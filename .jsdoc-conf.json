@@ -13,7 +13,7 @@
     "opts": {
         "systemName": "NHAI",
         "copyright": "Copyright 2020, Adam Powers",
-        "template": "node_modules/docdash",
+        "template": "node_modules/tui-jsdoc-template",
         "readme": "README.md",
         "encoding": "utf8",
         "destination": "docs/",
@@ -21,8 +21,18 @@
         "verbose": true
     },
     "templates": {
-        "cleverLinks": false,
-        "monospaceLinks": false
+        "name": "NHAI",
+        "footerText": "TEST FOOTER",
+        "useCollapsibles": true,
+        "logo": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/c/ca/1x1.png",
+            "width": "1px",
+            "height": "1px",
+            "link": "https://apowers313.github.io/nhai/"
+        },
+        "css": [
+            ".jsdoc.css"
+        ]
     },
     "docdash": {
         "static": true,

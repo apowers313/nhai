@@ -1,0 +1,19 @@
+footer {
+    background-color: grey
+}
+
+.lnb h3 {
+    color: white
+}
+
+#resizer {
+    background-color: grey
+}
+
+.main section article h3.subsection-title {
+    color: white
+}
+
+.main section header h2 {
+    border-left-color: grey
+}
