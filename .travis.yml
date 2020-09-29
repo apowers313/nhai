@@ -26,9 +26,10 @@ script:
 jobs:
   include:
     - stage: coverage
-      script: npm run coverage
       name: 'Testing Coverage Report'
+      script: npm run coverage
     - stage: docs
+      name: 'Code Documentation'
       script:
         - npm run docs
         - npm run docs:publish
