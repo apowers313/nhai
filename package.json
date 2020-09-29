@@ -1,0 +1,21 @@
+{
+  "name": "nhai",
+  "version": "1.0.0",
+  "description": "NetHack AI based on Concept Reinforcement Learning (CRL)",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "nyc --reporter=text mocha"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Adam Powers <apowers@ato.ms>",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "coveralls": "^3.1.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^8.1.3"
+  }
+}
