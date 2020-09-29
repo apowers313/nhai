@@ -31,7 +31,7 @@
             "link": "https://apowers313.github.io/nhai/"
         },
         "css": [
-            ".jsdoc.css"
+            "jsdoc.css"
         ]
     },
     "docdash": {
