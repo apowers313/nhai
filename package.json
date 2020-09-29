@@ -8,8 +8,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "nyc --reporter=html --reporter=text mocha",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "test": "mocha",
+    "coverage": "nyc --reporter=text-lcov mocha | coveralls"
   },
   "author": "Adam Powers <apowers@ato.ms>",
   "license": "UNLICENSED",
