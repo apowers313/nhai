@@ -19,7 +19,9 @@ stages:
 before_script:
   - npm prune
 
-script: echo "Running tests with $(node -v) ..."
+script:
+  - echo "Running tests with $(node -v) ..."
+  - npm run test
 
 jobs:
   include:
