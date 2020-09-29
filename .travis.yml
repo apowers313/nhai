@@ -14,7 +14,7 @@ node_js:
 stages:
   - test
   - coverage
-  # - docs
+  - docs
 
 before_script:
   - npm prune
@@ -28,3 +28,7 @@ jobs:
     - stage: coverage
       script: npm run coverage
       name: 'Testing Coverage Report'
+    - stage: docs
+      script:
+        - npm run docs
+        - npm run docs:publish
