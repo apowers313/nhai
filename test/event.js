@@ -1,9 +1,13 @@
 const { EventBase, EventBusBase } = require("../index");
-
 const assert = require("chai").assert;
+
 // helpers
 var testBus;
 class TestEvent extends EventBase {
+    get sourceName() {
+        return "dummy";
+    }
+
     get sourceType() {
         return "test";
     }
@@ -27,7 +31,7 @@ describe("EventBusBase", function() {
         assert.isFunction(EventBusBase);
     });
 
-    it("throws if constructed without EventBase", function() {
+    it("throws if constructed without eventBase arg", function() {
         assert.throws(() => {
             new EventBusBase();
         }, TypeError, "expected baseEvent arg to be class implementing EventBase");
@@ -37,6 +41,13 @@ describe("EventBusBase", function() {
         assert.throws(() => {
             new EventBusBase(EventBase);
         }, TypeError, "constructor requires a class derived from EventBase but attempted to pass EventBase itself");
+    });
+
+    it("throws if constructed without EventBase-derived class", function() {
+        assert.throws(() => {
+            class Foo {}
+            new EventBusBase(Foo);
+        }, TypeError, "expected EventBase arg while constructing EventBusBase");
     });
 
     it("constructs with class derived from EventBase", function() {
@@ -149,6 +160,50 @@ describe("EventBase", function() {
     });
 
     describe("bad construction", function() {
+        it("throws on abstract sourceName", function() {
+            class BadTestEvent extends EventBase {
+                get sourceType() {
+                    return "test";
+                }
+
+                get allowedTypes() {
+                    return new Set(["foo", "bar"]);
+                }
+
+                get eventBus() {
+                    return testBus;
+                }
+            }
+
+            assert.throws(() => {
+                new BadTestEvent();
+            }, Error, "sourceName not implemented");
+        });
+
+        it("throws on wrong sourceName type", function() {
+            class BadTestEvent extends EventBase {
+                get sourceName() {
+                    return null;
+                }
+
+                get sourceType() {
+                    return "test";
+                }
+
+                get allowedTypes() {
+                    return new Set(["foo", "bar"]);
+                }
+
+                get eventBus() {
+                    return testBus;
+                }
+            }
+
+            assert.throws(() => {
+                new BadTestEvent();
+            }, TypeError, "sourceName must be a String");
+        });
+
         it("throws on abstract sourceType", function() {
             class BadTestEvent extends EventBase {
                 get allowedTypes() {
