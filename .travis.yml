@@ -12,6 +12,8 @@ node_js:
   - '14'
 
 stages:
+  - lint
+  - audit
   - test
   - coverage
   - docs
@@ -25,6 +27,14 @@ script:
 
 jobs:
   include:
+    - stage: audit
+      name: 'Security Audit'
+      script:
+        - npm audit
+    - stage: lint
+      name: 'Lint'
+      script:
+        - npm run lint
     - stage: coverage
       name: 'Testing Coverage Report'
       script: npm run coverage
