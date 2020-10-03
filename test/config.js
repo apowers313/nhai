@@ -10,6 +10,18 @@ describe("config", function() {
         assert.isFunction(Config.getConfig);
     });
 
+    it("get", function() {
+        let cv = Config.get("version");
+        let version = require("../package.json").version;
+        assert.strictEqual(cv, version);
+    });
+
+    it("set", function() {
+        Config.set("foo", "bar");
+        let val = Config.get("foo");
+        assert.strictEqual(val, "bar");
+    });
+
     describe("getConfig", function() {
         it("returns a Map", function() {
             let c = Config.getConfig();
@@ -21,5 +33,4 @@ describe("config", function() {
             assert.strictEqual(Config.getConfig().get("version"), version);
         });
     });
-
 });
