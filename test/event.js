@@ -1,4 +1,4 @@
-const { EventBase, EventBusBase } = require("../index");
+const { EventBase, EventBusBase, EventFilter, EventListener } = require("../index");
 const assert = require("chai").assert;
 
 // helpers
@@ -12,7 +12,7 @@ class TestEvent extends EventBase {
         return "test";
     }
 
-    get allowedTypes() {
+    get allowedEventTypes() {
         return new Set(["foo", "bar"]);
     }
 
@@ -21,6 +21,12 @@ class TestEvent extends EventBase {
     }
 }
 testBus = new EventBusBase(TestEvent);
+function testBusListenerCount() {
+    let names = testBus.eventNames();
+    if(names.length === 0) return 0;
+    let totalCount = names.map((event) => testBus.listenerCount(event));
+    return totalCount.reduce((total, num) => total + num);
+}
 
 describe("EventBusBase", function() {
     afterEach(() => {
@@ -52,6 +58,14 @@ describe("EventBusBase", function() {
 
     it("constructs with class derived from EventBase", function() {
         new EventBusBase(TestEvent);
+    });
+
+    it("allowedEvents", function() {
+        let eb = new EventBusBase(TestEvent);
+        assert.instanceOf(eb.allowedEvents, Set);
+        assert.strictEqual(eb.allowedEvents.size, 2);
+        assert.isTrue(eb.allowedEvents.has("foo"));
+        assert.isTrue(eb.allowedEvents.has("bar"));
     });
 
     it("addListener", function(done) {
@@ -100,6 +114,10 @@ describe("EventBusBase", function() {
 });
 
 describe("EventBase", function() {
+    afterEach(() => {
+        testBus.removeAllListeners();
+    });
+
     it("is Function", function() {
         assert.isFunction(EventBase);
     });
@@ -155,7 +173,7 @@ describe("EventBase", function() {
             let t = new TestEvent();
             assert.throws(() => {
                 t.emit("something");
-            }, TypeError, "event type 'something' not one of the allowedTypes");
+            }, TypeError, "event type 'something' not one of the allowedEventTypes");
         });
     });
 
@@ -166,7 +184,7 @@ describe("EventBase", function() {
                     return "test";
                 }
 
-                get allowedTypes() {
+                get allowedEventTypes() {
                     return new Set(["foo", "bar"]);
                 }
 
@@ -190,7 +208,7 @@ describe("EventBase", function() {
                     return "test";
                 }
 
-                get allowedTypes() {
+                get allowedEventTypes() {
                     return new Set(["foo", "bar"]);
                 }
 
@@ -206,7 +224,7 @@ describe("EventBase", function() {
 
         it("throws on abstract sourceType", function() {
             class BadTestEvent extends EventBase {
-                get allowedTypes() {
+                get allowedEventTypes() {
                     return new Set(["foo", "bar"]);
                 }
 
@@ -226,7 +244,7 @@ describe("EventBase", function() {
                     return 3;
                 }
 
-                get allowedTypes() {
+                get allowedEventTypes() {
                     return new Set(["foo", "bar"]);
                 }
 
@@ -240,7 +258,7 @@ describe("EventBase", function() {
             }, TypeError, "sourceType must be a String");
         });
 
-        it("throws on abstract allowedTypes", function() {
+        it("throws on abstract allowedEventTypes", function() {
             class BadTestEvent extends EventBase {
                 get sourceType() {
                     return "test";
@@ -253,16 +271,16 @@ describe("EventBase", function() {
 
             assert.throws(() => {
                 new BadTestEvent();
-            }, Error, "allowedTypes not implemented");
+            }, Error, "allowedEventTypes not implemented");
         });
 
-        it("throws on wrong allowedTypes type", function() {
+        it("throws on wrong allowedEventTypes type", function() {
             class BadTestEvent extends EventBase {
                 get sourceType() {
                     return "test";
                 }
 
-                get allowedTypes() {
+                get allowedEventTypes() {
                     return 3;
                 }
 
@@ -273,7 +291,7 @@ describe("EventBase", function() {
 
             assert.throws(() => {
                 new BadTestEvent();
-            }, TypeError, "allowedTypes must be a Set");
+            }, TypeError, "allowedEventTypes must be a Set");
         });
 
         it("throws on abstract eventBus", function() {
@@ -282,7 +300,7 @@ describe("EventBase", function() {
                     return "test";
                 }
 
-                get allowedTypes() {
+                get allowedEventTypes() {
                     return new Set(["foo", "bar"]);
                 }
             }
@@ -298,7 +316,7 @@ describe("EventBase", function() {
                     return "test";
                 }
 
-                get allowedTypes() {
+                get allowedEventTypes() {
                     return new Set(["foo", "bar"]);
                 }
 
@@ -312,4 +330,329 @@ describe("EventBase", function() {
             }, TypeError, "eventBus must be an EventBusBase");
         });
     });
+});
+
+describe("EventFilter", function() {
+    it("is Function", function() {
+        assert.isFunction(EventFilter);
+    });
+
+    it("sets allow type", function() {
+        let f = new EventFilter("allow", {sourceType: "foo", all: true});
+        assert.strictEqual(f.allow, true);
+        assert.strictEqual(f.deny, false);
+    });
+
+    it("sets deny type", function() {
+        let f = new EventFilter("deny", {sourceType: "foo", all: true});
+        assert.strictEqual(f.deny, true);
+        assert.strictEqual(f.allow, false);
+    });
+
+    it("throws on bad type");
+
+    it("sets default priority", function() {
+        let f = new EventFilter("deny", {sourceType: "foo", all: true});
+        assert.strictEqual(f.priority, 100);
+    });
+
+    it("throws on bad priority");
+
+    it("sets priority", function() {
+        let f = new EventFilter("deny", {sourceType: "foo", all: true}, 747);
+        assert.strictEqual(f.priority, 747);
+    });
+
+    it("throws on bad criteria object");
+
+    it("sets critera", function() {
+        let c = {sourceType: "foo", all: true};
+        let f = new EventFilter("deny", c, 747);
+        assert.strictEqual(f.criteria, c);
+        assert.strictEqual(f.criteria.sourceType, "foo");
+        assert.strictEqual(f.criteria.all, true);
+    });
+
+    describe("buildTestFn", function() {
+        class TestFilterEvent extends EventBase {
+            constructor(o) {
+                super();
+
+                this._sourceName = o.sourceName;
+                this._sourceType = o.sourceType;
+                this.type = o.eventType;
+            }
+
+            get sourceName() { return this._sourceName || "empty"; }
+            get sourceType() { return this._sourceType || "empty"; }
+            get allowedEventTypes() { return new Set(["register", "init"]); }
+            get eventBus() { return testBus; }
+        }
+
+        it("creates a function", function() {
+            let fn = EventFilter.buildTestFn({sourceType: "foo", all: true});
+            assert.isFunction(fn);
+        });
+
+        it("matches based on sourceType", function() {
+            let fn = EventFilter.buildTestFn({sourceType: "foo", all: true});
+            let e = new TestFilterEvent({sourceType: "foo"});
+            assert.strictEqual(fn(e), true);
+        });
+
+        it("doesn't match wrong sourceType", function() {
+            let fn = EventFilter.buildTestFn({sourceType: "foo", all: true});
+            let e = new TestFilterEvent({sourceType: "bar"});
+            assert.strictEqual(fn(e), false);
+        });
+
+        it("matches based on sourceName", function() {
+            let fn = EventFilter.buildTestFn({sourceName: "beer", all: true});
+            let e = new TestFilterEvent({sourceName: "beer"});
+            assert.strictEqual(fn(e), true);
+        });
+
+        it("doesn't match wrong sourceName", function() {
+            let fn = EventFilter.buildTestFn({sourceName: "beer", all: true});
+            let e = new TestFilterEvent({sourceName: "wine"});
+            assert.strictEqual(fn(e), false);
+        });
+
+        it("matches based on eventType", function() {
+            let fn = EventFilter.buildTestFn({eventType: "register", all: true});
+            let e = new TestFilterEvent({eventType: "register"});
+            assert.strictEqual(fn(e), true);
+        });
+
+        it("doesn't match wrong eventType", function() {
+            let fn = EventFilter.buildTestFn({eventType: "register", all: true});
+            let e = new TestFilterEvent({eventType: "init"});
+            assert.strictEqual(fn(e), false);
+        });
+
+        it("matches on custom function");
+        it("doesn't match on custom function");
+
+        it("matches any", function() {
+            let fn = EventFilter.buildTestFn({sourceType: "foo", eventType: "register", any: true});
+            let e = new TestFilterEvent({sourceType: "foo", eventType: "register"});
+            assert.strictEqual(fn(e), true);
+        });
+
+        it("partial matches any", function() {
+            let fn = EventFilter.buildTestFn({sourceType: "foo", eventType: "register", any: true});
+            let e = new TestFilterEvent({sourceType: "bar", eventType: "register"});
+            assert.strictEqual(fn(e), true);
+        });
+
+        it("doesn't match any", function() {
+            let fn = EventFilter.buildTestFn({sourceType: "foo", eventType: "register", any: true});
+            let e = new TestFilterEvent({sourceType: "bar", eventType: "init"});
+            assert.strictEqual(fn(e), false);
+        });
+
+        it("matches all", function() {
+            let fn = EventFilter.buildTestFn({sourceType: "foo", eventType: "register", all: true});
+            let e = new TestFilterEvent({sourceType: "foo", eventType: "register"});
+            assert.strictEqual(fn(e), true);
+        });
+
+        it("doesn't match all", function() {
+            let fn = EventFilter.buildTestFn({sourceType: "foo", eventType: "register", all: true});
+            let e = new TestFilterEvent({sourceType: "bar", eventType: "register"});
+            assert.strictEqual(fn(e), false);
+        });
+
+        it("matches none", function() {
+            let fn = EventFilter.buildTestFn({sourceType: "foo", eventType: "register", none: true});
+            let e = new TestFilterEvent({sourceType: "bar", eventType: "init"});
+            assert.strictEqual(fn(e), true);
+        });
+
+        it("doesn't match none", function() {
+            let fn = EventFilter.buildTestFn({sourceType: "foo", eventType: "register", none: true});
+            let e = new TestFilterEvent({sourceType: "foo", eventType: "init"});
+            assert.strictEqual(fn(e), false);
+        });
+
+        it("throws on unknown criteria", function() {
+            assert.throws(() => {
+                EventFilter.buildTestFn({something: "yep"});
+            }, TypeError, "key 'something' isn't a valid filter criteria");
+        });
+
+        it("throws on missing 'any', 'all', or 'none'", function() {
+            assert.throws(() => {
+                EventFilter.buildTestFn({sourceType: "foo"});
+            }, Error, "expected 'criteria' to include at least one of 'any', 'all', or 'none'");
+        });
+
+        it("throws on empty object", function() {
+            assert.throws(() => {
+                EventFilter.buildTestFn({});
+            }, Error, "expected 'criteria' to include at least one of");
+        });
+
+        it("throws on empty criteria", function() {
+            assert.throws(() => {
+                EventFilter.buildTestFn();
+            }, TypeError, "expected 'criteria' to be an Object");
+        });
+
+        it("throws on non-Object criteria", function() {
+            assert.throws(() => {
+                EventFilter.buildTestFn(3);
+            }, TypeError, "expected 'criteria' to be an Object");
+        });
+    });
+
+    it("matchEvent true");
+    it("matchEvent false");
+
+    it("allowEvent true", function() {
+        let f = new EventFilter("allow", {sourceName: "dummy", all: true}, 747);
+        let te = new TestEvent();
+        assert.isTrue(f.allowEvent(te));
+        assert.isFalse(f.denyEvent(te));
+    });
+
+    it("allowEvent false", function() {
+        let f = new EventFilter("allow", {sourceName: "bob", all: true}, 747);
+        let te = new TestEvent();
+        assert.isFalse(f.allowEvent(te));
+        assert.isFalse(f.denyEvent(te));
+    });
+
+    it("denyEvent true", function() {
+        let f = new EventFilter("deny", {sourceName: "dummy", all: true}, 747);
+        let te = new TestEvent();
+        assert.isTrue(f.denyEvent(te));
+        assert.isFalse(f.allowEvent(te));
+    });
+
+    it("denyEvent false", function() {
+        let f = new EventFilter("deny", {sourceName: "bob", all: true}, 747);
+        let te = new TestEvent();
+        assert.isFalse(f.denyEvent(te));
+        assert.isFalse(f.allowEvent(te));
+    });
+});
+
+describe("EventListener", function() {
+    afterEach(() => {
+        testBus.removeAllListeners();
+    });
+
+    it("is Function", function() {
+        assert.isFunction(EventListener);
+    });
+
+    it("ignores null filterList", function() {
+        let l = new EventListener(testBus, null, () => {});
+        assert.strictEqual(l.filterList.length, 0);
+    });
+
+    it("filterList is Array", function() {
+        let l = new EventListener(testBus, null, () => {});
+        assert.isArray(l.filterList);
+    });
+
+    it("adds single filter", function() {
+        let f = new EventFilter("allow", {sourceType: "foo", any: true});
+        let l = new EventListener(testBus, f, () => {});
+        assert.strictEqual(l.filterList.length, 1);
+    });
+
+    it("adds filter list", function() {
+        let f1 = new EventFilter("allow", {sourceType: "foo", any: true});
+        let f2 = new EventFilter("allow", {sourceType: "foo", any: true});
+        let fl = [f1, f2];
+        let l = new EventListener(testBus, fl, () => {});
+        assert.strictEqual(l.filterList.length, 2);
+    });
+
+    it("adds filter after construction", function() {
+        let f = new EventFilter("allow", {sourceType: "foo", any: true});
+        let l = new EventListener(testBus, null, () => {});
+        l.addFilter(f);
+        assert.strictEqual(l.filterList.length, 1);
+    });
+
+    it("adds filters in any order", function() {
+        let l = new EventListener(testBus, null, () => {});
+        l.addFilter(new EventFilter("allow", {sourceType: "three", any: true}));
+        l.addFilter(new EventFilter("allow", {sourceType: "one", any: true}));
+        l.addFilter(new EventFilter("allow", {sourceType: "four", any: true}));
+        l.addFilter(new EventFilter("allow", {sourceType: "two", any: true}));
+        assert.isArray(l.filterList);
+        assert.strictEqual(l.filterList.length, 4);
+        assert.strictEqual(l.filterList[0].criteria.sourceType, "three");
+        assert.strictEqual(l.filterList[1].criteria.sourceType, "one");
+        assert.strictEqual(l.filterList[2].criteria.sourceType, "four");
+        assert.strictEqual(l.filterList[3].criteria.sourceType, "two");
+    });
+
+    it("adds filters in priority order", function() {
+        let l = new EventListener(testBus, null, () => {});
+        l.addFilter(new EventFilter("allow", {sourceType: "three", any: true}, 10));
+        l.addFilter(new EventFilter("allow", {sourceType: "one", any: true}, 1));
+        l.addFilter(new EventFilter("allow", {sourceType: "four", any: true}, 17));
+        l.addFilter(new EventFilter("allow", {sourceType: "two", any: true}, 3));
+        assert.isArray(l.filterList);
+        assert.strictEqual(l.filterList.length, 4);
+        assert.strictEqual(l.filterList[0].criteria.sourceType, "one");
+        assert.strictEqual(l.filterList[1].criteria.sourceType, "two");
+        assert.strictEqual(l.filterList[2].criteria.sourceType, "three");
+        assert.strictEqual(l.filterList[3].criteria.sourceType, "four");
+    });
+
+    it("listens for allowed events", function() {
+        assert.strictEqual(testBusListenerCount(), 0);
+        let f = new EventFilter("allow", {eventType: "foo", any: true});
+        let l = new EventListener(testBus, f, () => {});
+        assert.instanceOf(l.attachedEvents, Set);
+        assert.strictEqual(l.attachedEvents.size, 1);
+        assert.isTrue(l.attachedEvents.has("foo"));
+        assert.strictEqual(testBusListenerCount(), 1);
+    });
+
+    it("listens for all events if none specified", function() {
+        assert.strictEqual(testBusListenerCount(), 0);
+        let f = new EventFilter("allow", {sourceName: "foo", any: true});
+        let l = new EventListener(testBus, f, () => {});
+        assert.instanceOf(l.attachedEvents, Set);
+        assert.strictEqual(l.attachedEvents.size, 2);
+        assert.isTrue(l.attachedEvents.has("foo"));
+        assert.isTrue(l.attachedEvents.has("bar"));
+        assert.strictEqual(testBusListenerCount(), 2);
+    });
+
+    it("catches event", function(done) {
+        assert.strictEqual(testBusListenerCount(), 0);
+        let f = new EventFilter("allow", {eventType: "foo", any: true});
+        new EventListener(testBus, f, myCallback);
+        let te = new TestEvent();
+        te.emit("foo", 42);
+
+        function myCallback(e) {
+            assert.instanceOf(e, EventBase);
+            done();
+        }
+    });
+
+    it("ignores event", function(done) {
+        assert.strictEqual(testBusListenerCount(), 0);
+        let f = new EventFilter("allow", {eventType: "foo", any: true});
+        new EventListener(testBus, f, myCallback);
+        let te = new TestEvent();
+        te.emit("bar", 42);
+
+        function myCallback() {
+            assert.fail("should not have caught event");
+        }
+
+        setTimeout(done, 20);
+    });
+
+    it("catches both");
 });
