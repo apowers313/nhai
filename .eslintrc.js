@@ -16,36 +16,35 @@ module.exports = {
         "mocha", "jsdoc",
     ],
     rules: {
-        // basic
-        "indent":          ["error", 4],
-        "linebreak-style": ["error", "unix"],
-        "quotes":          ["error", "double"],
-        "semi":            ["error", "always"],
-        "camelcase":       ["error", {properties: "always"}],
-
-        // error prevention
-        "wrap-iife":                   ["error", "inside"],
-        "consistent-return":           "error",
-        "no-template-curly-in-string": "error",
-        "no-promise-executor-return":  "error",
-        "eqeqeq":                      "error",
-        "dot-notation":                "error",
-        "dot-location":                ["error", "property"],
-        "curly":                       ["error", "multi", "consistent"],
-        // "strict": ["error", "global"],
-        // "complexity":                  ["error", {max: 10}],
-
-        // cosmetic
-        "space-before-function-paren":     ["error", "never"],
-        "func-call-spacing":               ["error", "never"],
-        "function-call-argument-newline":  ["error", "consistent"],
-        "one-var":                         ["error", {uninitialized: "consecutive"}],
-        "switch-colon-spacing":            ["error", {after: true, before: false}],
-        "padding-line-between-statements": [
-            "error",
-            {blankLine: "always", prev: "*", next: "class"},
-            {blankLine: "always", prev: "class", next: "*"},
-        ],
+        /* *****************
+         * basic
+         *******************/
+        "indent":                           ["error", 4],
+        "linebreak-style":                  ["error", "unix"],
+        "quotes":                           ["error", "double"],
+        "semi":                             ["error", "always"],
+        "camelcase":                        ["error", {properties: "always"}],
+        /* *****************
+         * error prevention
+         *******************/
+        "wrap-iife":                        ["error", "inside"],
+        "consistent-return":                "error",
+        "no-template-curly-in-string":      "error",
+        "no-promise-executor-return":       "error",
+        "eqeqeq":                           "error",
+        "dot-notation":                     "error",
+        "dot-location":                     ["error", "property"],
+        "curly":                            ["error", "multi", "consistent"],
+        // "strict":                        ["error", "global"],
+        // "complexity":                    ["error", {max: 10}],
+        /* *****************
+         * cosmetic
+         *******************/
+        "space-before-function-paren":      ["error", "never"],
+        "func-call-spacing":                ["error", "never"],
+        "function-call-argument-newline":   ["error", "consistent"],
+        "one-var":                          ["error", {uninitialized: "consecutive"}],
+        "switch-colon-spacing":             ["error", {after: true, before: false}],
         "padded-blocks":                    ["error", "never"],
         "operator-linebreak":               ["error", "after"],
         "quote-props":                      ["error", "consistent-as-needed"],
@@ -80,46 +79,47 @@ module.exports = {
         "default-case":                     "error",
         "default-case-last":                "error",
         "default-param-last":               "error",
-        // "no-underscore-dangle":             "error",
-        // some magic numbers are okay (such as the '4' for indent in this file)
-        // "no-magic-numbers":                 "error",
-        // bad for some Mocha tests that expect to throw
-        // "no-new":                           "error",
-        // "one-var-declaration-per-line": ["error", "never"],
-
-        // style
-        "no-warning-comments": ["warn", {terms: ["TODO", "FIXME", "XXX"]}],
-        "sort-vars":           ["error"],
-        "yoda":                ["error", "never"],
+        "padding-line-between-statements":  ["error", {blankLine: "always", prev: "*", next: "class"}, {blankLine: "always", prev: "class", next: "*"}],
+        // "no-underscore-dangle":          "error",
+        // "no-magic-numbers":              "error", // some magic numbers are okay (such as the '4' for indent in this file)
+        // "no-new":                        "error", // bad for some Mocha tests that expect to throw
+        // "one-var-declaration-per-line":  ["error", "never"],
+        /* *****************
+         * style
+         *******************/
+        "no-warning-comments":              ["warn", {terms: ["TODO", "FIXME", "XXX"]}],
+        "sort-vars":                        ["error"],
+        "yoda":                             ["error", "never"],
         // "sort-keys": ["warn", "asc", {"natural": true}],
-
-        // ES6
-        "prefer-template":         "error",
-        "template-curly-spacing":  ["error", "never"],
-        "sort-imports":            ["error"],
-        "rest-spread-spacing":     ["error", "always"],
-        "arrow-parens":            ["error", "always"],
-        "require-await":           "error",
-        "prefer-rest-params":      "error",
-        "prefer-destructuring":    "error",
-        "prefer-spread":           "error",
-        "no-useless-rename":       "error",
-        "no-var":                  "error",
-        "no-duplicate-imports":    "error",
-        "no-useless-constructor":  "error",
-        "no-useless-computed-key": "error",
-        // screws up Mocha
-        // "prefer-arrow-callback":   "error",
-        // this gets annoying fast
-        // "prefer-const":            "error",
-
-        // mocha
-        "mocha/no-exclusive-tests": ["error", "always"],
-        "mocha/no-skipped-tests":   ["error", "always"],
-
-        // jsdoc
-        "jsdoc/require-returns-check": "off",
-        "jsdoc/require-jsdoc":         "warn",
-        // "jsdoc/require-returns":       "off",
+        /* *****************
+         * ES6
+         *******************/
+        "prefer-template":                  "error",
+        "template-curly-spacing":           ["error", "never"],
+        "sort-imports":                     ["error"],
+        "rest-spread-spacing":              ["error", "always"],
+        "arrow-parens":                     ["error", "always"],
+        "require-await":                    "error",
+        "prefer-rest-params":               "error",
+        "prefer-destructuring":             "error",
+        "prefer-spread":                    "error",
+        "no-useless-rename":                "error",
+        "no-var":                           "error",
+        "no-duplicate-imports":             "error",
+        "no-useless-constructor":           "error",
+        "no-useless-computed-key":          "error",
+        // "prefer-arrow-callback":         "error", // screws up Mocha
+        // "prefer-const":                  "error", // this gets annoying fast
+        /* *****************
+         * mocha
+         *******************/
+        "mocha/no-exclusive-tests":         ["error", "always"],
+        "mocha/no-skipped-tests":           ["error", "always"],
+        /* *****************
+         * jsdoc
+         *******************/
+        "jsdoc/require-returns-check":      "off",
+        "jsdoc/require-jsdoc":              "warn",
+        // "jsdoc/require-returns":         "off",
     },
 };
