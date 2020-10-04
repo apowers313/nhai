@@ -1,5 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
-
 const {assert} = require("chai");
 const {Config} = require("..");
 

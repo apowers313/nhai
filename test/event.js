@@ -1,5 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
-
 const {EventBase, EventBusBase, EventFilter, EventListener} = require("../index");
 const {assert} = require("chai");
 

@@ -1,5 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
-
 const {PerceptionEvent, Component} = require("../index");
 const {assert} = require("chai");
 

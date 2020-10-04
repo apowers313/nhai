@@ -1,5 +1,3 @@
-/* eslint-disable jsdoc/require-jsdoc */
-
 const {Log, Config} = require("../index");
 const {assert} = require("chai");
 const stdMocks = require("std-mocks");
