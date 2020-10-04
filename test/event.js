@@ -1,8 +1,11 @@
-const { EventBase, EventBusBase, EventFilter, EventListener } = require("../index");
-const assert = require("chai").assert;
+/* eslint-disable jsdoc/require-jsdoc */
+
+const {EventBase, EventBusBase, EventFilter, EventListener} = require("../index");
+const {assert} = require("chai");
 
 // helpers
-var testBus;
+let testBus;
+
 class TestEvent extends EventBase {
     get sourceName() {
         return "dummy";
@@ -20,16 +23,43 @@ class TestEvent extends EventBase {
         return testBus;
     }
 }
+
+class TestFilterEvent extends EventBase {
+    constructor(o) {
+        super();
+
+        this._sourceName = o.sourceName;
+        this._sourceType = o.sourceType;
+        this.type = o.eventType;
+    }
+
+    get sourceName() {
+        return this._sourceName || "empty";
+    }
+
+    get sourceType() {
+        return this._sourceType || "empty";
+    }
+
+    get allowedEventTypes() {
+        return new Set(["register", "init"]);
+    }
+
+    get eventBus() {
+        return testBus;
+    }
+}
+
 testBus = new EventBusBase(TestEvent);
 function testBusListenerCount() {
     let names = testBus.eventNames();
-    if(names.length === 0) return 0;
+    if (names.length === 0) return 0;
     let totalCount = names.map((event) => testBus.listenerCount(event));
     return totalCount.reduce((total, num) => total + num);
 }
 
 describe("EventBusBase", function() {
-    afterEach(() => {
+    afterEach(function() {
         testBus.removeAllListeners();
     });
 
@@ -52,6 +82,7 @@ describe("EventBusBase", function() {
     it("throws if constructed without EventBase-derived class", function() {
         assert.throws(() => {
             class Foo {}
+
             new EventBusBase(Foo);
         }, TypeError, "expected EventBase arg while constructing EventBusBase");
     });
@@ -71,7 +102,7 @@ describe("EventBusBase", function() {
     it("addListener", function(done) {
         let te = new TestEvent();
 
-        testBus.addListener("foo", function (e) {
+        testBus.addListener("foo", function(e) {
             assert.instanceOf(e, EventBase);
             assert.strictEqual(e.data, 42);
             done();
@@ -114,7 +145,7 @@ describe("EventBusBase", function() {
 });
 
 describe("EventBase", function() {
-    afterEach(() => {
+    afterEach(function() {
         testBus.removeAllListeners();
     });
 
@@ -137,7 +168,7 @@ describe("EventBase", function() {
         it("can emit", function(done) {
             let t = new TestEvent();
             let d = {
-                cookie: 0xDEADBEEF // mmm... beef cookies
+                cookie: 0xDEADBEEF, // mmm... beef cookies
             };
 
             testBus.once("foo", (e) => {
@@ -151,7 +182,7 @@ describe("EventBase", function() {
         it("can emit with multiple args", function(done) {
             let t = new TestEvent();
             let d = {
-                cookie: 0xDEADBEEF // mmm... beef cookies
+                cookie: 0xDEADBEEF, // mmm... beef cookies
             };
 
             testBus.once("foo", (e, ... args) => {
@@ -374,21 +405,6 @@ describe("EventFilter", function() {
     });
 
     describe("buildTestFn", function() {
-        class TestFilterEvent extends EventBase {
-            constructor(o) {
-                super();
-
-                this._sourceName = o.sourceName;
-                this._sourceType = o.sourceType;
-                this.type = o.eventType;
-            }
-
-            get sourceName() { return this._sourceName || "empty"; }
-            get sourceType() { return this._sourceType || "empty"; }
-            get allowedEventTypes() { return new Set(["register", "init"]); }
-            get eventBus() { return testBus; }
-        }
-
         it("creates a function", function() {
             let fn = EventFilter.buildTestFn({sourceType: "foo", all: true});
             assert.isFunction(fn);
@@ -539,7 +555,7 @@ describe("EventFilter", function() {
 });
 
 describe("EventListener", function() {
-    afterEach(() => {
+    afterEach(function() {
         testBus.removeAllListeners();
     });
 

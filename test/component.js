@@ -1,10 +1,12 @@
-const { PerceptionEvent, Component } = require("../index");
-const assert = require("chai").assert;
+/* eslint-disable jsdoc/require-jsdoc */
+
+const {PerceptionEvent, Component} = require("../index");
+const {assert} = require("chai");
 
 describe("Component", function() {
     it("accepts argument inputs", function() {
         let d = {
-            beer: "mmm"
+            beer: "mmm",
         };
         let c = new Component("foo", "bar", d);
         assert.instanceOf(c, Component);

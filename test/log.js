@@ -1,6 +1,8 @@
-const { Log, Config } = require("../index");
-const assert = require("chai").assert;
-var stdMocks = require("std-mocks");
+/* eslint-disable jsdoc/require-jsdoc */
+
+const {Log, Config} = require("../index");
+const {assert} = require("chai");
+const stdMocks = require("std-mocks");
 
 describe("Log", function() {
     it("is Function", function() {

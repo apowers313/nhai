@@ -1,5 +1,7 @@
-const { Perception, PerceptionEvent, EventBase, EventBusBase } = require("../index");
-const assert = require("chai").assert;
+/* eslint-disable jsdoc/require-jsdoc */
+
+const {Perception, PerceptionEvent, EventBase, EventBusBase} = require("../index");
+const {assert} = require("chai");
 
 describe("PerceptionEvent", function() {
     describe("events", function() {

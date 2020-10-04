@@ -1,5 +1,7 @@
-const assert = require("chai").assert;
-const { Config } = require("..");
+/* eslint-disable jsdoc/require-jsdoc */
+
+const {assert} = require("chai");
+const {Config} = require("..");
 
 describe("config", function() {
     it("is class", function() {
@@ -12,7 +14,7 @@ describe("config", function() {
 
     it("get", function() {
         let cv = Config.get("version");
-        let version = require("../package.json").version;
+        let {version} = require("../package.json");
         assert.strictEqual(cv, version);
     });
 
@@ -29,7 +31,7 @@ describe("config", function() {
         });
 
         it("has version", function() {
-            let version = require("../package.json").version;
+            let {version} = require("../package.json");
             assert.strictEqual(Config.getConfig().get("version"), version);
         });
     });
