@@ -8,11 +8,11 @@ describe("PerceptionEvent", function() {
             assert.instanceOf(PerceptionEvent.prototype, EventBase);
         });
 
-        it("getEventBus returns event bus singleton", function() {
-            assert.isFunction(Perception.getEventBus);
-            let eb1 = Perception.getEventBus();
+        it("eventBus is an event bus singleton", function() {
+            assert.isObject(Perception.eventBus);
+            let eb1 = Perception.eventBus;
             assert.instanceOf(eb1, EventBusBase);
-            let eb2 = Perception.getEventBus();
+            let eb2 = Perception.eventBus;
             assert.strictEqual(eb1, eb2);
         });
 
