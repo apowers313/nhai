@@ -10,7 +10,7 @@
   "scripts": {
     "test": "mocha",
     "test:coverage": "nyc --reporter=text --reporter=html mocha && open coverage/index.html",
-    "lint": "eslint \"lib/**/*.js\"",
+    "lint": "eslint \"lib/**/*.js\" \"test/**/*.js\"",
     "coverage": "nyc --reporter=text-lcov mocha | coveralls",
     "docs": "jsdoc -c ./.jsdoc-conf.json && cp jsdoc.css docs",
     "docs:publish": "gh-pages --silent --repo https://$GH_TOKEN@github.com/apowers313/nhai.git --dist docs"
@@ -26,6 +26,8 @@
     "coveralls": "^3.1.0",
     "docdash": "^1.2.0",
     "eslint": "^7.10.0",
+    "eslint-plugin-jsdoc": "^30.6.3",
+    "eslint-plugin-mocha": "^8.0.0",
     "gh-pages": "^3.1.0",
     "jsdoc": "^3.6.6",
     "mocha": "^8.1.3",
