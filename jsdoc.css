@@ -17,3 +17,9 @@ footer {
 .main section header h2 {
     border-left-color: grey
 }
+
+.main section article table td.name, .main section article table td.type {
+    max-width: 300px;
+    min-width: 100px;
+    word-break: normal;
+}

@@ -119,7 +119,44 @@ module.exports = {
          * jsdoc
          *******************/
         "jsdoc/require-returns-check":      "off",
-        "jsdoc/require-jsdoc":              "warn",
+        "jsdoc/require-returns":            "off",
+        "jsdoc/check-indentation":          "warn",
+        "jsdoc/require-description":        "error",
+        "jsdoc/require-jsdoc":              [
+            "error", {
+                enableFixer:  false,
+                publicOnly:   true,
+                checkGetters: true,
+                checkSetters: true,
+                require:      {
+                    ClassDeclaration:        true,
+                    ClassExpression:         true,
+                    FunctionDeclaration:     true,
+                    FunctionExpression:      true,
+                    MethodDefinition:        true,
+                    ArrowFunctionExpression: true,
+                },
+                // contexts:   [
+                //     "ClassDeclaration",
+                //     "ClassExpression",
+                //     "FunctionDeclaration",
+                //     "FunctionExpression",
+                //     "MethodDefinition",
+                //     "VariableDeclaration",
+                //     "ArrowFunctionExpression",
+                //     "Property",
+                // ],
+                // exemptEmptyConstructors: false,
+                // checkConstructors:       true,
+            },
+        ],
         // "jsdoc/require-returns":         "off",
     },
+    // settings: {
+    //     jsdoc: {
+    //         tagNamePreference: {
+    //             returns: "return",
+    //         },
+    //     },
+    // },
 };

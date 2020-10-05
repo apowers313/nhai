@@ -518,6 +518,8 @@ describe("EventFilter", function() {
                 EventFilter.buildTestFn(3);
             }, TypeError, "expected 'criteria' to be an Object");
         });
+
+        it("can only specify one of 'any', 'all', or 'none'");
     });
 
     it("matchEvent true");
@@ -619,6 +621,8 @@ describe("EventListener", function() {
         assert.strictEqual(l.filterList[2].criteria.sourceType, "three");
         assert.strictEqual(l.filterList[3].criteria.sourceType, "four");
     });
+
+    it("can mix priority and non-priority events");
 
     it("listens for allowed events", function() {
         assert.strictEqual(testBusListenerCount(), 0);
