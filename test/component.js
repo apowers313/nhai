@@ -2,6 +2,10 @@ const {PerceptionEvent, Component} = require("../index");
 const {assert} = require("chai");
 
 describe("Component", function() {
+    afterEach(function() {
+        Component.clearList();
+    });
+
     it("accepts argument inputs", function() {
         let d = {
             beer: "mmm",
@@ -65,10 +69,6 @@ describe("Component", function() {
     });
 
     describe("register", function() {
-        afterEach(function() {
-            Component.clearList();
-        });
-
         it("registers module", function() {
             let c = new Component("myName", "myType", {data: "foo"});
             Component.register(c);
@@ -92,11 +92,9 @@ describe("Component", function() {
         });
 
         it("throws on duplicate name", function() {
-            let c1 = new Component("myName", "myType1", {data: "foo"});
-            let c2 = new Component("myName", "myType2", {data: "bar"});
-            Component.register(c1);
+            new Component("myName", "myType1", {data: "foo"});
             assert.throws(() => {
-                Component.register(c2);
+                new Component("myName", "myType2", {data: "bar"});
             });
         });
 
