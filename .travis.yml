@@ -33,7 +33,7 @@ jobs:
         - npm audit
     - stage: coverage
       name: 'Testing Coverage Report'
-      script: npm run coverage
+      script: npm run coverage:publish
     - stage: docs
       name: 'Code Documentation'
       script:
