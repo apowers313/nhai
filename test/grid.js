@@ -1,4 +1,4 @@
-const Grid = require("../src/grid.js");
+const Grid = require("../src/Grid.js");
 const {assert} = require("chai");
 
 describe("Grid", function() {
