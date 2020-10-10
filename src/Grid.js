@@ -57,7 +57,7 @@ class yValue {
  */
 class Grid {
     /**
-     * Creates a new Grid
+     * Creates a new two dimensional array
      *
      * @param {number}   width           - The width of the Grid
      * @param {height}   height          - The height of the Grid
@@ -99,7 +99,7 @@ class Grid {
         return this._height;
     }
 
-    /** A Uint8Array for the raw data underlying the Grid */
+    /** A {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array|Uint8Array} for the raw data underlying the Grid */
     get dataBuf() {
         return this._dataBuf;
     }
