@@ -8,54 +8,17 @@
     "test": "test"
   },
   "scripts": {
-    "dev:test": "npm-watch test:dev",
-    "dev:docs": "npm-watch docs",
-    "dev:coverage": "npm-watch coverage",
-    "dev:lint": "npm-watch lint",
-    "test": "mocha",
-    "test:dev": "nyc --reporter=text mocha -- --reporter min",
-    "lint": "eslint \"lib/**/*.js\" \"src/**/*.js\" \"test/**/*.js\"",
-    "coverage": "nyc --reporter=text --reporter=html mocha && open coverage/index.html",
+    "dev:test": "gulp dev:test",
+    "dev:docs": "gulp dev:docs",
+    "dev:coverage": "gulp dev:coverage",
+    "dev:lint": "gulp dev:lint",
+    "test": "gulp test",
+    "test:dev": "mocha --reporter min",
+    "lint": "gulp lint",
+    "coverage": "gulp coverage",
     "coverage:publish": "nyc --reporter=text-lcov mocha | coveralls",
-    "docs": "echo \"*** Docs created at: ./docs/index.html\" && jsdoc -c ./.jsdoc-conf.json && cp jsdoc.css docs",
+    "docs": "gulp docs",
     "docs:publish": "gh-pages --silent --repo https://$GH_TOKEN@github.com/apowers313/nhai.git --dist docs"
-  },
-  "watch": {
-    "test:dev": {
-      "patterns": [
-        "src",
-        "test",
-        "lib"
-      ],
-      "quiet": true,
-      "inherit": true
-    },
-    "test:docs": {
-      "patterns": [
-        "src",
-        "lib"
-      ],
-      "quiet": true,
-      "inherit": true
-    },
-    "lint": {
-      "patterns": [
-        "src",
-        "test",
-        "lib"
-      ],
-      "quiet": true,
-      "inherit": true
-    },
-    "test:coverage": {
-      "patterns": [
-        "src",
-        "test",
-        "lib"
-      ],
-      "quiet": true,
-      "inherit": true
-    }
   },
   "author": "Adam Powers <apowers@ato.ms>",
   "repository": {
@@ -64,6 +27,7 @@
   },
   "license": "UNLICENSED",
   "devDependencies": {
+    "browser-sync": "^2.26.12",
     "chai": "^4.2.0",
     "coveralls": "^3.1.0",
     "docdash": "^1.2.0",
@@ -71,6 +35,11 @@
     "eslint-plugin-jsdoc": "^30.6.3",
     "eslint-plugin-mocha": "^8.0.0",
     "gh-pages": "^3.1.0",
+    "gulp": "^4.0.2",
+    "gulp-eslint": "^6.0.0",
+    "gulp-exec": "^5.0.0",
+    "gulp-jsdoc3": "^3.0.0",
+    "gulp-mocha": "^7.0.2",
     "jsdoc": "^3.6.6",
     "mocha": "^8.1.3",
     "npm-watch": "^0.7.0",
@@ -79,6 +48,7 @@
     "tui-jsdoc-template": "^1.2.2"
   },
   "dependencies": {
+    "@neth4ck/neth4ck": "^1.0.1",
     "bunyan": "^1.8.14",
     "bunyan-debug-stream": "^2.0.0"
   }

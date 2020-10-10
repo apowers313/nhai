@@ -30,7 +30,8 @@ module.exports = {
         "wrap-iife": ["error", "inside"],
         "consistent-return": "error",
         "no-template-curly-in-string": "error",
-        "no-promise-executor-return": "error",
+        // TODO: gulp-eslint is running outdated eslint
+        // "no-promise-executor-return": "error",
         "eqeqeq": "error",
         "dot-notation": "error",
         "dot-location": ["error", "property"],
@@ -77,7 +78,8 @@ module.exports = {
         "nonblock-statement-body-position": ["error", "beside"],
         "no-mixed-operators": ["error", {allowSamePrecedence: true}],
         "default-case": "error",
-        "default-case-last": "error",
+        // TODO: gulp-eslint is running outdated eslint
+        // "default-case-last": "error",
         "default-param-last": "error",
         "no-multiple-empty-lines": ["error", {max: 1, maxBOF: 0, maxEOF: 1}],
         "padding-line-between-statements": ["error", {blankLine: "always", prev: "*", next: "class"}, {blankLine: "always", prev: "class", next: "*"}],
