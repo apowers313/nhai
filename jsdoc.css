@@ -18,6 +18,12 @@ footer {
     border-left-color: grey
 }
 
+.lnb .member-type {
+    color: white;
+}
+
+/*span.icon.green*/
+
 .main section article table td.name, .main section article table td.type {
     max-width: 300px;
     min-width: 100px;
