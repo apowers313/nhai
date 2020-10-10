@@ -91,9 +91,9 @@ const watchCoverage = parallel(coverageBrowserSync, coverageRefresh);
 /* ************
  * DOCS
  **************/
-function docsBuild() {
-    return src(documentation, {read: false})
-        .pipe(jsdoc(jsDocConfig));
+function docsBuild(done) {
+    src(documentation, {read: false})
+        .pipe(jsdoc(jsDocConfig, done));
 }
 
 const docs = series(docsBuild, copyCss);
