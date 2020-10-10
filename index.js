@@ -4,6 +4,7 @@ const {EventBase, EventBusBase, EventFilter, EventListener} = require("./lib/Eve
 const FeatureExtractor = require("./lib/FeatureExtractor");
 const Log = require("./lib/Log");
 const {Perception, PerceptionEvent, PerceptionModule} = require("./lib/Perception");
+const Utility = require("./lib/Utility");
 
 module.exports = {
     Component,
@@ -17,4 +18,5 @@ module.exports = {
     Perception,
     PerceptionEvent,
     PerceptionModule,
+    Utility,
 };
