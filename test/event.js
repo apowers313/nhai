@@ -68,7 +68,7 @@ describe("EventBusBase", function() {
     it("throws if constructed without eventBase arg", function() {
         assert.throws(() => {
             new EventBusBase();
-        }, TypeError, "expected baseEvent arg to be class implementing EventBase");
+        }, TypeError, "EventBusBase.constructor expected 'baseEvent' to be a class, got: undefined");
     });
 
     it("throws if constructed with EventBase", function() {
@@ -82,7 +82,7 @@ describe("EventBusBase", function() {
             class Foo {}
 
             new EventBusBase(Foo);
-        }, TypeError, "expected EventBase arg while constructing EventBusBase");
+        }, TypeError, "EventBusBase.constructor expected 'baseEvent' to be instanceof EventBase, got: Foo");
     });
 
     it("constructs with class derived from EventBase", function() {
@@ -138,7 +138,7 @@ describe("EventBusBase", function() {
 
         assert.throws(() => {
             testBus.emit("blah", 45);
-        }, TypeError, "expected emitted event to be an instance of 'TestEvent'");
+        }, TypeError, "EventBusBase.checkEvent expected 'event' to be a object, got: 45");
     });
 });
 
@@ -248,7 +248,7 @@ describe("EventBase", function() {
 
             assert.throws(() => {
                 new BadTestEvent();
-            }, TypeError, "sourceName must be a String");
+            }, TypeError, "EventBase.constructor expected 'sourceName' to be a string, got: null");
         });
 
         it("throws on abstract sourceType", function() {
@@ -284,7 +284,7 @@ describe("EventBase", function() {
 
             assert.throws(() => {
                 new BadTestEvent();
-            }, TypeError, "sourceType must be a String");
+            }, TypeError, "EventBase.constructor expected 'sourceType' to be a string, got: 3");
         });
 
         it("throws on abstract allowedEventTypes", function() {
@@ -320,7 +320,7 @@ describe("EventBase", function() {
 
             assert.throws(() => {
                 new BadTestEvent();
-            }, TypeError, "allowedEventTypes must be a Set");
+            }, TypeError, "EventBase.constructor expected 'allowedEventTypes' to be a object, got: 3");
         });
 
         it("throws on abstract eventBus", function() {
@@ -356,7 +356,7 @@ describe("EventBase", function() {
 
             assert.throws(() => {
                 new BadTestEvent();
-            }, TypeError, "eventBus must be an EventBusBase");
+            }, TypeError, "EventBase.constructor expected 'eventBus' to be a object, got: 3");
         });
     });
 });
@@ -510,13 +510,13 @@ describe("EventFilter", function() {
         it("throws on empty criteria", function() {
             assert.throws(() => {
                 EventFilter.buildTestFn();
-            }, TypeError, "expected 'criteria' to be an Object");
+            }, TypeError, "buildTestFn expected 'criteria' to be a object, got: undefined");
         });
 
         it("throws on non-Object criteria", function() {
             assert.throws(() => {
                 EventFilter.buildTestFn(3);
-            }, TypeError, "expected 'criteria' to be an Object");
+            }, TypeError, "buildTestFn expected 'criteria' to be a object, got: 3");
         });
 
         it("can only specify one of 'any', 'all', or 'none'");
