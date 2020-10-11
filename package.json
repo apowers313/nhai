@@ -52,6 +52,8 @@
   "dependencies": {
     "@neth4ck/neth4ck": "^1.0.1",
     "bunyan": "^1.8.14",
-    "bunyan-debug-stream": "^2.0.0"
+    "bunyan-debug-stream": "^2.0.0",
+    "random": "^2.2.0",
+    "seedrandom": "^3.0.5"
   }
 }
