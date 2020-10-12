@@ -124,13 +124,18 @@ describe("EventBusBase", function() {
     it("once", function(done) {
         let te = new TestEvent();
 
+        let count = te.eventBus.listenerCount("foo");
+        assert.strictEqual(count, 0);
+
         testBus.once("foo", (e) => {
             assert.instanceOf(e, EventBase);
             assert.strictEqual(e.data, 44);
-            done();
+            setTimeout(done, 10);
         });
 
         te.emit("foo", 44);
+        count = te.eventBus.listenerCount("foo");
+        assert.strictEqual(count, 0);
     });
 
     it("throws on emitting non-EventBase event", function() {
