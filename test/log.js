@@ -11,6 +11,10 @@ const newStream = {
 };
 
 describe("Log", function() {
+    beforeEach(function() {
+        Log.init();
+    });
+
     it("is Function", function() {
         assert.isFunction(Log);
     });
