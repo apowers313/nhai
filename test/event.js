@@ -51,7 +51,10 @@ class TestFilterEvent extends EventBase {
 testBus = new EventBusBase(TestEvent);
 function testBusListenerCount() {
     let names = testBus.eventNames();
-    if (names.length === 0) return 0;
+    if (names.length === 0) {
+        return 0;
+    }
+
     let totalCount = names.map((event) => testBus.listenerCount(event));
     return totalCount.reduce((total, num) => total + num);
 }
