@@ -35,7 +35,7 @@ module.exports = {
         "eqeqeq": "error",
         "dot-notation": "error",
         "dot-location": ["error", "property"],
-        "curly": ["error", "multi", "consistent"],
+        "curly": ["error", "all"],
         // "strict":                        ["error", "global"],
         // "complexity":                    ["error", {max: 10}],
         /* *****************
@@ -44,7 +44,7 @@ module.exports = {
         "space-before-function-paren": ["error", "never"],
         "func-call-spacing": ["error", "never"],
         "function-call-argument-newline": ["error", "consistent"],
-        "one-var": ["error", {uninitialized: "consecutive"}],
+        "one-var": ["error", "never"],
         "switch-colon-spacing": ["error", {after: true, before: false}],
         "padded-blocks": ["error", "never"],
         "operator-linebreak": ["error", "after"],
@@ -75,14 +75,19 @@ module.exports = {
         "new-parens": ["error", "always"],
         "no-whitespace-before-property": "error",
         "no-nested-ternary": "error",
-        "nonblock-statement-body-position": ["error", "beside"],
+        "nonblock-statement-body-position": ["error", "below", {overrides: "if"}],
         "no-mixed-operators": ["error", {allowSamePrecedence: true}],
         "default-case": "error",
         // TODO: gulp-eslint is running outdated eslint
         // "default-case-last": "error",
         "default-param-last": "error",
         "no-multiple-empty-lines": ["error", {max: 1, maxBOF: 0, maxEOF: 1}],
-        "padding-line-between-statements": ["error", {blankLine: "always", prev: "*", next: "class"}, {blankLine: "always", prev: "class", next: "*"}],
+        "padding-line-between-statements": [
+            "error",
+            {blankLine: "always", prev: "*", next: "class"},
+            {blankLine: "always", prev: "class", next: "*"},
+            {blankLine: "always", prev: "if", next: "*"},
+        ],
         // "no-underscore-dangle":          "error",
         // "no-magic-numbers":              "error", // some magic numbers are okay (such as the '4' for indent in this file)
         // "no-new":                        "error", // bad for some Mocha tests that expect to throw
@@ -90,8 +95,8 @@ module.exports = {
         /* *****************
          * style
          *******************/
-        "no-warning-comments": ["warn", {terms: ["TODO", "FIXME", "XXX"]}],
-        "sort-vars": ["error"],
+        "no-warning-comments": ["warn", {terms: ["TODO", "FIXME", "XXX", "NOTE"]}],
+        "sort-vars": "error",
         "yoda": ["error", "never"],
         // "sort-keys": ["warn", "asc", {"natural": true}],
         /* *****************
@@ -123,9 +128,8 @@ module.exports = {
          *******************/
         "jsdoc/require-returns-check": "off",
         "jsdoc/require-returns": "off",
-        "jsdoc/check-indentation": "warn",
-        "jsdoc/require-description": "error",
         "jsdoc/check-indentation": "off",
+        "jsdoc/require-description": "error",
         "jsdoc/require-jsdoc": [
             "error", {
                 enableFixer: false,
@@ -140,27 +144,18 @@ module.exports = {
                     MethodDefinition: true,
                     ArrowFunctionExpression: true,
                 },
-                // contexts:   [
-                //     "ClassDeclaration",
-                //     "ClassExpression",
-                //     "FunctionDeclaration",
-                //     "FunctionExpression",
-                //     "MethodDefinition",
-                //     "VariableDeclaration",
-                //     "ArrowFunctionExpression",
-                //     "Property",
-                // ],
-                // exemptEmptyConstructors: false,
-                // checkConstructors:       true,
             },
         ],
-        // "jsdoc/require-returns":         "off",
     },
-    // settings: {
-    //     jsdoc: {
-    //         tagNamePreference: {
-    //             returns: "return",
-    //         },
-    //     },
-    // },
+    settings: {
+        jsdoc: {
+            tagNamePreference: {
+                augments: "extends",
+            },
+        },
+    },
+    // XXX: only necessary because gulp-eslint is still on eslint 6.0
+    globals: {
+        globalThis: "writable",
+    },
 };
