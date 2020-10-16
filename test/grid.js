@@ -1,5 +1,6 @@
-const Grid = require("../src/Grid.js");
+const {Grid} = require("../src/Grid.js");
 const {assert} = require("chai");
+const helperScreens = require("./helpers/screens");
 
 describe("Grid", function() {
     it("is Function", function() {
@@ -65,9 +66,15 @@ describe("Grid", function() {
         g[2][4] = 69;
         assert.strictEqual(g.dataBuf[14], 69);
         let i = 0;
-        for (let x = 0; x < 3; x++) for (let y = 0; y < 5; y++) g[x][y] = i++;
+        for (let x = 0; x < 3; x++) {
+            for (let y = 0; y < 5; y++) {
+                g[x][y] = i++;
+            }
+        }
 
-        for (i = 0; i < 15; i++) assert.strictEqual(g.dataBuf[i], i);
+        for (i = 0; i < 15; i++) {
+            assert.strictEqual(g.dataBuf[i], i);
+        }
     });
 
     it("can get a value from Grid[x][y]", function() {
@@ -212,7 +219,10 @@ describe("Grid", function() {
         it("formats with serializer", function() {
             let g = new Grid(3, 5, {
                 serializer: function(val) {
-                    if (val === 0) return " ";
+                    if (val === 0) {
+                        return " ";
+                    }
+
                     return String.fromCharCode(val);
                 },
             });
@@ -237,6 +247,8 @@ describe("Grid", function() {
                 "  e\n",
             );
         });
+
+        it("serializer converts space to 0");
     });
 
     describe("copy", function() {
@@ -291,6 +303,53 @@ describe("Grid", function() {
 
             assert.strictEqual(g[0][0], 0);
             assert.strictEqual(g[2][4], 0);
+        });
+    });
+
+    describe("from", function() {
+        it("creates Grid", function() {
+            let screen1 = helperScreens[1].split("\n");
+            let g = Grid.from(screen1);
+            assert.instanceOf(g, Grid);
+            assert.strictEqual(g.width, 80);
+            assert.strictEqual(g.height, 20);
+            assert.strictEqual(g[0][0], 0);
+            assert.strictEqual(g[30][9], 64);
+        });
+    });
+
+    describe("forEach", function() {
+        it("iterates Grid");
+    });
+
+    describe("diff", function() {
+        it("compares two Grids", function() {
+            let g1 = new Grid(5, 5);
+            let g2 = new Grid(5, 5);
+            g1[0][0] = 42;
+            g2[4][4] = 32;
+            let ret = Grid.diff(g1, g2);
+            assert.isArray(ret);
+            assert.strictEqual(ret.length, 2);
+            assert.deepEqual(ret, [
+                {x: 0, y: 0, srcVal: 42, dstVal: 0},
+                {x: 4, y: 4, srcVal: 0, dstVal: 32},
+            ]);
+        });
+
+        it("returns null if Grids are the same", function() {
+            let g1 = new Grid(5, 5);
+            let g2 = new Grid(5, 5);
+            let ret = Grid.diff(g1, g2);
+            assert.isNull(ret);
+        });
+
+        it("throws if Grids are different sizes", function() {
+            let g1 = new Grid(5, 5);
+            let g2 = new Grid(5, 4);
+            assert.throws(() => {
+                Grid.diff(g1, g2);
+            }, Error, "diff expected Grids to be same size: src(5,5) vs dst(5,4)");
         });
     });
 });

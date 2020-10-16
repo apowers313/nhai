@@ -1,21 +1,34 @@
+const {checkType, checkInstance, createHiddenProp} = require("../index").Utility;
+
 function checkBounds(max, val) {
     // TODO: check to make sure val is a number
-    if (val >= max) throw new RangeError(`Attempting to access value out of bounds: requested ${val}, max is ${max - 1}`);
-    if (val < 0) throw new RangeError(`Attempting to access value out of bounds: requested ${val}`);
+    if (val >= max) {
+        throw new RangeError(`Attempting to access value out of bounds: requested ${val}, max is ${max - 1}`);
+    }
+
+    if (val < 0) {
+        throw new RangeError(`Attempting to access value out of bounds: requested ${val}`);
+    }
 }
 
 function getProp(name) {
-    if (name[0] === "_") throw new Error(`attempting to access private property ${name}`);
+    if (name[0] === "_") {
+        throw new Error(`attempting to access private property ${name}`);
+    }
+
     let n = Number.parseInt(name);
-    if (Number.isInteger(n)) return n;
+    if (Number.isInteger(n)) {
+        return n;
+    }
+
     return name;
 }
 
 class yValue {
     constructor(dataBuf, height, x, opts = {}) {
-        this._height = height;
-        this._baseOffset = height * x;
-        this._dataBuf = dataBuf;
+        createHiddenProp(this, "_height", height, true);
+        createHiddenProp(this, "_baseOffset", height * x, true);
+        createHiddenProp(this, "_dataBuf", dataBuf, true);
         this.serializer = opts.serializer || defaultSerializer;
         this.converter = opts.converter || defaultConverter;
 
@@ -45,7 +58,8 @@ class yValue {
         if (Number.isInteger(idx)) {
             checkBounds(this._height, idx);
             let offset = this._baseOffset + idx;
-            return this._dataBuf[offset] = this.converter(value);
+            this._dataBuf[offset] = this.converter(value);
+            return true;
         }
 
         throw new Error(`can't set property ${idx}`);
@@ -62,24 +76,32 @@ class Grid {
      * @param {number}   width           - The width of the Grid
      * @param {height}   height          - The height of the Grid
      * @param {object}   opts            - Options
-     * @param {Function} opts.serializer - A function that converts values to be stored in the Grid. Function accepts a single 'val' argument and returns an number.
-     * @param {Function} opts.converter  - A function that converts values from a number to a string for `toString`. Function accepts a single 'num' argument and returns a string.
+     * @param {Function} opts.serializer - A function that converts values from a number to a string for `toString`. Function accepts a single 'num' argument that is the Number to be converted and returns a string.
+     * @param {Function} opts.converter  - A function that converts values to be stored in the Grid. Function accepts a single 'val' argument and returns an number.
      */
     constructor(width, height, opts = {}) {
-        this._width = width;
-        this._height = height;
-        // TODO: check that opts.buffer.length === width * height
+        createHiddenProp(this, "_width", width, true);
+        createHiddenProp(this, "_height", height, true);
+
+        let db;
         if (opts.buffer && (opts.buffer instanceof Uint8Array)) {
-            if (opts.buffer.byteLength !== (width * height)) throw new Error("Grid constructor 'opts.buffer' was wrong size, didn't match width * height");
-            this._dataBuf = Uint8Array.from(opts.buffer);
+            if (opts.buffer.byteLength !== (width * height)) {
+                throw new Error("Grid constructor 'opts.buffer' was wrong size, didn't match width * height");
+            }
+
+            db = Uint8Array.from(opts.buffer);
         } else {
-            this._dataBuf = new Uint8Array(width * height);
+            db = new Uint8Array(width * height);
         }
 
-        let xArray = [];
-        for (let x = 0; x < width; x++) xArray[x] = new yValue(this._dataBuf, height, x, opts);
+        createHiddenProp(this, "_dataBuf", db, true);
 
-        this._xArray = xArray;
+        let xArray = [];
+        for (let x = 0; x < width; x++) {
+            xArray[x] = new yValue(this._dataBuf, height, x, opts);
+        }
+
+        createHiddenProp(this, "_xArray", xArray, true);
         this.serializer = opts.serializer || defaultSerializer;
         this.converter = opts.converter || defaultConverter;
 
@@ -114,8 +136,12 @@ class Grid {
         let output = "";
 
         for (let y = 0; y < this.height; y++) {
-            for (let x = 0; x < this.width; x++) output += this.serializer(this[x][y]);
+            // output += "\"";
+            for (let x = 0; x < this.width; x++) {
+                output += this.serializer(this[x][y]);
+            }
 
+            // output += "\"\\n +\n";
             output += "\n";
         }
 
@@ -143,6 +169,77 @@ class Grid {
     clear() {
         this.dataBuf.fill(0, 0, this.dataBuf.buffer.length);
     }
+
+    /**
+     * Iterates all the cells of the Grid
+     *
+     * @param   {Function} cb Called for each cell of the Grid. Signature is `cb(value, x, y, grid)`.
+     */
+    forEach(cb) {
+        checkType("forEach", "cb", cb, "function");
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                cb(this[x][y], x, y, this);
+            }
+        }
+    }
+
+    /**
+     * Creates a new Grid from an Array of strings.
+     *
+     * @param   {Array.<string>} val An array of equal length strings to set the initial value of the Grid.
+     * The Grid height will be equal to the number of elements in the array, and the width will be equal to
+     * the length of the strings.
+     */
+    static from(val) {
+        if (Array.isArray(val)) {
+            checkType("Grid.from", "val[0]", val[0], "string");
+            // TODO: assuming array of strings
+            // TODO: all lines are the same length
+            let w = val[0].length;
+            let h = val.length;
+            let g = new Grid(w, h);
+
+            g.forEach((v, x, y) => {
+                g[x][y] = val[y][x];
+            });
+
+            return g;
+        }
+
+        // TODO: .from(ArrayBuffer,x,y)
+        throw new TypeError(`Grid.from got unexpected type: ${val}`);
+    }
+
+    /**
+     * Compares two Grids and returns an Array of the differences. Grids must be the same height and width.
+     *
+     * @param {Grid} src - The first grid to compare.
+     * @param {Grid} dst - The second grid to compare.
+     *
+     * @returns {Array.<object>|null}     An Array of Objects describing the differences. Object for each change is `{x, y, srcVal, dstVal}`. Returns `null` if there are no differences.
+     */
+    static diff(src, dst) {
+        checkInstance("diff", "src", src, Grid);
+        checkInstance("diff", "dst", dst, Grid);
+        if (src.height !== dst.height || src.width !== dst.width) {
+            throw new Error(`diff expected Grids to be same size: src(${src.width},${src.height}) vs dst(${dst.width},${dst.height})`);
+        }
+
+        let ret = [];
+        src.forEach((v, x, y) => {
+            if (src[x][y] !== dst[x][y]) {
+                ret.push({
+                    x,
+                    y,
+                    srcVal: src[x][y],
+                    dstVal: dst[x][y],
+                });
+            }
+        });
+
+        return ret.length ? ret : null;
+    }
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -166,14 +263,23 @@ function setHandler(target, idx, value, receiver) {
 }
 
 function defaultSerializer(val) {
-    if (val === undefined) return "    ";
+    if (val === undefined) {
+        return "    ";
+    }
+
     return val.toString().padStart(4);
 }
 
 function defaultConverter(val) {
-    if (typeof val === "number") return val;
-    if (typeof val === "string" && val.length === 1) return val.charCodeAt(0);
+    if (typeof val === "number") {
+        return val;
+    }
+
+    if (typeof val === "string" && val.length === 1) {
+        return (val === " ") ? 0 : val.charCodeAt(0);
+    }
+
     throw new Error(`unable to convert value ${val} to number`);
 }
 
-module.exports = Grid;
+module.exports = {Grid};
