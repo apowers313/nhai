@@ -9,7 +9,7 @@
   },
   "scripts": {
     "push": "npm run ready && git push origin master",
-    "ready": "npm run lint && npm audit && npm test && npm run docs && npm run coverage",
+    "ready": "gulp ready",
     "dev:test": "gulp dev:test",
     "dev:docs": "gulp dev:docs",
     "dev:coverage": "gulp dev:coverage",
@@ -42,10 +42,12 @@
     "gulp-exec": "^5.0.0",
     "gulp-jsdoc3": "^3.0.0",
     "gulp-mocha": "^7.0.2",
+    "gulp-nodemon": "^2.5.0",
     "jsdoc": "^3.6.6",
     "mocha": "^8.1.3",
     "npm-watch": "^0.7.0",
     "nyc": "^15.1.0",
+    "sinon": "^9.2.0",
     "std-mocks": "^1.0.1",
     "tui-jsdoc-template": "^1.2.2"
   },
