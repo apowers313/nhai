@@ -4,12 +4,12 @@ const {watch, src, dest, series, parallel} = require("gulp");
 const mocha = require("gulp-mocha");
 const eslint = require("gulp-eslint");
 const jsdoc = require("gulp-jsdoc3");
+const nodemon = require("gulp-nodemon");
 // const istanbul = require("gulp-istanbul"); // gulp-istanbul is broken; hasn't been updated in 3 years
-// const exec = require("gulp-exec");
-let {exec, spawn} = require("child_process");
+let {spawn} = require("child_process");
 const browserSync = require("browser-sync").create();
 
-const sources = ["src/*.js", "lib/*.js"];
+const sources = ["src/*.js", "lib/*.js", "index.js", "main.js"];
 const tests = ["test/*.js"];
 const support = ["gulpfile.js", "package.json", ".eslintrc.js", "docs.json"];
 const js = [... sources, ... tests];
@@ -37,18 +37,20 @@ function watchTest() {
 /* ************
  * LINT
  **************/
-function lint() {
+function lintBasic() {
     return src(js)
-        .pipe(eslint())
-        .pipe(eslint.format())
+        .pipe(eslint({quiet: true}))
+        .pipe(eslint.format());
+}
+
+function lint() {
+    return lintBasic()
         .pipe(eslint.failAfterError());
 }
 
 function watchLint() {
     return watch(all, function() {
-        return src(js)
-            .pipe(eslint())
-            .pipe(eslint.format());
+        return lintBasic();
     });
 }
 
@@ -121,14 +123,52 @@ function docsRefresh() {
 
 const watchDocs = parallel(docsBrowserSync, docsRefresh);
 
+/* ************
+ * MAIN
+ **************/
+function watchMain(done) {
+    let stream = nodemon({script: "main.js",
+        watch: js,
+        done: done,
+    });
+
+    stream
+        .on("restart", function() {
+            console.log("Restarting...");
+        })
+        .on("crash", function() {
+            console.error("Application crashed!\n");
+            stream.emit("restart", 10); // restart the server in 10 seconds
+        });
+}
+
+/* ************
+ * RELEASE
+ **************/
+const ready = parallel(test, audit, lint, coverage, docs);
+
+function audit(done) {
+    let cmd = "npm";
+    let args = [
+        "audit",
+    ];
+    let opts = {
+        stdio: "inherit",
+    };
+    spawn(cmd, args, opts);
+    done();
+}
+
 module.exports = {
     test,
     lint,
     coverage,
     docs,
+    ready,
     "default": watchTest,
     "dev:test": watchTest,
     "dev:lint": watchLint,
     "dev:coverage": watchCoverage,
     "dev:docs": watchDocs,
+    "dev:main": watchMain,
 };
