@@ -43,20 +43,6 @@ describe("Perception", function() {
         }, TypeError, "Component.constructor expected 'name' to be a string, got: undefined");
     });
 
-    it("registers on new", function(done) {
-        Perception.eventBus.on("register", (e) => {
-            process.nextTick(() => {
-                assert.instanceOf(e, PerceptionEvent);
-                assert.strictEqual(e.type, "register");
-                assert.strictEqual(e.data, p);
-                done();
-            });
-        });
-
-        // eslint-disable-next-line no-var
-        var p = new Perception("smell", Object);
-    });
-
     describe("input", function() {
         it("validates input type", function() {
             let p = new Perception("foo", Object);
