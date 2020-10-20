@@ -1,3 +1,4 @@
+const init = require("./lib/init");
 const {Action, ActionEvent, ActionSelection} = require("./lib/Action");
 const {Component} = require("./lib/Component");
 const {Config} = require("./lib/Config");
@@ -11,6 +12,7 @@ const {Trace} = require("./lib/Trace");
 const Utility = require("./lib/Utility");
 
 module.exports = {
+    init,
     Action,
     ActionEvent,
     ActionSelection,
