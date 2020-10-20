@@ -126,6 +126,11 @@ class Grid {
         return this._dataBuf;
     }
 
+    // eslint-disable-next-line jsdoc/require-jsdoc
+    get [Symbol.toStringTag]() {
+        return "Grid";
+    }
+
     /**
      * Convert the Grid to a human-readable string. If `converter` was specified as an option during construction, it is used to
      * convert each element.
