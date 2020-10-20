@@ -141,12 +141,47 @@ describe("EventBusBase", function() {
         assert.strictEqual(count, 0);
     });
 
-    it("throws on emitting non-EventBase event", function() {
-        testBus.on("blah", () => {});
+    it("emit returns Promise", function() {
+        let te = new TestEvent();
+        let ret = te.emit("foo", 46);
+        assert.instanceOf(ret, Promise);
+    });
 
-        assert.throws(() => {
-            testBus.emit("blah", 45);
-        }, TypeError, "EventBusBase.checkEvent expected 'event' to be a object, got: 45");
+    it("emit resolves to true if listener", function() {
+        let te = new TestEvent();
+        testBus.once("foo", ()=>{});
+        let p = te.emit("foo", 46);
+
+        assert.instanceOf(p, Promise);
+        return p.then((res) => {
+            assert.isBoolean(res);
+            assert.isTrue(res);
+        });
+    });
+
+    it("emit resolves to false if no listeners", function() {
+        let te = new TestEvent();
+        let p = te.emit("foo", 46);
+
+        assert.instanceOf(p, Promise);
+        return p.then((res) => {
+            assert.isBoolean(res);
+            assert.isFalse(res);
+        });
+    });
+
+    it("rejects on emitting non-EventBase event", function(done) {
+        // testBus.on("blah", () => {});
+
+        testBus.emit("blah", 45)
+            .then(() => {
+                assert.fail("should not have resolved");
+            })
+            .catch((e) => {
+                assert.instanceOf(e, TypeError);
+                assert.strictEqual(e.message, "EventBusBase.checkEvent expected 'event' to be a object, got: 45");
+                done();
+            });
     });
 });
 
@@ -206,11 +241,17 @@ describe("EventBase", function() {
             t.emit("foo", 0xBEEF, "beer", d);
         });
 
-        it("throws on bad event type", function() {
+        it("throws on bad event type", function(done) {
             let t = new TestEvent();
-            assert.throws(() => {
-                t.emit("something");
-            }, TypeError, "event type 'something' not one of the allowedEventTypes");
+            t.emit("something")
+                .then(() => {
+                    assert.fail("should not have resolved");
+                })
+                .catch((e) => {
+                    assert.instanceOf(e, TypeError);
+                    assert.strictEqual(e.message, "event type 'something' not one of the allowedEventTypes");
+                    done();
+                });
         });
     });
 
