@@ -4,6 +4,8 @@ const {checkInstance} = Utility;
 
 /**
  * Identifies changes in vision
+ *
+ * @extends FeatureExtractor
  */
 class DeltaFeatureExtractor extends FeatureExtractor {
     /**
