@@ -107,7 +107,7 @@ module.exports = {
         "sort-imports": ["error"],
         "rest-spread-spacing": ["error", "always"],
         "arrow-parens": ["error", "always"],
-        "require-await": "error",
+        // "require-await": "error", // annoying for API calls that don't contain await
         "prefer-rest-params": "error",
         "prefer-destructuring": "error",
         "prefer-spread": "error",
@@ -130,6 +130,7 @@ module.exports = {
         "jsdoc/require-returns": "off",
         "jsdoc/check-indentation": "off",
         "jsdoc/require-description": "error",
+        "jsdoc/valid-types": "error",
         "jsdoc/require-jsdoc": [
             "error", {
                 enableFixer: false,
