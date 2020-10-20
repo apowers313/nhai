@@ -32,7 +32,7 @@ describe("Log", function() {
         let output = stdMocks.flush();
         assert.strictEqual(output.stdout.length, 6);
         assert.strictEqual(output.stderr.length, 0);
-        assert.match(output.stdout[0], /^.*nhai TRACE: \u001b\[90mtrace uno\u001b\[39m\n$/);
+        assert.match(output.stdout[0], /^.*nhai TRACE: \u001b\[37mtrace uno\u001b\[39m\n$/);
         assert.match(output.stdout[1], /^.*nhai DEBUG: \u001b\[36mdebug deux\u001b\[39m\n$/);
         assert.match(output.stdout[2], /^.*nhai INFO: {2}\u001b\[32minfo thrice\u001b\[39m\n$/);
         assert.match(output.stdout[3], /^.*nhai WARN: {2}\u001b\[33mwarn fier\u001b\[39m\n$/);
@@ -54,7 +54,7 @@ describe("Log", function() {
         let output = stdMocks.flush();
         assert.strictEqual(output.stdout.length, 6);
         assert.strictEqual(output.stderr.length, 0);
-        assert.match(output.stdout[0], /^.*nhai TRACE: \[baby\] \u001b\[90mtrace uno\u001b\[39m\n$/);
+        assert.match(output.stdout[0], /^.*nhai TRACE: \[baby\] \u001b\[37mtrace uno\u001b\[39m\n$/);
         assert.match(output.stdout[1], /^.*nhai DEBUG: \[baby\] \u001b\[36mdebug deux\u001b\[39m\n$/);
         assert.match(output.stdout[2], /^.*nhai INFO: {2}\[baby\] \u001b\[32minfo thrice\u001b\[39m\n$/);
         assert.match(output.stdout[3], /^.*nhai WARN: {2}\[baby\] \u001b\[33mwarn fier\u001b\[39m\n$/);
@@ -102,7 +102,7 @@ describe("Log", function() {
             let output = stdMocks.flush();
             assert.strictEqual(output.stdout.length, 2);
             assert.strictEqual(output.stderr.length, 0);
-            assert.match(output.stdout[0], /^.*nhai TRACE: \u001b\[90mwhee!\u001b\[39m\n$/);
+            assert.match(output.stdout[0], /^.*nhai TRACE: \u001b\[37mwhee!\u001b\[39m\n$/);
             assert.match(output.stdout[1], /^.*nhai INFO: {2}\u001b\[32mserious\u001b\[39m\n$/);
 
             stdMocks.use();
