@@ -1,6 +1,6 @@
 const {Action, ActionEvent, Utility} = require("../index");
 const {checkType} = Utility;
-
+const {once} = require("events");
 const actionQueue = [];
 
 function queueKey(key) {
@@ -24,19 +24,12 @@ Action.addAction("down", queueKey.bind(null, "j"));
 Action.addAction("wait", queueKey.bind(null, "."));
 
 // eslint-disable-next-line jsdoc/require-jsdoc
-function getAction() {
-    return new Promise((resolve) => {
-        let e = new ActionEvent("nethack", "main");
-        e.eventBus.once("action", handleActionEvent);
-        console.log("emitting");
-        e.emit("waiting");
-
-        function handleActionEvent(data) {
-            e.eventBus.removeAllListeners("action");
-            console.log("resolving");
-            resolve(data);
-        }
-    });
+async function getAction() {
+    let e = new ActionEvent("nethack", "main");
+    console.log("emitting");
+    let p = once(e.eventBus, "action");
+    await e.emit("waiting");
+    return p;
 }
 
 module.exports = {
