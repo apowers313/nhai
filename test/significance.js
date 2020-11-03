@@ -1,6 +1,7 @@
 const {assert} = require("chai");
 const {Significance, SignificanceEvent, Component, EventBase} = require("..");
 const sinon = require("sinon");
+const sandbox = sinon.createSandbox();
 
 describe("Significance", function() {
     it("is Component", function() {
@@ -22,8 +23,6 @@ describe("Significance", function() {
     });
 
     describe("events", function() {
-        const sandbox = sinon.createSandbox();
-
         beforeEach(function() {
             sandbox.spy(Significance.prototype);
         });
