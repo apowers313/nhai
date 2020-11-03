@@ -11,7 +11,7 @@ describe("config", function() {
     });
 
     it("get", function() {
-        let cv = Config.get("version");
+        let cv = Config.get("app-version");
         let {version} = require("../package.json");
         assert.strictEqual(cv, version);
     });
@@ -30,7 +30,7 @@ describe("config", function() {
 
         it("has version", function() {
             let {version} = require("../package.json");
-            assert.strictEqual(Config.getConfig().get("version"), version);
+            assert.strictEqual(Config.getConfig().get("app-version"), version);
         });
     });
 });
