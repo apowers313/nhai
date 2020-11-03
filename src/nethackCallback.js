@@ -2,15 +2,16 @@
 
 const {Grid} = require("./Grid.js");
 const vision = require("./nethackVision");
+const setIntrinsic = require("./nethackIntrinsic");
 const {actionQueue, getAction} = require("./nethackAction");
+const nhai = require("../index");
+const {warn} = nhai.Log;
 
 // eslint-disable-next-line jsdoc/require-jsdoc
 module.exports = async function nethackShimCallback(name, ... args) {
-    console.log(`callback: ${name} ${args}`);
-
     switch (name) {
-    // case "shim_init_nhwindows":
-    //     return await terminal.init();
+    case "shim_init_nhwindows":
+        return await nhai.init();
     // case "shim_create_nhwindow":
     //     winCount++;
     //     // console.log("creating window", args, "returning", winCount);
@@ -19,11 +20,10 @@ module.exports = async function nethackShimCallback(name, ... args) {
         return await printGlyph(... args);
     case "shim_display_nhwindow":
         if (args[0] === "WIN_MAP"){
-            console.log("--- GRID START ---\n");
-            console.log(grid.toString());
-            console.log("--- GRID END ---\n");
-            vision.input(grid);
-            grid = grid.copy();
+            // console.log("--- GRID START ---\n");
+            // console.log(grid.toString());
+            // console.log("--- GRID END ---\n");
+            return vision.input(grid);
         }
 
         return;
@@ -45,9 +45,18 @@ module.exports = async function nethackShimCallback(name, ... args) {
     // case "shim_nhgetch":
     case "shim_nh_poskey":
         return awaitAction();
-    // case "shim_status_update":
-    //     // terminal.log(`shim_status_update: ${name} ${args}`);
-    //     return statusUpdate(... args);
+    case "shim_status_update":
+        if (args[0] === "BL_FLUSH" ||
+            args[0] === "BL_RESET" ||
+            args[0] === "BL_CHARACTERISTICS") {
+            return;
+        }
+
+        // warn(`shim_status_update: args ${args}`);
+        warn(`shim_status_update: stat ${args[0]}, value ${args[1]}, value type ${typeof args[1]}`);
+        return setIntrinsic(args[0], args[1]);
+    case "shim_getmsghistory":
+        return "";
     // case "shim_start_menu":
     //     return menuStart();
     // case "shim_select_menu":
