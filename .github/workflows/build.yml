@@ -62,3 +62,30 @@ jobs:
 
     - name: Test
       run: npm test
+
+  docs:
+    needs: test
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Docs
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: docs
+          CLEAN: true
+
+
+  coverage:
+    needs: test
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Coverage
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
