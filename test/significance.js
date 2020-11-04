@@ -33,7 +33,6 @@ describe("Significance", function() {
 
         it("catches intrinsic change", function() {
             let s = new Significance();
-            console.log("spy installed");
 
             let e = new SignificanceEvent("test", "intrinsic");
             e.emit("change", {
