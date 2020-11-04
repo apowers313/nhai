@@ -10,7 +10,7 @@ const newStream = {
     level: "fatal",
 };
 
-describe("Log", function() {
+describe.skip("Log", function() {
     beforeEach(function() {
         Log.init();
     });
