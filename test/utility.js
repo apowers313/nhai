@@ -112,6 +112,7 @@ describe("Utility", function() {
             assert.strictEqual(randomFloat(), 0.6180286446270832);
         });
 
+        // XXX: for some reason this has different results on different CIs
         // it("accepts date seed", function() {
         //     randomSeed(new Date(0));
         //     assert.strictEqual(randomFloat(), 0.45849928108785903);
