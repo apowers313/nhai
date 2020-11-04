@@ -8,7 +8,7 @@ class TestClass {}
 
 class OtherClass {}
 
-describe("Utility", function() {
+describe.only("Utility", function() {
     describe("checkType", function() {
         it("throws on wrong type", function() {
             assert.throws(() => {
