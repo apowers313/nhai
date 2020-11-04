@@ -14,7 +14,7 @@
     "dev:docs": "gulp dev:docs",
     "dev:coverage": "gulp dev:coverage",
     "dev:lint": "gulp dev:lint",
-    "test": "mocha",
+    "test": "gulp test",
     "test:dev": "mocha --reporter min",
     "lint": "gulp lint",
     "coverage": "gulp coverage",
