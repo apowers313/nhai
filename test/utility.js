@@ -8,7 +8,7 @@ class TestClass {}
 
 class OtherClass {}
 
-describe.only("Utility", function() {
+describe("Utility", function() {
     describe("checkType", function() {
         it("throws on wrong type", function() {
             assert.throws(() => {
@@ -112,7 +112,7 @@ describe.only("Utility", function() {
             assert.strictEqual(randomFloat(), 0.6180286446270832);
         });
 
-        it("accepts date seed", function() {
+        it.only("accepts date seed", function() {
             randomSeed(new Date(0));
             assert.strictEqual(randomFloat(), 0.45849928108785903);
             assert.strictEqual(randomFloat(), 0.41759607379639296);
