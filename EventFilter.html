@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Class: EventFilter | NHAI</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+        
+            <link type="text/css" rel="stylesheet" href="jsdoc.css">
+        
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 1px; height: 1px">
+        
+            <a href="https://apowers313.github.io/nhai/" rel="noopener noreferrer" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/1x1.png" width="100%" height="100%">
+            </a>
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">NHAI</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+    <div class="lnb-api hidden"><h3>Modules</h3><ul><li><a href="module-Config.html">Config</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:Config_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="module-Config.html#~app-name">app-name</a></li><li><a href="module-Config.html#~app-version">app-version</a></li></ul></div></li><li><a href="module-ShellCommands.html">ShellCommands</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:ShellCommands_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="module-ShellCommands.html#~break">break</a></li><li><a href="module-ShellCommands.html#~exit">exit</a></li><li><a href="module-ShellCommands.html#~watch">watch</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Action.html">Action</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Action_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Action.html#.eventBus">eventBus</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Action.html#.addAction">addAction</a></li><li><a href="Action.html#.clearActions">clearActions</a></li><li><a href="Action.html#.getActionList">getActionList</a></li></ul></div></li><li><a href="ActionEvent.html">ActionEvent</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ActionEvent_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ActionEvent.html#allowedEventTypes">allowedEventTypes</a></li><li><a href="ActionEvent.html#eventBus">eventBus</a></li><li><a href="ActionEvent.html#sourceName">sourceName</a></li><li><a href="ActionEvent.html#sourceType">sourceType</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ActionEvent.html#emit">emit</a></li></ul></div></li><li><a href="ActionSelection.html">ActionSelection</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ActionSelection_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ActionSelection.html#performAction">performAction</a></li><li><a href="ActionSelection.html#sendEvent">sendEvent</a></li></ul></div></li><li><a href="Component.html">Component</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Component_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Component.html#.list">list</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Component.html#.clearList">clearList</a></li><li><a href="Component.html#.get">get</a></li><li><a href="Component.html#.register">register</a></li><li><a href="Component.html#sendEvent">sendEvent</a></li></ul></div></li><li><a href="DeltaFeatureExtractor.html">DeltaFeatureExtractor</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="DeltaFeatureExtractor_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="DeltaFeatureExtractor.html#createDelta">createDelta</a></li><li><a href="DeltaFeatureExtractor.html#listen">listen</a></li><li><a href="DeltaFeatureExtractor.html#sendEvent">sendEvent</a></li></ul></div></li><li><a href="EventBase.html">EventBase</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="EventBase_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="EventBase.html#allowedEventTypes">allowedEventTypes</a></li><li><a href="EventBase.html#eventBus">eventBus</a></li><li><a href="EventBase.html#sourceName">sourceName</a></li><li><a href="EventBase.html#sourceType">sourceType</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="EventBase.html#emit">emit</a></li></ul></div></li><li><a href="EventBusBase.html">EventBusBase</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="EventBusBase_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="EventBusBase.html#.eventBusList">eventBusList</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="EventBusBase.html#checkEvent">checkEvent</a></li><li><a href="EventBusBase.html#emit">emit</a></li></ul></div></li><li><a href="EventFilter.html">EventFilter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="EventFilter_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="EventFilter.html#.buildTestFn">buildTestFn</a></li><li><a href="EventFilter.html#allowEvent">allowEvent</a></li><li><a href="EventFilter.html#denyEvent">denyEvent</a></li><li><a href="EventFilter.html#matchEvent">matchEvent</a></li></ul></div></li><li><a href="EventListener.html">EventListener</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="EventListener_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="EventListener.html#addFilter">addFilter</a></li><li><a href="EventListener.html#applyFilter">applyFilter</a></li><li><a href="EventListener.html#update">update</a></li></ul></div></li><li><a href="FeatureExtractor.html">FeatureExtractor</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="FeatureExtractor_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="FeatureExtractor.html#listen">listen</a></li><li><a href="FeatureExtractor.html#sendEvent">sendEvent</a></li></ul></div></li><li><a href="Grid.html">Grid</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Grid_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Grid.html#dataBuf">dataBuf</a></li><li><a href="Grid.html#height">height</a></li><li><a href="Grid.html#width">width</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Grid.html#.diff">diff</a></li><li><a href="Grid.html#.from">from</a></li><li><a href="Grid.html#clear">clear</a></li><li><a href="Grid.html#copy">copy</a></li><li><a href="Grid.html#forEach">forEach</a></li><li><a href="Grid.html#toString">toString</a></li></ul></div></li><li><a href="Intrinsic.html">Intrinsic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Intrinsic_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Intrinsic.html#max">max</a></li><li><a href="Intrinsic.html#min">min</a></li><li><a href="Intrinsic.html#positive">positive</a></li><li><a href="Intrinsic.html#value">value</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Intrinsic.html#sendEvent">sendEvent</a></li></ul></div></li><li><a href="Log.html">Log</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Log_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Log.html#.addStream">addStream</a></li><li><a href="Log.html#.debug">debug</a></li><li><a href="Log.html#.error">error</a></li><li><a href="Log.html#.fatal">fatal</a></li><li><a href="Log.html#.getLogger">getLogger</a></li><li><a href="Log.html#.getStdoutLevel">getStdoutLevel</a></li><li><a href="Log.html#.info">info</a></li><li><a href="Log.html#.init">init</a></li><li><a href="Log.html#.levelToName">levelToName</a></li><li><a href="Log.html#.nameToLevel">nameToLevel</a></li><li><a href="Log.html#.patch">patch</a></li><li><a href="Log.html#.setStdoutLevel">setStdoutLevel</a></li><li><a href="Log.html#.trace">trace</a></li><li><a href="Log.html#.unpatch">unpatch</a></li><li><a href="Log.html#.warn">warn</a></li><li><a href="Log.html#debug">debug</a></li><li><a href="Log.html#error">error</a></li><li><a href="Log.html#fatal">fatal</a></li><li><a href="Log.html#info">info</a></li><li><a href="Log.html#trace">trace</a></li><li><a href="Log.html#warn">warn</a></li></ul></div></li><li><a href="module-Config-Config.html">Config</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:Config~Config_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="module-Config-Config.html#.configFileList">configFileList</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="module-Config-Config.html#.get">get</a></li><li><a href="module-Config-Config.html#.getConfig">getConfig</a></li><li><a href="module-Config-Config.html#.init">init</a></li><li><a href="module-Config-Config.html#.set">set</a></li></ul></div></li><li><a href="Perception.html">Perception</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Perception_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Perception.html#.eventBus">eventBus</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Perception.html#input">input</a></li><li><a href="Perception.html#sendEvent">sendEvent</a></li></ul></div></li><li><a href="PerceptionEvent.html">PerceptionEvent</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="PerceptionEvent_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="PerceptionEvent.html#allowedEventTypes">allowedEventTypes</a></li><li><a href="PerceptionEvent.html#eventBus">eventBus</a></li><li><a href="PerceptionEvent.html#sourceName">sourceName</a></li><li><a href="PerceptionEvent.html#sourceType">sourceType</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="PerceptionEvent.html#emit">emit</a></li></ul></div></li><li><a href="Shell.html">Shell</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Shell_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Shell.html#.addDefaultCommand">addDefaultCommand</a></li><li><a href="Shell.html#.init">init</a></li><li><a href="Shell.html#addCommand">addCommand</a></li><li><a href="Shell.html#changePrompt">changePrompt</a></li></ul></div></li><li><a href="Significance.html">Significance</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Significance_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Significance.html#.eventBus">eventBus</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Significance.html#.getWeight">getWeight</a></li><li><a href="Significance.html#.setWeight">setWeight</a></li><li><a href="Significance.html#calculateChange">calculateChange</a></li><li><a href="Significance.html#sendEvent">sendEvent</a></li></ul></div></li><li><a href="SignificanceEvent.html">SignificanceEvent</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="SignificanceEvent_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="SignificanceEvent.html#allowedEventTypes">allowedEventTypes</a></li><li><a href="SignificanceEvent.html#eventBus">eventBus</a></li><li><a href="SignificanceEvent.html#sourceName">sourceName</a></li><li><a href="SignificanceEvent.html#sourceType">sourceType</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="SignificanceEvent.html#emit">emit</a></li></ul></div></li><li><a href="Trace.html">Trace</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Trace_sub"></div></li><li><a href="Utility.html">Utility</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Utility_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Utility.html#.checkInstance">checkInstance</a></li><li><a href="Utility.html#.checkType">checkType</a></li><li><a href="Utility.html#.createHiddenProp">createHiddenProp</a></li><li><a href="Utility.html#.randomFloat">randomFloat</a></li><li><a href="Utility.html#.randomInt">randomInt</a></li><li><a href="Utility.html#.randomSeed">randomSeed</a></li></ul></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2><span class="attribs"><span class="type-signature"></span></span>EventFilter<span class="signature">(type, criteria, priority<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        
+            <div class="class-description"><p>A filter that detects if an event should be allowed or denied based on some criteria.</p></div>
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+<dt>
+    
+        <h4 class="name" id="EventFilter">
+            
+                new <span class="type-signature"></span>EventFilter<span class="signature">(type, criteria, priority<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_EventBase.js.html">lib/EventBase.js</a></code>,
+                <code><a href="lib_EventBase.js.html#line163">line 163</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Creates a new filter for an event. The filter is a simple detecter for a single set of criteria, but can be chained
+together into a firewall-like set of policies as a <a href="EventListener.html">EventListener</a> <code>filterList</code>.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">"allow"</span>
+|
+
+<span class="param-type">"deny"</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Whether this filter is allowing or denying a specific event.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>criteria</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>An Object describing the filter rules</p>
+                <h6>Properties</h6>
+                
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>sourceType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Matches the <code>sourceType</code> of the <a href="EventBase.html">EventBase</a></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sourceName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Matches the <code>sourceName</code> of the <a href="EventBase.html">EventBase</a></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>eventType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Matches the <code>eventType</code> of the <a href="EventBase.html">EventBase</a></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A custom function for making complex filtering decisions. Receives a
+single <a href="EventBase.html">EventBase</a> parameter and returns <code>true</code> for match and
+<code>false</code> for non-match.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>any</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>This filter is <code>true</code> if any criteria are true.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>all</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>This filter is <code>true</code> if all criteria are true.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>none</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>This filter is <code>true</code> if none of criteria are true.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>priority</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    100
+                
+                </td>
+            
+
+            <td class="description last"><p>The priority of this specific filter. Not useful for a single filter,
+but used as part of an <a href="EventListener.html">EventListener</a> <code>filterList</code>.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>allow</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><code>true</code> if this EventFilter is intended to allow an event</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>deny</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p><code>true</code> if this EventFilter is intended to deny an event</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>priority</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The relative priority of this filter. Used when part of a <a href="EventListener.html">EventListener</a> <code>filterList</code>.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>criteria</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The original criteria object passed to the constructor</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+        
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+                
+
+<dt>
+    
+        <h4 class="name" id=".buildTestFn">
+            
+                <span class="type-signature"><span class="icon green">static</span> </span>buildTestFn<span class="signature">(criteria)</span><span class="type-signature"> &rarr; {function}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_EventBase.js.html">lib/EventBase.js</a></code>,
+                <code><a href="lib_EventBase.js.html#line278">line 278</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Builds a test function for the specified criteria</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>criteria</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The criteria object. See <a href="EventFilter.html">EventFilter</a> constructor for details.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">function</span>
+
+
+
+
+
+- <p>A function that recieves a single <a href="EventBase.html">EventBase</a> parameter and returns <code>true</code> if the
+event matches the criteria, <code>false</code> otherwise</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="allowEvent">
+            
+                <span class="type-signature"></span>allowEvent<span class="signature">(event)</span><span class="type-signature"> &rarr; {boolean}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_EventBase.js.html">lib/EventBase.js</a></code>,
+                <code><a href="lib_EventBase.js.html#line263">line 263</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Indicates whether this event should be allowed or not</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The event to evaluate against the criteria</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">boolean</span>
+
+
+
+
+
+- <p>Returns <code>true</code> if the event matches the criteria and should be allowed, <code>false</code> otherwise</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="denyEvent">
+            
+                <span class="type-signature"></span>denyEvent<span class="signature">(event)</span><span class="type-signature"> &rarr; {boolean}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_EventBase.js.html">lib/EventBase.js</a></code>,
+                <code><a href="lib_EventBase.js.html#line249">line 249</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Indicates whether this event should be denied or not</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The event to evaluate against the criteria</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">boolean</span>
+
+
+
+
+
+- <p>Returns <code>true</code> if the event matches the criteria and should be denied, <code>false</code> otherwise</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="matchEvent">
+            
+                <span class="type-signature"></span>matchEvent<span class="signature">(event)</span><span class="type-signature"> &rarr; {boolean}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_EventBase.js.html">lib/EventBase.js</a></code>,
+                <code><a href="lib_EventBase.js.html#line239">line 239</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Indicates whether the event matches the criteria or not</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="EventBase.html">EventBase</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The event to evaluate against the criteria</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">boolean</span>
+
+
+
+
+
+- <p>Returns <code>true</code> if the specified event matches the criteria specified in the
+constructor, <code>false</code> otherwise</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            </dl>
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/c/ca/1x1.png" style="width: 1px; height: 1px">
+    <div class="footer-text">TEST FOOTER</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = 'EventFilter_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
+</body>
+</html>
