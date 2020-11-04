@@ -24,10 +24,7 @@ const jsDocConfig = require("./.jsdoc-conf.json");
  **************/
 function test(testReporter = "spec") {
     return src(tests)
-        .pipe(mocha({reporter: testReporter}))
-        .on("error", function(err) {
-            console.log(err.stack);
-        });
+        .pipe(mocha({reporter: testReporter, exit: true}));
 }
 
 function watchTest() {
