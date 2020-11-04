@@ -20,6 +20,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - npm install
+    - name: Install
+      run: npm install
 
-    - gulp test
+    - name: Test
+      run: gulp test
