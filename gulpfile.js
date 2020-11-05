@@ -59,6 +59,7 @@ function runIstanbul(done) {
     let args = [
         "--reporter=text",
         "--reporter=html",
+        "--reporter=lcov",
         "mocha",
     ];
     let opts = {
