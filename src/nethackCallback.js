@@ -4,14 +4,14 @@ const {Grid} = require("./Grid.js");
 const vision = require("./nethackVision");
 const setIntrinsic = require("./nethackIntrinsic");
 const {actionQueue, getAction} = require("./nethackAction");
-const nhai = require("../index");
-const {warn} = nhai.Log;
+const {Log} = require("../index");
+const {warn} = Log;
 
 // eslint-disable-next-line jsdoc/require-jsdoc
 module.exports = async function nethackShimCallback(name, ... args) {
     switch (name) {
-    case "shim_init_nhwindows":
-        return await nhai.init();
+    // case "shim_init_nhwindows":
+    //     return await nhai.init();
     // case "shim_create_nhwindow":
     //     winCount++;
     //     // console.log("creating window", args, "returning", winCount);
@@ -52,7 +52,6 @@ module.exports = async function nethackShimCallback(name, ... args) {
             return;
         }
 
-        // warn(`shim_status_update: args ${args}`);
         warn(`shim_status_update: stat ${args[0]}, value ${args[1]}, value type ${typeof args[1]}`);
         return setIntrinsic(args[0], args[1]);
     case "shim_getmsghistory":
@@ -84,7 +83,7 @@ module.exports = async function nethackShimCallback(name, ... args) {
     }
 };
 
-let grid = new Grid(80, 20, {
+let grid = new Grid(80, 21, {
     serializer: function(val) {
         if (val === 0) {
             return " ";
