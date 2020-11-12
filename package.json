@@ -29,9 +29,12 @@
   },
   "license": "UNLICENSED",
   "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
     "browser-sync": "^2.26.13",
     "chai": "^4.2.0",
     "coveralls": "^3.1.0",
+    "cz-conventional-changelog": "^3.3.0",
     "docdash": "^1.2.0",
     "eslint": "^7.12.1",
     "eslint-plugin-jsdoc": "^30.7.6",
@@ -43,11 +46,15 @@
     "gulp-jsdoc3": "^3.0.0",
     "gulp-mocha": "^7.0.2",
     "gulp-nodemon": "^2.5.0",
+    "husky": "^4.3.0",
+    "is-ci": "^2.0.0",
     "jsdoc": "^3.6.6",
     "mocha": "^8.2.0",
     "npm-watch": "^0.7.0",
     "nyc": "^15.1.0",
+    "pinst": "^2.0.0",
     "sinon": "^9.2.1",
+    "standard-version": "^9.0.0",
     "std-mocks": "^1.0.1",
     "tui-jsdoc-template": "^1.2.2"
   },
@@ -58,5 +65,24 @@
     "cosmiconfig": "^7.0.0",
     "random": "^2.2.0",
     "seedrandom": "^3.0.5"
+  },
+  "husky": {
+    "hooks": {
+      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "gulp test",
+      "pre-push": "gulp ready"
+    }
+  },
+  "standard-version": {
+    "skip": {
+      "commit": true,
+      "tag": true
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
