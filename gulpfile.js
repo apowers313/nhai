@@ -69,8 +69,7 @@ function runIstanbul(done) {
     let opts = {
         stdio: "inherit",
     };
-    spawn(cmd, args, opts);
-    done();
+    spawn(cmd, args, opts).on("close", done);
 }
 
 const coverage = runIstanbul;
