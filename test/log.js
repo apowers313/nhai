@@ -86,7 +86,7 @@ describe("Log", function() {
             let l2 = Log.getLogger();
             assert.strictEqual(l1, l2);
             assert.isArray(l1.streams);
-            assert.strictEqual(l1.streams.length, 1);
+            assert.strictEqual(l1.streams.length, Config.get("log-file-enabled") ? 2 : 1);
             // console.log("logger", l1);
         });
     });
@@ -203,8 +203,8 @@ describe("Log", function() {
 
             let l = Log.getLogger();
             assert.isArray(l.streams);
-            assert.strictEqual(l.streams.length, 2);
-            assert.strictEqual(l.streams[1].name, newStream.name);
+            assert.strictEqual(l.streams.length, Config.get("log-file-enabled") ? 3 : 2);
+            assert.strictEqual(l.streams[Config.get("log-file-enabled") ? 2 : 1].name, newStream.name);
 
             stdMocks.use();
             Log.fatal("foo");
