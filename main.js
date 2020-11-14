@@ -2,7 +2,6 @@ const nethackShimCallback = require("./src/nethackCallback");
 const {init, Log} = require("./index");
 let nethackInternalLogger;
 let runCount = 0;
-/* global WebAssembly */
 
 // this returns an Object containing the emscription Module options
 // the NetHack emscripten implementation adds lots of state information
