@@ -1,7 +1,7 @@
 const {assert} = require("chai");
 const {Intrinsic, Component, Significance} = require("..");
 
-describe("Intrinsic", function() {
+describe.only("Intrinsic", function() {
     afterEach(function() {
         Component.clearList();
         Intrinsic.clearList();
@@ -46,7 +46,7 @@ describe("Intrinsic", function() {
             let i = new Intrinsic("test");
             assert.throws(() => {
                 i.value = "hi there!";
-            }, TypeError, "Intrinsic.value couldn't parse string as float: 'hi there!'");
+            }, TypeError, "Intrinsic#defaultConverter couldn't parse string as float: 'hi there!'");
         });
 
         it("can be overloaded", function() {
@@ -67,6 +67,21 @@ describe("Intrinsic", function() {
             gi.value = goldValue;
             assert.isNumber(gi.value);
             assert.strictEqual(gi.value, 3);
+        });
+
+        it("custom converter", function() {
+            function goldConverter(val) {
+                const goldRegex = /^\\G[A-F0-9]{8}:(?<goldval>[0-9]*)$/;
+                return Intrinsic.defaultConverter(val.match(goldRegex).groups.goldval);
+            }
+
+            let gi = new Intrinsic("gold", {
+                converter: goldConverter,
+            });
+
+            gi.value = "\\G1EBC091E:4";
+            assert.isNumber(gi.value);
+            assert.strictEqual(gi.value, 4);
         });
 
         it("emits 'change'", function(done) {
@@ -160,18 +175,5 @@ describe("Intrinsic", function() {
                 });
             });
         });
-
-        // describe("getIntrinsic", function() {
-        //     it("returns intrinsic", function() {
-        //         let i1 = new Intrinsic("bob");
-        //         let i2 = Intrinsic.getIntrinsic("bob");
-        //         assert.strictEqual(i1, i2);
-        //     });
-
-        //     it("returns unknown on not found", function() {
-        //         let i = Intrinsic.getIntrinsic("asdf");
-        //         assert.isUndefined(i);
-        //     });
-        // });
     });
 });

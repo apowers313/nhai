@@ -9,14 +9,58 @@ new Intrinsic("con");
 new Intrinsic("int");
 new Intrinsic("wis");
 new Intrinsic("char");
-new Intrinsic("cap");
+new Intrinsic("cap", {
+    min: 0,
+    max: 5,
+    positive: false,
+    converter: capacityToValue,
+});
 new Intrinsic("energy");
 new Intrinsic("energy-max");
 new Intrinsic("xp");
 new Intrinsic("ac");
-new Intrinsic("hunger");
+new Intrinsic("hunger", {
+    min: 0,
+    max: 10,
+    positive: false,
+    converter: hungerToValue,
+});
 new Intrinsic("hp");
 new Intrinsic("hp-max");
+new Intrinsic("cond");
+
+function hungerToValue(val) {
+    switch (val.trim().toLowerCase()) {
+    case "satiated": return 2;
+    case "not hungry": return 0;
+    case "": return 0;
+    case "hungry": return 1;
+    case "weak": return 2;
+    case "fainting": return 5;
+    case "fainted": return 5;
+    case "starved": return 10;
+    default: throw new Error(`Unknown hunger type: '${val}'`);
+    }
+}
+
+function capacityToValue(val) {
+    // Burdened, streSsed, straiNed, overTaxed, overLoaded
+    switch (val.trim().toLowerCase()) {
+    case "": return 0;
+    case "burdened": return 1;
+    case "stressed": return 2;
+    case "strained": return 3;
+    case "overtaxed": return 4;
+    case "overloaded": return 5;
+
+    default: throw new Error(`Unknown capacity type: '${val}'`);
+    }
+}
+
+// function goldToValue(val) {
+//     const goldRegex = /^\\G[A-F0-9]{8}:(?<goldval>[0-9]*)$/;
+//     return Intrinsic.defaultConverter(val.match(goldRegex).groups.goldval);
+// }
 
 // eslint-disable-next-line jsdoc/require-jsdoc
 function setIntrinsic(name, value) {
@@ -47,6 +91,7 @@ function convertNethackName(name) {
     case "BL_HUNGER": return "hunger";
     case "BL_HP": return "hp";
     case "BL_HPMAX": return "hp-max";
+    case "BL_CONDITION": return "cond";
     default: throw new Error(`'${name}' is not a known intrinsic`);
     }
 }
