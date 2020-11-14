@@ -143,7 +143,7 @@ function watchMain(done) {
 /* ************
  * RELEASE
  **************/
-const ready = parallel(test, audit, lint, coverage, docs);
+const ready = parallel(test, /* audit,*/ lint, coverage, docs);
 
 function audit(done) {
     let cmd = "npm";
@@ -153,12 +153,11 @@ function audit(done) {
     let opts = {
         stdio: "inherit",
     };
-    // TODO: this doesn't fail if the audit fails
-    spawn(cmd, args, opts);
-    done();
+    let aud = spawn(cmd, args, opts).on("close", done);
 }
 
 module.exports = {
+    audit,
     test,
     lint,
     coverage,
