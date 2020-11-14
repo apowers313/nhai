@@ -1,7 +1,7 @@
 const {assert} = require("chai");
 const {Intrinsic, Component, Significance} = require("..");
 
-describe.only("Intrinsic", function() {
+describe("Intrinsic", function() {
     afterEach(function() {
         Component.clearList();
         Intrinsic.clearList();
