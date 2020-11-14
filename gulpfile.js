@@ -27,6 +27,10 @@ function test(testReporter = "spec") {
         .pipe(mocha({reporter: testReporter, exit: true}));
 }
 
+function testQuiet() {
+    return test.bind(null, "min")();
+}
+
 function watchTest() {
     return watch(all, test.bind(null, "min"));
 }
@@ -159,6 +163,7 @@ function audit(done) {
 module.exports = {
     audit,
     test,
+    "test:quiet": testQuiet,
     lint,
     coverage,
     docs,

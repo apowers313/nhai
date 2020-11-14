@@ -14,12 +14,10 @@
     "dev:coverage": "gulp dev:coverage",
     "dev:lint": "gulp dev:lint",
     "test": "gulp test",
-    "test:dev": "mocha --reporter min",
+    "test:quiet": "gulp test:quiet",
     "lint": "gulp lint",
     "coverage": "gulp coverage",
-    "coverage:publish": "nyc --reporter=text-lcov mocha | coveralls",
-    "docs": "gulp docs",
-    "docs:publish": "gh-pages --silent --repo https://$GH_TOKEN@github.com/apowers313/nhai.git --dist docs"
+    "docs": "gulp docs"
   },
   "author": "Adam Powers <apowers@ato.ms>",
   "repository": {
@@ -70,7 +68,7 @@
     "hooks": {
       "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "gulp test",
+      "pre-commit": "gulp test:quiet",
       "pre-push": "gulp ready"
     }
   },
