@@ -5,7 +5,6 @@ const actionQueue = [];
 
 function queueKey(key) {
     checkType("queueKey", "key", key, "string");
-    console.log("key", key);
     if (actionQueue.length !== 0) {
         throw new Error("queueKey expected actionQueue.length to be 0");
     }
@@ -26,7 +25,6 @@ Action.addAction("wait", queueKey.bind(null, "."));
 // eslint-disable-next-line jsdoc/require-jsdoc
 async function getAction() {
     let e = new ActionEvent("nethack", "main");
-    console.log("emitting");
     let p = once(e.eventBus, "action");
     await e.emit("waiting");
     return p;
