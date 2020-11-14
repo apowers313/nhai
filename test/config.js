@@ -2,6 +2,9 @@ const {assert} = require("chai");
 const {Config} = require("..");
 const fs = require("fs");
 const path = require("path");
+const os = require("os");
+const cwd = process.cwd();
+const workingDir = os.tmpdir();
 
 // helpers
 function copyFile(srcPath, dstPath) {
@@ -47,13 +50,45 @@ describe("config", function() {
     });
 
     describe("init", function() {
-        describe("YAML", function() {
+        describe("JS", function() {
             beforeEach(function() {
-                copyFile(path.join(__dirname, "helpers", "config.yml"), path.join(process.cwd(), ".nhairc"));
+                copyFile(path.join(__dirname, "helpers", "config.js"), path.join(workingDir, ".nhairc.js"));
+                process.chdir(workingDir);
             });
 
             afterEach(function() {
-                deleteFile(path.join(process.cwd(), ".nhairc"));
+                deleteFile(path.join(workingDir, ".nhairc.js"));
+                process.chdir(cwd);
+            });
+
+            it("loads file", async function() {
+                await Config.init();
+                assert.strictEqual(Config.get("test"), "cookie-abc123");
+            });
+
+            it("preserves defaults", async function() {
+                await Config.init();
+                assert.strictEqual(Config.get("app-version"), require("../package.json").version);
+            });
+
+            it("sets configFileList", async function() {
+                await Config.init();
+                assert.instanceOf(Config.configFileList, Array);
+                assert.strictEqual(Config.configFileList.length, 1);
+                assert.deepEqual(Config.configFileList[0].config, {test: "cookie-abc123"});
+                assert.match(Config.configFileList[0].filepath, /\.nhairc\.js$/);
+            });
+        });
+
+        describe("YAML", function() {
+            beforeEach(function() {
+                copyFile(path.join(__dirname, "helpers", "config.yml"), path.join(workingDir, ".nhairc"));
+                process.chdir(workingDir);
+            });
+
+            afterEach(function() {
+                deleteFile(path.join(workingDir, ".nhairc"));
+                process.chdir(cwd);
             });
 
             it("loads file", async function() {
@@ -68,12 +103,40 @@ describe("config", function() {
 
             it("sets configFileList", async function() {
                 await Config.init();
-                assert.deepEqual(Config.configFileList, [
-                    {
-                        config: {test: "yaml-cookie-yummy"},
-                        filepath: "/Users/ampower/Projects/personal/nhai/.nhairc",
-                    },
-                ]);
+                assert.instanceOf(Config.configFileList, Array);
+                assert.strictEqual(Config.configFileList.length, 1);
+                assert.deepEqual(Config.configFileList[0].config, {test: "yaml-cookie-yummy"});
+                assert.match(Config.configFileList[0].filepath, /\.nhairc$/);
+            });
+        });
+
+        describe("JSON", function() {
+            beforeEach(function() {
+                copyFile(path.join(__dirname, "helpers", "config.json"), path.join(workingDir, ".nhairc.json"));
+                process.chdir(workingDir);
+            });
+
+            afterEach(function() {
+                deleteFile(path.join(workingDir, ".nhairc.json"));
+                process.chdir(cwd);
+            });
+
+            it("loads file", async function() {
+                await Config.init();
+                assert.strictEqual(Config.get("test"), "happy little json!");
+            });
+
+            it("preserves defaults", async function() {
+                await Config.init();
+                assert.strictEqual(Config.get("app-version"), require("../package.json").version);
+            });
+
+            it("sets configFileList", async function() {
+                await Config.init();
+                assert.instanceOf(Config.configFileList, Array);
+                assert.strictEqual(Config.configFileList.length, 1);
+                assert.deepEqual(Config.configFileList[0].config, {test: "happy little json!"});
+                assert.match(Config.configFileList[0].filepath, /\.nhairc\.json$/);
             });
         });
     });
