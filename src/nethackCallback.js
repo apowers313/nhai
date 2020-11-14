@@ -5,7 +5,7 @@ const vision = require("./nethackVision");
 const setIntrinsic = require("./nethackIntrinsic");
 const {actionQueue, getAction} = require("./nethackAction");
 const {Log} = require("../index");
-const {warn} = Log;
+const {trace, warn} = Log;
 
 // eslint-disable-next-line jsdoc/require-jsdoc
 module.exports = async function nethackShimCallback(name, ... args) {
@@ -37,7 +37,6 @@ module.exports = async function nethackShimCallback(name, ... args) {
     // case "shim_putstr":
     //     // terminal.log(`shim_putstr: ${name} ${args}`);
     //     return terminal.message(args[2]);
-    // case "shim_putmsghistory":
     // case "shim_raw_print":
     //     return terminal.message(args[0]);
     // case "shim_message_menu":
@@ -78,7 +77,7 @@ module.exports = async function nethackShimCallback(name, ... args) {
     //     // ignore
     //     return;
     default:
-        console.log(`callback: ${name} ${args}`);
+        trace(`callback: ${name} ${args}`);
         return 0;
     }
 };
@@ -96,16 +95,12 @@ let grid = new Grid(80, 21, {
 // eslint-disable-next-line no-unused-vars, require-await
 async function printGlyph(win, x, y, glyph, bkglyph) {
     let ret = globalThis.nethackGlobal.helpers.mapglyphHelper(glyph, x, y, 0);
-    // console.log("ret", ret);
-    // console.log("->>> ch", String.fromCharCode(ret.ch));
     grid[x][y] = ret.ch;
 }
 
 async function awaitAction() {
     await getAction();
-    console.log("getAction done.");
     let ch = actionQueue.shift();
-    // ch = ch || "j".charCodeAt(0);
-    console.log("awaitAction ch:", ch);
+    trace("got action character:", ch);
     return ch;
 }
