@@ -8,7 +8,6 @@
     "test": "test"
   },
   "scripts": {
-    "push": "npm run ready && git push origin master",
     "ready": "gulp ready",
     "dev:test": "gulp dev:test",
     "dev:docs": "gulp dev:docs",
@@ -36,7 +35,7 @@
     "coveralls": "^3.1.0",
     "cz-conventional-changelog": "^3.3.0",
     "docdash": "^1.2.0",
-    "eslint": "^7.12.1",
+    "eslint": "^7.13.0",
     "eslint-plugin-jsdoc": "^30.7.6",
     "eslint-plugin-mocha": "^8.0.0",
     "eslint-plugin-old-c-programmer": "^1.0.0",
@@ -50,7 +49,7 @@
     "husky": "^4.3.0",
     "is-ci": "^2.0.0",
     "jsdoc": "^3.6.6",
-    "mocha": "^8.2.0",
+    "mocha": "^8.2.1",
     "npm-watch": "^0.7.0",
     "nyc": "^15.1.0",
     "pinst": "^2.0.0",
