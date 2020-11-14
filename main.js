@@ -2,6 +2,7 @@ const nethackShimCallback = require("./src/nethackCallback");
 const {init, Log} = require("./index");
 let nethackInternalLogger;
 let runCount = 0;
+/* global WebAssembly */
 
 // this returns an Object containing the emscription Module options
 // the NetHack emscripten implementation adds lots of state information
@@ -36,6 +37,8 @@ function runNethack() {
     setTimeout(() => {
         startTimer();
         nethackStart(nethackShimCallback, buildWasmModule());
+        // XXX: must remove uncaughtException and unhandledRejection to prevent memory leak
+        // See also: https://github.com/emscripten-core/emscripten/issues/12740#issuecomment-724447423
         process.removeAllListeners("uncaughtException");
         process.removeAllListeners("unhandledRejection");
         process.on("uncaughtException", function(ex) {
