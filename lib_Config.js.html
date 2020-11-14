@@ -83,11 +83,16 @@ const defaultConfigMap = new Map(
         ["log-patch-console", true], // whether Log.init should monkey patch console.log
         ["log-start-msg", false], // print a "Starting..." msg when logger is initialized
         ["log-force-color", true], // force color logging, even if not ta TTY (can be messy but good for testing)
+        ["log-file-enabled", false], // whether to write log messages to a file
+        ["log-file-prefix", "nhai-"], // name of the file to write logs to
+        ["log-file-suffix", ".log"], // name of the file to write logs to
+        ["log-file-path", "."], // the path / folder to write logs to
         ["shell-enabled", true], // whether to start the shell
         ["shell-prompt", "$"], // default shell prompt symbol
         ["random-seed", "goodluck!"], // seed for the PRNG / DRNG
         ["debug-break-on-entry", false], // whether the debugger should break on entry
         ["debug-sync-environment", true], // assumes that the environment won't keep running if Trace hits a break
+        ["locale", "default"], // the location used for interpreting date / time
     ],
 );
 

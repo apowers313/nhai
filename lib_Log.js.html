@@ -61,6 +61,7 @@ const {Config} = require("./Config");
 
 let defaultLogger;
 let stdoutStream;
+let fileStream;
 
 let origConsoleLog = console.log;
 let origConsoleTrace = console.trace;
@@ -98,6 +99,27 @@ class Log {
             level: Config.get("log-level"),
             src: Config.get("log-src"),
         });
+
+        if (Config.get("log-file-enabled")) {
+            let numericDateTime = {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: false,
+            };
+            let d = new Intl.DateTimeFormat("default", numericDateTime)
+                .formatToParts()
+                .reduce((acc, v) => Object({... acc, [v.type]: v.value}), {});
+
+            fileStream = {
+                path: `${Config.get("log-file-path")}/${Config.get("log-file-prefix")}-${d.year}${d.month}${d.day}-${d.hour}${d.minute}${d.second}${Config.get("log-file-suffix")}`,
+                level: "trace",
+            };
+            defaultLogger.addStream(fileStream);
+        }
 
         if (Config.get("log-patch-console")) {
             Log.patch();
