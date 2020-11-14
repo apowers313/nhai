@@ -2,7 +2,7 @@
 
 const {watch, src, dest, series, parallel} = require("gulp");
 const mocha = require("gulp-mocha");
-const eslint = require("gulp-eslint");
+const eslint = require("gulp-eslint7");
 const jsdoc = require("gulp-jsdoc3");
 const nodemon = require("gulp-nodemon");
 // const istanbul = require("gulp-istanbul"); // gulp-istanbul is broken; hasn't been updated in 3 years
