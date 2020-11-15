@@ -3,10 +3,16 @@ const {Config} = require("..");
 const fs = require("fs");
 const path = require("path");
 const os = require("os");
-const cwd = process.cwd();
-const workingDir = os.tmpdir();
 
 // helpers
+const cwd = process.cwd();
+const workingDir = os.tmpdir();
+const jsHelperPath = path.join(__dirname, "helpers", "config.js");
+const yamlHelperPath = path.join(__dirname, "helpers", "config.yml");
+const jsonHelperPath = path.join(__dirname, "helpers", "config.json");
+const jsConfigPath = path.join(workingDir, ".nhairc.js");
+const yamlConfigPath = path.join(workingDir, ".nhairc");
+const jsonConfigPath = path.join(workingDir, ".nhairc.json");
 function copyFile(srcPath, dstPath) {
     let data = fs.readFileSync(srcPath);
     fs.writeFileSync(dstPath, data);
@@ -52,7 +58,7 @@ describe("config", function() {
     describe("init", function() {
         describe("JS", function() {
             beforeEach(function() {
-                copyFile(path.join(__dirname, "helpers", "config.js"), path.join(workingDir, ".nhairc.js"));
+                copyFile(jsHelperPath, jsConfigPath);
                 process.chdir(workingDir);
             });
 
@@ -82,12 +88,12 @@ describe("config", function() {
 
         describe("YAML", function() {
             beforeEach(function() {
-                copyFile(path.join(__dirname, "helpers", "config.yml"), path.join(workingDir, ".nhairc"));
+                copyFile(yamlHelperPath, yamlConfigPath);
                 process.chdir(workingDir);
             });
 
             afterEach(function() {
-                deleteFile(path.join(workingDir, ".nhairc"));
+                deleteFile(yamlConfigPath);
                 process.chdir(cwd);
             });
 
@@ -112,12 +118,12 @@ describe("config", function() {
 
         describe("JSON", function() {
             beforeEach(function() {
-                copyFile(path.join(__dirname, "helpers", "config.json"), path.join(workingDir, ".nhairc.json"));
+                copyFile(jsonHelperPath, jsonConfigPath);
                 process.chdir(workingDir);
             });
 
             afterEach(function() {
-                deleteFile(path.join(workingDir, ".nhairc.json"));
+                deleteFile(jsonConfigPath);
                 process.chdir(cwd);
             });
 
