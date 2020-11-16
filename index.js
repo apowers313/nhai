@@ -8,6 +8,7 @@ const {Intrinsic} = require("./lib/Intrinsic");
 const Log = require("./lib/Log");
 const {Perception, PerceptionEvent, PerceptionModule} = require("./lib/Perception");
 const {Significance, SignificanceEvent} = require("./lib/Significance");
+const {Synchronize} = require("./lib/Synchronize");
 const {Trace} = require("./lib/Trace");
 const Utility = require("./lib/Utility");
 
@@ -30,6 +31,7 @@ module.exports = {
     PerceptionModule,
     Significance,
     SignificanceEvent,
+    Synchronize,
     Utility,
     Trace,
 };
