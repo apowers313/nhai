@@ -50,14 +50,14 @@
     "mocha": "^8.2.1",
     "npm-watch": "^0.7.0",
     "nyc": "^15.1.0",
-    "pinst": "^2.1.0",
+    "pinst": "^2.1.1",
     "sinon": "^9.2.1",
     "standard-version": "^9.0.0",
     "std-mocks": "^1.0.1",
     "tui-jsdoc-template": "^1.2.2"
   },
   "dependencies": {
-    "@neth4ck/neth4ck": "^1.0.2",
+    "@neth4ck/neth4ck": "^1.0.3",
     "bunyan": "^1.8.14",
     "bunyan-debug-stream": "^2.0.0",
     "cosmiconfig": "^7.0.0",
