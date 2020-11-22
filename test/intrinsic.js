@@ -174,6 +174,135 @@ describe("Intrinsic", function() {
                     assert.strictEqual(i.positive, true);
                 });
             });
+
+            it("throws if min is greater than max", function() {
+                assert.throws(() => {
+                    new Intrinsic("test", {min: 5, max: 4});
+                }, RangeError, "Intrinsic.constructor: opts.min must be less than opts.max");
+            });
+
+            it("throws if min is the same as max", function() {
+                assert.throws(() => {
+                    new Intrinsic("test", {min: 5, max: 5});
+                }, RangeError, "Intrinsic.constructor: opts.min must be less than opts.max");
+            });
+        });
+    });
+
+    describe("range", function() {
+        it("works with positive", function() {
+            let i = new Intrinsic("test1", {
+                min: 0,
+                max: 42,
+            });
+            assert.strictEqual(i.range, 42);
+
+            i = new Intrinsic("test2", {
+                min: 10,
+                max: 50,
+            });
+            assert.strictEqual(i.range, 40);
+        });
+
+        it("works with negative", function() {
+            let i = new Intrinsic("test1", {
+                min: -10,
+                max: 30,
+            });
+            assert.strictEqual(i.range, 40);
+
+            i = new Intrinsic("test2", {
+                min: -10,
+                max: 0,
+            });
+            assert.strictEqual(i.range, 10);
+
+            i = new Intrinsic("test3", {
+                min: -10,
+                max: -5,
+            });
+            assert.strictEqual(i.range, 5);
+        });
+    });
+
+    describe("normalizedValue", function() {
+        it("returns zero", function() {
+            let i = new Intrinsic("test1", {
+                min: 0,
+                max: 42,
+            });
+            i.value = 0;
+            assert.strictEqual(i.normalizedValue, 0);
+
+            i = new Intrinsic("test2", {
+                min: 10,
+                max: 42,
+            });
+            i.value = 10;
+            assert.strictEqual(i.normalizedValue, 0);
+
+            i = new Intrinsic("test3", {
+                min: -10,
+                max: 42,
+            });
+            i.value = -10;
+            assert.strictEqual(i.normalizedValue, 0);
+        });
+
+        it("returns one", function() {
+            let i = new Intrinsic("test1", {
+                min: 0,
+                max: 42,
+            });
+            i.value = 42;
+            assert.strictEqual(i.normalizedValue, 1);
+
+            i = new Intrinsic("test2", {
+                min: -10,
+                max: 0,
+            });
+            i.value = 0;
+            assert.strictEqual(i.normalizedValue, 1);
+        });
+
+        it("works with positive", function() {
+            let i = new Intrinsic("test1", {
+                min: 5,
+                max: 30,
+            });
+            i.value = 10;
+            assert.strictEqual(i.normalizedValue, 0.2);
+            i.value = 25;
+            assert.strictEqual(i.normalizedValue, 0.8);
+
+            i = new Intrinsic("test2", {
+                min: 20,
+                max: 120,
+            });
+            i.value = 40;
+            assert.strictEqual(i.normalizedValue, 0.2);
+            i.value = 100;
+            assert.strictEqual(i.normalizedValue, 0.8);
+        });
+
+        it("works with negative", function() {
+            let i = new Intrinsic("test1", {
+                min: -15,
+                max: 10,
+            });
+            i.value = -10;
+            assert.strictEqual(i.normalizedValue, 0.2);
+            i.value = 5;
+            assert.strictEqual(i.normalizedValue, 0.8);
+
+            i = new Intrinsic("test2", {
+                min: -120,
+                max: -20,
+            });
+            i.value = -40;
+            assert.strictEqual(i.normalizedValue, 0.8);
+            i.value = -100;
+            assert.strictEqual(i.normalizedValue, 0.2);
         });
     });
 });
