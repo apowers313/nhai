@@ -65,6 +65,7 @@ describe("config", function() {
             afterEach(function() {
                 deleteFile(path.join(workingDir, ".nhairc.js"));
                 process.chdir(cwd);
+                Config.reset();
             });
 
             it("loads file", async function() {
@@ -77,12 +78,12 @@ describe("config", function() {
                 assert.strictEqual(Config.get("app-version"), require("../package.json").version);
             });
 
-            it("sets configFileList", async function() {
+            it("sets fileList", async function() {
                 await Config.init();
-                assert.instanceOf(Config.configFileList, Array);
-                assert.strictEqual(Config.configFileList.length, 1);
-                assert.deepEqual(Config.configFileList[0].config, {test: "cookie-abc123"});
-                assert.match(Config.configFileList[0].filepath, /\.nhairc\.js$/);
+                assert.instanceOf(Config.fileList, Array);
+                assert.strictEqual(Config.fileList.length, 1);
+                assert.deepEqual(Config.fileList[0].config, {test: "cookie-abc123"});
+                assert.match(Config.fileList[0].filepath, /\.nhairc\.js$/);
             });
         });
 
@@ -95,6 +96,7 @@ describe("config", function() {
             afterEach(function() {
                 deleteFile(yamlConfigPath);
                 process.chdir(cwd);
+                Config.reset();
             });
 
             it("loads file", async function() {
@@ -107,12 +109,12 @@ describe("config", function() {
                 assert.strictEqual(Config.get("app-version"), require("../package.json").version);
             });
 
-            it("sets configFileList", async function() {
+            it("sets fileList", async function() {
                 await Config.init();
-                assert.instanceOf(Config.configFileList, Array);
-                assert.strictEqual(Config.configFileList.length, 1);
-                assert.deepEqual(Config.configFileList[0].config, {test: "yaml-cookie-yummy"});
-                assert.match(Config.configFileList[0].filepath, /\.nhairc$/);
+                assert.instanceOf(Config.fileList, Array);
+                assert.strictEqual(Config.fileList.length, 1);
+                assert.deepEqual(Config.fileList[0].config, {test: "yaml-cookie-yummy"});
+                assert.match(Config.fileList[0].filepath, /\.nhairc$/);
             });
         });
 
@@ -125,6 +127,7 @@ describe("config", function() {
             afterEach(function() {
                 deleteFile(jsonConfigPath);
                 process.chdir(cwd);
+                Config.reset();
             });
 
             it("loads file", async function() {
@@ -137,13 +140,112 @@ describe("config", function() {
                 assert.strictEqual(Config.get("app-version"), require("../package.json").version);
             });
 
-            it("sets configFileList", async function() {
+            it("sets fileList", async function() {
                 await Config.init();
-                assert.instanceOf(Config.configFileList, Array);
-                assert.strictEqual(Config.configFileList.length, 1);
-                assert.deepEqual(Config.configFileList[0].config, {test: "happy little json!"});
-                assert.match(Config.configFileList[0].filepath, /\.nhairc\.json$/);
+                assert.instanceOf(Config.fileList, Array);
+                assert.strictEqual(Config.fileList.length, 1);
+                assert.deepEqual(Config.fileList[0].config, {test: "happy little json!"});
+                assert.match(Config.fileList[0].filepath, /\.nhairc\.json$/);
             });
+        });
+    });
+
+    describe("reset", function() {
+        it("sets defaults", function() {
+            Config.set("app-version", "3.14.159");
+            assert.strictEqual(Config.get("app-version"), "3.14.159");
+            Config.reset();
+            assert.strictEqual(Config.get("app-version"), require("../package.json").version);
+        });
+
+        it("unsets initialized", function() {
+            Config.load({oogie: "boogie"});
+            assert.strictEqual(Config.get("oogie"), "boogie");
+            Config.reset();
+            assert.isUndefined(Config.get("oogie"));
+        });
+
+        it("clears fileList", async function() {
+            copyFile(jsHelperPath, jsConfigPath);
+            process.chdir(workingDir);
+
+            await Config.init();
+            // test is "cookie-abc123" if the config file was loaded
+            assert.strictEqual(Config.get("test"), "cookie-abc123");
+            assert.strictEqual(Config.fileList.length, 1);
+            Config.reset();
+            assert.strictEqual(Config.fileList.length, 0);
+
+            deleteFile(path.join(workingDir, ".nhairc.js"));
+            process.chdir(cwd);
+        });
+    });
+
+    describe("load", function() {
+        afterEach(function() {
+            Config.reset();
+        });
+
+        it("sets initialized", function() {
+            Config.load({tv: "off"});
+            let val = Config.get("tv");
+            assert.strictEqual(val, "off");
+        });
+
+        it("preserves defaults", async function() {
+            Config.load({tv: "off"});
+            assert.strictEqual(Config.get("app-version"), require("../package.json").version);
+        });
+
+        it("init doesn't grab config file", async function() {
+            copyFile(jsHelperPath, jsConfigPath);
+            process.chdir(workingDir);
+
+            Config.load({tv: "mute"});
+            await Config.init();
+            // test is "cookie-abc123" if the config file was loaded
+            assert.isUndefined(Config.get("test"));
+
+            let val = Config.get("tv");
+            assert.strictEqual(val, "mute");
+
+            deleteFile(path.join(workingDir, ".nhairc.js"));
+            process.chdir(cwd);
+        });
+
+        it("doesn't set fileList", async function() {
+            Config.load({foo: "bar"});
+            assert.strictEqual(Config.fileList.length, 0);
+        });
+    });
+
+    describe("isLoaded", function() {
+        afterEach(function() {
+            Config.reset();
+        });
+
+        it("is true after load", function() {
+            Config.load({tv: "off"});
+            assert.isTrue(Config.isLoaded);
+        });
+
+        it("is true after init", async function() {
+            copyFile(jsHelperPath, jsConfigPath);
+            process.chdir(workingDir);
+
+            await Config.init();
+            // test is "cookie-abc123" if the config file was loaded
+            assert.strictEqual(Config.get("test"), "cookie-abc123");
+            assert.isTrue(Config.isLoaded);
+
+            // cleanup
+            deleteFile(path.join(workingDir, ".nhairc.js"));
+            process.chdir(cwd);
+        });
+
+        it("is false after reset", function() {
+            Config.reset();
+            assert.isFalse(Config.isLoaded);
         });
     });
 });
