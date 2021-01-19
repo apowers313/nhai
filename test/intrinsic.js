@@ -4,7 +4,6 @@ const {Intrinsic, Component, Significance} = require("..");
 describe("Intrinsic", function() {
     afterEach(function() {
         Component.clearList();
-        Intrinsic.clearList();
         Significance.eventBus.removeAllListeners();
     });
 
@@ -16,9 +15,9 @@ describe("Intrinsic", function() {
     describe("value", function() {
         it("accepts string", function() {
             let i = new Intrinsic("test");
-            i.value = "747";
+            i.value = "99";
             assert.isNumber(i.value);
-            assert.strictEqual(i.value, 747);
+            assert.strictEqual(i.value, 99);
         });
 
         it("accepts integer", function() {
@@ -47,6 +46,22 @@ describe("Intrinsic", function() {
             assert.throws(() => {
                 i.value = "hi there!";
             }, TypeError, "Intrinsic#defaultConverter couldn't parse string as float: 'hi there!'");
+        });
+
+        it("throws on value less than min", function() {
+            let i = new Intrinsic("test");
+            assert.throws(() => {
+                console.log("SETTING");
+                i.value = -1;
+            }, RangeError, "Intrinsic#value: attempted to set value (-1) less than min (0)");
+        });
+
+        it("throws on value greater than max", function() {
+            let i = new Intrinsic("test");
+            assert.throws(() => {
+                console.log("SETTING");
+                i.value = 101;
+            }, RangeError, "Intrinsic#value: attempted to set value (101) greater than max (100)");
         });
 
         it("can be overloaded", function() {
@@ -286,23 +301,12 @@ describe("Intrinsic", function() {
         });
 
         it("works with negative", function() {
-            let i = new Intrinsic("test1", {
-                min: -15,
-                max: 10,
+            let i = new Intrinsic("test3", {
+                min: -43,
+                max: 57,
             });
-            i.value = -10;
-            assert.strictEqual(i.normalizedValue, 0.2);
-            i.value = 5;
-            assert.strictEqual(i.normalizedValue, 0.8);
-
-            i = new Intrinsic("test2", {
-                min: -120,
-                max: -20,
-            });
-            i.value = -40;
-            assert.strictEqual(i.normalizedValue, 0.8);
-            i.value = -100;
-            assert.strictEqual(i.normalizedValue, 0.2);
+            i.value = -33;
+            assert.strictEqual(i.normalizedValue, 0.1);
         });
     });
 });
