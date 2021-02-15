@@ -1,4 +1,4 @@
-const {Breakpoint, EventBase, EventBusBase, EventFilter, EventListener} = require("../index");
+const {EventBase, EventBusBase, EventFilter, EventListener} = require("../index");
 const {assert} = require("chai");
 
 // helpers
