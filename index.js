@@ -2,9 +2,11 @@ const init = require("./lib/init");
 const {Action, ActionEvent, ActionSelection} = require("./lib/Action");
 const {Component} = require("./lib/Component");
 const {Config} = require("./lib/Config");
-const {EventBase, EventBusBase, EventFilter, EventListener} = require("./lib/EventBase");
+const {EventBase, EventBusBase, EventListener} = require("./lib/EventBase");
+const {EventFilter} = require("./lib/EventFilter");
 const {FeatureExtractor} = require("./lib/FeatureExtractor");
 const {Intrinsic} = require("./lib/Intrinsic");
+const {Jupyter} = require("./lib/Jupyter");
 const Log = require("./lib/Log");
 const {Perception, PerceptionEvent, PerceptionModule} = require("./lib/Perception");
 const {Significance, SignificanceEvent} = require("./lib/Significance");
@@ -25,6 +27,7 @@ module.exports = {
     EventListener,
     FeatureExtractor,
     Intrinsic,
+    Jupyter,
     Log,
     Perception,
     PerceptionEvent,
