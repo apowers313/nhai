@@ -51,7 +51,6 @@ describe("Intrinsic", function() {
         it("throws on value less than min", function() {
             let i = new Intrinsic("test");
             assert.throws(() => {
-                console.log("SETTING");
                 i.value = -1;
             }, RangeError, "Intrinsic#value: attempted to set value (-1) less than min (0)");
         });
@@ -59,7 +58,6 @@ describe("Intrinsic", function() {
         it("throws on value greater than max", function() {
             let i = new Intrinsic("test");
             assert.throws(() => {
-                console.log("SETTING");
                 i.value = 101;
             }, RangeError, "Intrinsic#value: attempted to set value (101) greater than max (100)");
         });

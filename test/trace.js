@@ -1,7 +1,4 @@
-const {Trace, Perception, PerceptionEvent} = require("..");
-
-const {assert} = require("chai");
-const sinon = require("sinon");
+const {Trace, Perception} = require("..");
 
 process.on("unhandledRejection", (err) => {
     console.log("GOT ERROR:", err);
@@ -13,28 +10,6 @@ describe("Trace", function() {
         Perception.eventBus.removeAllListeners();
         Trace.clearEventHistory();
         // Trace.run();
-    });
-
-    it("is a function", function() {
-        assert.isFunction(Trace);
-    });
-
-    describe("checkBreak", function() {
-        it("can break", function(done) {
-            let pe = new PerceptionEvent("perception", "haptics");
-            const cbSpy = sinon.spy();
-            Perception.eventBus.on("data", cbSpy);
-            Trace.setBreakpoint("*");
-
-            pe.emit("data");
-            assert.strictEqual(cbSpy.callCount, 0);
-
-            Trace.run();
-            setTimeout(() => {
-                assert.strictEqual(cbSpy.callCount, 1);
-                done();
-            }, 5);
-        });
     });
 
     describe("getEventHistory", function() {

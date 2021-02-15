@@ -1,5 +1,6 @@
 const init = require("./lib/init");
 const {Action, ActionEvent, ActionSelection} = require("./lib/Action");
+const {Breakpoint} = require("./lib/Breakpoint");
 const {Component} = require("./lib/Component");
 const {Config} = require("./lib/Config");
 const {EventBase, EventBusBase, EventListener} = require("./lib/EventBase");
@@ -19,6 +20,7 @@ module.exports = {
     Action,
     ActionEvent,
     ActionSelection,
+    Breakpoint,
     Component,
     Config,
     EventBase,
