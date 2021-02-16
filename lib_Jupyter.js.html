@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: lib/Trace.js | NHAI</title>
+    <title>Source: lib/Jupyter.js | NHAI</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -52,30 +52,52 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/* eslint-disable jsdoc/require-jsdoc */
+            <pre class="prettyprint source linenums"><code>const nop = (... args)=>{
+    console.log("NOP:", ... args);
+};
 
-const eventList = [];
+let addMagic = nop;
+if (typeof global.$$ === "object" &amp;&amp;
+    typeof global.$$.addMagic === "function") {
+    // eslint-disable-next-line prefer-destructuring
+    addMagic = global.$$.addMagic;
+}
 
-/**
- * Tracing execution flow, used for debugging and research
- */
-class Trace {
-    static getEventHistory() {
-        return [... eventList];
+let decorateMagic = nop;
+if (typeof global.$$ === "object" &amp;&amp;
+    typeof global.$$.addMagic === "function" &amp;&amp;
+    typeof global.$$.addMagic.utils === "object" &amp;&amp;
+    typeof global.$$.addMagic.utils.decorateMagic === "function") {
+    // eslint-disable-next-line prefer-destructuring
+    decorateMagic = global.$$.addMagic.utils.decorateMagic;
+}
+
+class Jupyter {
+    /**
+     * Adds a new magic command. Wrapper around magicpatch.
+     *
+     * @param {...any} args
+     */
+    static addMagic(... args) {
+        addMagic(... args);
     }
 
-    static clearEventHistory() {
-        eventList.length = 0;
-    }
-
-    static addEvent(e) {
-        eventList.push(e);
+    /**
+     * Adds documentation and arg parsing for a magic function. Wrapper around magicpatch.
+     *
+     * @param {...any} args
+     */
+    static decorateMagic(... args) {
+        decorateMagic(... args);
     }
 }
 
 module.exports = {
-    Trace,
+    Jupyter,
 };
+
+require("./ShellCommands");
+
 </code></pre>
         </article>
     </section>
