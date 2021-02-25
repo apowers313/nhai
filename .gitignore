@@ -8,3 +8,4 @@ coverage
 docs.json
 .nhairc.js
 log/*
+.ipynb_checkpoints/
