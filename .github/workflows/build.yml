@@ -23,6 +23,9 @@ jobs:
     - name: Install
       run: npm install
 
+    - name: Install magicpatch
+      run: npm install -g magicpatch
+
     - name: Security Audit
       run: npm audit
 
@@ -62,6 +65,9 @@ jobs:
     - name: Install
       if: steps.cache.outputs.cache-hit != 'true'
       run: npm install
+
+    - name: Install magicpatch
+      run: npm install -g magicpatch
 
     - name: Test
       run: npm test
@@ -127,6 +133,9 @@ jobs:
     - name: Install
       if: steps.cache.outputs.cache-hit != 'true'
       run: npm install
+
+    - name: Install magicpatch
+      run: npm install -g magicpatch
 
     - name: Create Coverage
       run: npm run coverage
