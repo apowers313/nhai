@@ -9,14 +9,16 @@ const nodemon = require("gulp-nodemon");
 let {spawn} = require("child_process");
 const browserSync = require("browser-sync").create();
 
-const sources = ["src/*.js", "lib/*.js", "index.js", "main.js"];
-const tests = ["test/*.js"];
+const mochaPreload = "test/helpers/jupyterTest.js";
+const sources = ["src/**/*.js", "lib/**/*.js", "index.js", "main.js"];
+const tests = ["test/**/*.js"];
+const helpers = ["test/helpers/*.js"];
 const support = ["gulpfile.js", "package.json", ".eslintrc.js", "docs.json"];
-const js = [... sources, ... tests];
+const js = [... sources, ... tests, ... helpers];
 const css = ["./jsdoc.css"];
 const markdown = ["**/*.md"];
 const documentation = [... sources, ... markdown, ... css];
-const all = [... sources, ... tests, ... support];
+const all = [... js, ... support];
 const jsDocConfig = require("./.jsdoc-conf.json");
 
 /* ************
@@ -24,7 +26,11 @@ const jsDocConfig = require("./.jsdoc-conf.json");
  **************/
 function test(testReporter = "spec") {
     return src(tests)
-        .pipe(mocha({reporter: testReporter, exit: true}));
+        .pipe(mocha({
+            file: mochaPreload,
+            reporter: testReporter,
+            exit: true,
+        }));
 }
 
 function testQuiet() {
@@ -65,6 +71,8 @@ function runIstanbul(done) {
         "--reporter=html",
         "--reporter=lcov",
         "mocha",
+        "--file",
+        mochaPreload,
     ];
     let opts = {
         stdio: "inherit",

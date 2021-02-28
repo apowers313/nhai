@@ -563,9 +563,146 @@ describe("Breakpoint", function() {
         it("clearAll resets generic name");
     });
 
+    describe("find", function() {
+        it("finds by name", function() {
+            new Breakpoint({
+                sourceName: "testSource",
+                all: true,
+            });
+
+            new Breakpoint({
+                sourceType: "mySourceType",
+                any: true,
+            });
+
+            new Breakpoint({
+                eventType: "blah",
+                none: true,
+            });
+
+            let bp = new Breakpoint({
+                every: true,
+            }, "bob");
+
+            let bpFound = Breakpoint.find("bob");
+            assert.isArray(bpFound);
+            assert.strictEqual(bpFound.length, 1);
+            assert.strictEqual(bpFound[0], bp);
+        });
+
+        it("finds by number", function() {
+            new Breakpoint({
+                sourceName: "testSource",
+                all: true,
+            });
+
+            let bp = new Breakpoint({
+                sourceType: "mySourceType",
+                any: true,
+            });
+
+            new Breakpoint({
+                eventType: "blah",
+                none: true,
+            });
+
+            new Breakpoint({
+                every: true,
+            }, "bob");
+
+            let bpFound = Breakpoint.find(1);
+            assert.isArray(bpFound);
+            assert.strictEqual(bpFound.length, 1);
+            assert.strictEqual(bpFound[0], bp);
+        });
+
+        it("finds duplicate names", function() {
+            new Breakpoint({
+                sourceName: "testSource",
+                all: true,
+            }, "sam");
+
+            new Breakpoint({
+                sourceType: "mySourceType",
+                any: true,
+            }, "sam");
+
+            let bp1 = new Breakpoint({
+                eventType: "blah",
+                none: true,
+            }, "bob");
+
+            let bp2 = new Breakpoint({
+                every: true,
+            }, "bob");
+
+            let bpFound = Breakpoint.find("bob");
+            assert.isArray(bpFound);
+            assert.strictEqual(bpFound.length, 2);
+            assert.strictEqual(bpFound[0], bp1);
+            assert.strictEqual(bpFound[1], bp2);
+        });
+    });
+
     describe("clear", function() {
-        it("clear by name");
-        it("clear by number");
+        it("clear by name", function() {
+            let bp = new Breakpoint({
+                every: true,
+            }, "bob");
+
+            // should have our breakpoint
+            let bpList = Breakpoint.list;
+            assert.strictEqual(bpList.length, 1);
+            assert.strictEqual(bpList[0], bp.toString());
+
+            // clear our breakpoint
+            Breakpoint.clear("bob");
+
+            // should be empty
+            bpList = Breakpoint.list;
+            assert.strictEqual(bpList.length, 0);
+        });
+
+        it("clear by number", function() {
+            let bp = new Breakpoint({
+                every: true,
+            }, "bob");
+
+            // should have our breakpoint
+            let bpList = Breakpoint.list;
+            assert.strictEqual(bpList.length, 1);
+            assert.strictEqual(bpList[0], bp.toString());
+
+            // clear our breakpoint
+            Breakpoint.clear(0);
+
+            // should be empty
+            bpList = Breakpoint.list;
+            assert.strictEqual(bpList.length, 0);
+        });
+
+        it("clears duplicate names", function() {
+            let bp1 = new Breakpoint({
+                every: true,
+            }, "bob");
+            let bp2 = new Breakpoint({
+                eventType: "blah",
+                none: true,
+            }, "bob");
+
+            // should have our breakpoint
+            let bpList = Breakpoint.list;
+            assert.strictEqual(bpList.length, 2);
+            assert.strictEqual(bpList[0], bp1.toString());
+            assert.strictEqual(bpList[1], bp2.toString());
+
+            // clear our breakpoint
+            Breakpoint.clear("bob");
+
+            // should be empty
+            bpList = Breakpoint.list;
+            assert.strictEqual(bpList.length, 0);
+        });
     });
 
     describe("clearAll", function() {
