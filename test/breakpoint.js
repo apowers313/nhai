@@ -57,14 +57,12 @@ describe("Breakpoint", function() {
             te.emit("foo");
             assert.strictEqual(cbSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
-            assert.isTrue(Breakpoint.setBreak);
 
             Breakpoint.run();
             await delay(5);
 
             assert.strictEqual(cbSpy.callCount, 1);
             assert.isFalse(Breakpoint.inBreak);
-            assert.isFalse(Breakpoint.setBreak);
         });
 
         it("doesn't break", async function() {
@@ -76,14 +74,12 @@ describe("Breakpoint", function() {
             assert.strictEqual(cbSpy.callCount, 0);
             te.emit("foo");
             assert.isFalse(Breakpoint.inBreak);
-            assert.isFalse(Breakpoint.setBreak);
 
             // Breakpoint.run();
             await delay(5);
 
             assert.strictEqual(cbSpy.callCount, 1);
             assert.isFalse(Breakpoint.inBreak);
-            assert.isFalse(Breakpoint.setBreak);
         });
 
         it("breaks on sourcetype", async function() {
@@ -98,14 +94,12 @@ describe("Breakpoint", function() {
             te.emit("foo");
             assert.strictEqual(cbSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
-            assert.isTrue(Breakpoint.setBreak);
 
             Breakpoint.run();
             await delay(5);
 
             assert.strictEqual(cbSpy.callCount, 1);
             assert.isFalse(Breakpoint.inBreak);
-            assert.isFalse(Breakpoint.setBreak);
         });
 
         it("handles different breakpoints", async function() {
@@ -132,20 +126,17 @@ describe("Breakpoint", function() {
             assert.strictEqual(fooSpy.callCount, 0);
             assert.strictEqual(barSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
-            assert.isTrue(Breakpoint.setBreak);
 
             // continue
             Breakpoint.run();
             await delay(5);
             assert.isFalse(Breakpoint.inBreak);
-            assert.isFalse(Breakpoint.setBreak);
 
             // break on bar event
             te.emit("bar");
             assert.strictEqual(fooSpy.callCount, 1);
             assert.strictEqual(barSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
-            assert.isTrue(Breakpoint.setBreak);
 
             // continue
             Breakpoint.run();
@@ -153,7 +144,6 @@ describe("Breakpoint", function() {
             assert.strictEqual(fooSpy.callCount, 1);
             assert.strictEqual(barSpy.callCount, 1);
             assert.isFalse(Breakpoint.inBreak);
-            assert.isFalse(Breakpoint.setBreak);
         });
 
         it("breaks every time", async function() {
@@ -171,26 +161,22 @@ describe("Breakpoint", function() {
             te.emit("foo");
             assert.strictEqual(fooSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
-            assert.isTrue(Breakpoint.setBreak);
 
             // continue
             Breakpoint.run();
             await delay(5);
             assert.isFalse(Breakpoint.inBreak);
-            assert.isFalse(Breakpoint.setBreak);
 
             // break on bar event
             te.emit("foo");
             assert.strictEqual(fooSpy.callCount, 1);
             assert.isTrue(Breakpoint.inBreak);
-            assert.isTrue(Breakpoint.setBreak);
 
             // continue
             Breakpoint.run();
             await delay(5);
             assert.strictEqual(fooSpy.callCount, 2);
             assert.isFalse(Breakpoint.inBreak);
-            assert.isFalse(Breakpoint.setBreak);
         });
 
         it("breaks after count", async function() {
@@ -210,7 +196,6 @@ describe("Breakpoint", function() {
                 te.emit("foo");
                 assert.strictEqual(fooSpy.callCount, i + 1);
                 assert.isFalse(Breakpoint.inBreak);
-                assert.isFalse(Breakpoint.setBreak);
             }
             assert.strictEqual(fooSpy.callCount, 9);
 
@@ -218,14 +203,12 @@ describe("Breakpoint", function() {
             te.emit("foo");
             assert.strictEqual(fooSpy.callCount, 9);
             assert.isTrue(Breakpoint.inBreak);
-            assert.isTrue(Breakpoint.setBreak);
 
             // continue
             Breakpoint.run();
             await delay(5);
             assert.strictEqual(fooSpy.callCount, 10);
             assert.isFalse(Breakpoint.inBreak);
-            assert.isFalse(Breakpoint.setBreak);
         });
 
         it("breaks after count twice", async function() {
@@ -246,7 +229,6 @@ describe("Breakpoint", function() {
                 te.emit("foo");
                 assert.strictEqual(fooSpy.callCount, i + 1);
                 assert.isFalse(Breakpoint.inBreak);
-                assert.isFalse(Breakpoint.setBreak);
             }
             assert.strictEqual(fooSpy.callCount, 9);
 
@@ -254,21 +236,18 @@ describe("Breakpoint", function() {
             te.emit("foo");
             assert.strictEqual(fooSpy.callCount, 9);
             assert.isTrue(Breakpoint.inBreak);
-            assert.isTrue(Breakpoint.setBreak);
 
             // continue
             Breakpoint.run();
             await delay(5);
             assert.strictEqual(fooSpy.callCount, 10);
             assert.isFalse(Breakpoint.inBreak);
-            assert.isFalse(Breakpoint.setBreak);
 
             for (let i = 0; i < 9; i++) {
                 // break on foo event
                 te.emit("foo");
                 assert.strictEqual(fooSpy.callCount, i + 11);
                 assert.isFalse(Breakpoint.inBreak);
-                assert.isFalse(Breakpoint.setBreak);
             }
             assert.strictEqual(fooSpy.callCount, 19);
 
@@ -276,14 +255,12 @@ describe("Breakpoint", function() {
             te.emit("foo");
             assert.strictEqual(fooSpy.callCount, 19);
             assert.isTrue(Breakpoint.inBreak);
-            assert.isTrue(Breakpoint.setBreak);
 
             // continue
             Breakpoint.run();
             await delay(5);
             assert.strictEqual(fooSpy.callCount, 20);
             assert.isFalse(Breakpoint.inBreak);
-            assert.isFalse(Breakpoint.setBreak);
         });
 
         it("breaks on all", async function() {
@@ -310,20 +287,17 @@ describe("Breakpoint", function() {
             assert.strictEqual(fooSpy.callCount, 0);
             assert.strictEqual(barSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
-            assert.isTrue(Breakpoint.setBreak);
 
             // continue
             Breakpoint.run();
             await delay(5);
             assert.isFalse(Breakpoint.inBreak);
-            assert.isFalse(Breakpoint.setBreak);
 
             // break on bar event
             te.emit("bar");
             assert.strictEqual(fooSpy.callCount, 1);
             assert.strictEqual(barSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
-            assert.isTrue(Breakpoint.setBreak);
 
             // continue
             Breakpoint.run();
@@ -331,7 +305,6 @@ describe("Breakpoint", function() {
             assert.strictEqual(fooSpy.callCount, 1);
             assert.strictEqual(barSpy.callCount, 1);
             assert.isFalse(Breakpoint.inBreak);
-            assert.isFalse(Breakpoint.setBreak);
         });
 
         it("doesn't remove breakpoint after trigger", async function() {
@@ -350,20 +323,17 @@ describe("Breakpoint", function() {
             assert.strictEqual(fooSpy.callCount, 0);
             assert.strictEqual(barSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
-            assert.isTrue(Breakpoint.setBreak);
 
             // continue
             Breakpoint.run();
             await delay(5);
             assert.isFalse(Breakpoint.inBreak);
-            assert.isFalse(Breakpoint.setBreak);
 
             // break on bar event
             te.emit("bar");
             assert.strictEqual(fooSpy.callCount, 1);
             assert.strictEqual(barSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
-            assert.isTrue(Breakpoint.setBreak);
 
             // continue
             Breakpoint.run();
@@ -371,7 +341,6 @@ describe("Breakpoint", function() {
             assert.strictEqual(fooSpy.callCount, 1);
             assert.strictEqual(barSpy.callCount, 1);
             assert.isFalse(Breakpoint.inBreak);
-            assert.isFalse(Breakpoint.setBreak);
         });
 
         it("breaks once", async function() {
@@ -391,21 +360,18 @@ describe("Breakpoint", function() {
             te.emit("foo");
             assert.strictEqual(fooSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
-            assert.isTrue(Breakpoint.setBreak);
 
             // continue
             Breakpoint.run();
             await delay(5);
             assert.strictEqual(fooSpy.callCount, 1);
             assert.isFalse(Breakpoint.inBreak);
-            assert.isFalse(Breakpoint.setBreak);
 
             // don't break on foo event again
             te.emit("foo");
             await delay(5);
             assert.strictEqual(fooSpy.callCount, 2);
             assert.isFalse(Breakpoint.inBreak);
-            assert.isFalse(Breakpoint.setBreak);
         });
 
         it("clear");
