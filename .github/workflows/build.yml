@@ -29,9 +29,9 @@ jobs:
     - name: Security Audit
       run: npm audit
 
-    # - name: List Modules
-    #   run: npm ls
-    #   continue-on-error: true
+    - name: List Modules
+      run: npm ls
+      continue-on-error: true
 
     - name: Lint
       run: npm run lint
