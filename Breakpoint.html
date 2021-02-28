@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Class: EventFilter | NHAI</title>
+    <title>Class: Breakpoint | NHAI</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -52,9 +52,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>EventFilter<span class="signature">(type, criteria, priority<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
-        
-            <div class="class-description"><p>A filter that detects if an event should be allowed or denied based on some criteria.</p></div>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Breakpoint<span class="signature">(criteria, name)</span><span class="type-signature"> &rarr; {<a href="Breakpoint.html">Breakpoint</a>}</span></h2>
         
     
 </header>
@@ -67,14 +65,14 @@
 
 <dt>
     
-        <h4 class="name" id="EventFilter">
+        <h4 class="name" id="Breakpoint">
             
-                new <span class="type-signature"></span>EventFilter<span class="signature">(type, criteria, priority<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
+                new <span class="type-signature"></span>Breakpoint<span class="signature">(criteria, name)</span><span class="type-signature"> &rarr; {<a href="Breakpoint.html">Breakpoint</a>}</span>
                 
             
             <div class="container-source members">
-                <code><a href="lib_EventFilter.js.html">lib/EventFilter.js</a></code>,
-                <code><a href="lib_EventFilter.js.html#line11">line 11</a></code>
+                <code><a href="lib_Breakpoint.js.html">lib/Breakpoint.js</a></code>,
+                <code><a href="lib_Breakpoint.js.html#line20">line 20</a></code>
             </div>
             
         </h4>
@@ -86,8 +84,7 @@
 
     
     <div class="description">
-        <p>Creates a new filter for an event. The filter is a simple detecter for a single set of criteria, but can be chained
-together into a firewall-like set of policies as a <a href="EventListener.html">EventListener</a> <code>filterList</code>.</p>
+        <p>Used to stop running code when specific criteria are met</p>
     </div>
     
 
@@ -111,11 +108,7 @@ together into a firewall-like set of policies as a <a href="EventListener.html">
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
-        
-        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -123,44 +116,6 @@ together into a firewall-like set of policies as a <a href="EventListener.html">
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>type</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">"allow"</span>
-|
-
-<span class="param-type">"deny"</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>Whether this filter is allowing or denying a specific event.</p></td>
-        </tr>
-
     
 
         <tr>
@@ -178,47 +133,17 @@ together into a firewall-like set of policies as a <a href="EventListener.html">
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last"><p>An Object describing the filter rules</p>
-                <h6>Properties</h6>
-                
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
+            <td class="description last"><p>Critera for when the Breakpoint should stop code from running. See <a href="EventFilter.html">EventFilter</a> for details</p></td>
+        </tr>
 
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
     
 
         <tr>
             
-                <td class="name"><code>sourceType</code></td>
+                <td class="name"><code>name</code></td>
             
 
             <td class="type">
@@ -234,194 +159,7 @@ together into a firewall-like set of policies as a <a href="EventListener.html">
 
             
 
-            <td class="description last"><p>Matches the <code>sourceType</code> of the <a href="EventBase.html">EventBase</a></p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>sourceName</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Matches the <code>sourceName</code> of the <a href="EventBase.html">EventBase</a></p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>eventType</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Matches the <code>eventType</code> of the <a href="EventBase.html">EventBase</a></p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>fn</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>A custom function for making complex filtering decisions. Receives a
-single <a href="EventBase.html">EventBase</a> parameter and returns <code>true</code> for match and
-<code>false</code> for non-match.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>any</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>This filter is <code>true</code> if any criteria are true.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>all</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>This filter is <code>true</code> if all criteria are true.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>none</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>This filter is <code>true</code> if none of criteria are true.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>priority</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    100
-                
-                </td>
-            
-
-            <td class="description last"><p>The priority of this specific filter. Not useful for a single filter,
-but used as part of an <a href="EventListener.html">EventListener</a> <code>filterList</code>.</p></td>
+            <td class="description last"><p>Optional name for this breakpoint. If no name is specified, a default name will be assigned.</p></td>
         </tr>
 
     
@@ -442,129 +180,29 @@ but used as part of an <a href="EventListener.html">EventListener</a> <code>filt
     
 
     
-
-    
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
+    <div class="container-returns">
+        <h5>Returns:</h5>
         
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>allow</code></td>
-            
-
-            <td class="type">
-            
                 
-<span class="param-type">boolean</span>
+
+
+
+<span class="param-type"><a href="Breakpoint.html">Breakpoint</a></span>
+
+
+
+
+
+- <p>The Breakpoint that was created</p>
+
+
 
 
             
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p><code>true</code> if this EventFilter is intended to allow an event</p></td>
-        </tr>
-
+    </div>
     
 
-        <tr>
-            
-                <td class="name"><code>deny</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p><code>true</code> if this EventFilter is intended to deny an event</p></td>
-        </tr>
-
     
-
-        <tr>
-            
-                <td class="name"><code>priority</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The relative priority of this filter. Used when part of a <a href="EventListener.html">EventListener</a> <code>filterList</code>.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>criteria</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The original criteria object passed to the constructor</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
 
 
 <dl class="details">
@@ -622,6 +260,217 @@ but used as part of an <a href="EventListener.html">EventListener</a> <code>filt
     
 
     
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+
+<dt>
+<h4 class="name" id=".inBreak">
+    <span class="type-signature"><span class="icon green">static</span> </span>inBreak<span class="type-signature"></span>
+    
+    <div class="container-source members">
+        <code><a href="lib_Breakpoint.js.html">lib/Breakpoint.js</a></code>,
+        <code><a href="lib_Breakpoint.js.html#line288">line 288</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>true if a break has been triggered</p>
+    </div>
+    
+
+    <!--
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id=".list">
+    <span class="type-signature"><span class="icon green">static</span> </span>list<span class="type-signature"></span>
+    
+    <div class="container-source members">
+        <code><a href="lib_Breakpoint.js.html">lib/Breakpoint.js</a></code>,
+        <code><a href="lib_Breakpoint.js.html#line298">line 298</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Array of breakpoint strings, as returned by <code>toString</code></p>
+    </div>
+    
+
+    <!--
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id=".setBreak">
+    <span class="type-signature"><span class="icon green">static</span> </span>setBreak<span class="type-signature"></span>
+    
+    <div class="container-source members">
+        <code><a href="lib_Breakpoint.js.html">lib/Breakpoint.js</a></code>,
+        <code><a href="lib_Breakpoint.js.html#line293">line 293</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>true if a break has been triggered</p>
+    </div>
+    
+
+    <!--
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        </dl>
+    
 
     
         <h3 class="subsection-title">Methods</h3>
@@ -631,14 +480,14 @@ but used as part of an <a href="EventListener.html">EventListener</a> <code>filt
 
 <dt>
     
-        <h4 class="name" id=".buildTestFn">
+        <h4 class="name" id=".checkBreak">
             
-                <span class="type-signature"><span class="icon green">static</span> </span>buildTestFn<span class="signature">(criteria)</span><span class="type-signature"> &rarr; {function}</span>
+                <span class="type-signature"><span class="icon green">async</span>, <span class="icon green">static</span> </span>checkBreak<span class="signature">(e, cb)</span><span class="type-signature"> &rarr; {Promise}</span>
                 
             
             <div class="container-source members">
-                <code><a href="lib_EventFilter.js.html">lib/EventFilter.js</a></code>,
-                <code><a href="lib_EventFilter.js.html#line126">line 126</a></code>
+                <code><a href="lib_Breakpoint.js.html">lib/Breakpoint.js</a></code>,
+                <code><a href="lib_Breakpoint.js.html#line180">line 180</a></code>
             </div>
             
         </h4>
@@ -650,7 +499,7 @@ but used as part of an <a href="EventListener.html">EventListener</a> <code>filt
 
     
     <div class="description">
-        <p>Builds a test function for the specified criteria</p>
+        <p>Evaluates whether the specified event triggers a breakpoint</p>
     </div>
     
 
@@ -686,13 +535,13 @@ but used as part of an <a href="EventListener.html">EventListener</a> <code>filt
 
         <tr>
             
-                <td class="name"><code>criteria</code></td>
+                <td class="name"><code>e</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type"><a href="EventBase.html">EventBase</a></span>
 
 
             
@@ -702,42 +551,64 @@ but used as part of an <a href="EventListener.html">EventListener</a> <code>filt
 
             
 
-            <td class="description last"><p>The criteria object. See <a href="EventFilter.html">EventFilter</a> constructor for details.</p></td>
+            <td class="description last"><p>An event that is derived from EventBase</p></td>
         </tr>
 
     
-    </tbody>
-</table>
 
-    </div>
-    
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
 
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <div class="container-returns">
-        <h5>Returns:</h5>
-        
+            <td class="type">
+            
                 
-
-
-
 <span class="param-type">function</span>
 
 
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A callback function for when resuming from the break</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
 
 
 
-- <p>A function that recieves a single <a href="EventBase.html">EventBase</a> parameter and returns <code>true</code> if the
-event matches the criteria, <code>false</code> otherwise</p>
+<span class="param-type">Promise</span>
+
+
+
+
+
+- <p>a Promise that resolves when resuming from the breakpoint</p>
 
 
 
@@ -792,14 +663,14 @@ event matches the criteria, <code>false</code> otherwise</p>
 
 <dt>
     
-        <h4 class="name" id="allowEvent">
+        <h4 class="name" id=".clear">
             
-                <span class="type-signature"></span>allowEvent<span class="signature">(event)</span><span class="type-signature"> &rarr; {boolean}</span>
+                <span class="type-signature"><span class="icon green">static</span> </span>clear<span class="signature">(name)</span><span class="type-signature"> &rarr; {boolean}</span>
                 
             
             <div class="container-source members">
-                <code><a href="lib_EventFilter.js.html">lib/EventFilter.js</a></code>,
-                <code><a href="lib_EventFilter.js.html#line111">line 111</a></code>
+                <code><a href="lib_Breakpoint.js.html">lib/Breakpoint.js</a></code>,
+                <code><a href="lib_Breakpoint.js.html#line255">line 255</a></code>
             </div>
             
         </h4>
@@ -811,7 +682,7 @@ event matches the criteria, <code>false</code> otherwise</p>
 
     
     <div class="description">
-        <p>Indicates whether this event should be allowed or not</p>
+        <p>Delete a breakpoint</p>
     </div>
     
 
@@ -847,13 +718,16 @@ event matches the criteria, <code>false</code> otherwise</p>
 
         <tr>
             
-                <td class="name"><code>event</code></td>
+                <td class="name"><code>name</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">boolean</span>
+<span class="param-type">string</span>
+|
+
+<span class="param-type">number</span>
 
 
             
@@ -863,7 +737,7 @@ event matches the criteria, <code>false</code> otherwise</p>
 
             
 
-            <td class="description last"><p>The event to evaluate against the criteria</p></td>
+            <td class="description last"><p>The name or number of the breakpoint. If multiple breakpoints with the same name are found, they are all cleared.</p></td>
         </tr>
 
     
@@ -897,7 +771,7 @@ event matches the criteria, <code>false</code> otherwise</p>
 
 
 
-- <p>Returns <code>true</code> if the event matches the criteria and should be allowed, <code>false</code> otherwise</p>
+- <p>Returns <code>true</code> if the breakpoint was found and enabled, false otherwise.</p>
 
 
 
@@ -952,14 +826,14 @@ event matches the criteria, <code>false</code> otherwise</p>
 
 <dt>
     
-        <h4 class="name" id="denyEvent">
+        <h4 class="name" id=".clearAll">
             
-                <span class="type-signature"></span>denyEvent<span class="signature">(event)</span><span class="type-signature"> &rarr; {boolean}</span>
+                <span class="type-signature"><span class="icon green">static</span> </span>clearAll<span class="signature">()</span><span class="type-signature"></span>
                 
             
             <div class="container-source members">
-                <code><a href="lib_EventFilter.js.html">lib/EventFilter.js</a></code>,
-                <code><a href="lib_EventFilter.js.html#line97">line 97</a></code>
+                <code><a href="lib_Breakpoint.js.html">lib/Breakpoint.js</a></code>,
+                <code><a href="lib_Breakpoint.js.html#line282">line 282</a></code>
             </div>
             
         </h4>
@@ -971,7 +845,96 @@ event matches the criteria, <code>false</code> otherwise</p>
 
     
     <div class="description">
-        <p>Indicates whether this event should be denied or not</p>
+        <p>Clear all breakpoints</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id=".disable">
+            
+                <span class="type-signature"><span class="icon green">static</span> </span>disable<span class="signature">(name)</span><span class="type-signature"> &rarr; {boolean}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_Breakpoint.js.html">lib/Breakpoint.js</a></code>,
+                <code><a href="lib_Breakpoint.js.html#line265">line 265</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Disable a breakpoint so that it still exists, but doesn't trigger</p>
     </div>
     
 
@@ -1007,13 +970,16 @@ event matches the criteria, <code>false</code> otherwise</p>
 
         <tr>
             
-                <td class="name"><code>event</code></td>
+                <td class="name"><code>name</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">boolean</span>
+<span class="param-type">string</span>
+|
+
+<span class="param-type">number</span>
 
 
             
@@ -1023,7 +989,7 @@ event matches the criteria, <code>false</code> otherwise</p>
 
             
 
-            <td class="description last"><p>The event to evaluate against the criteria</p></td>
+            <td class="description last"><p>The name or number of the breakpoint. If multiple breakpoints with the same name are found, they are all disabled.</p></td>
         </tr>
 
     
@@ -1057,13 +1023,781 @@ event matches the criteria, <code>false</code> otherwise</p>
 
 
 
-- <p>Returns <code>true</code> if the event matches the criteria and should be denied, <code>false</code> otherwise</p>
+- <p>Returns <code>true</code> if the breakpoint was found and enabled, false otherwise.</p>
 
 
 
 
             
     </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id=".enable">
+            
+                <span class="type-signature"><span class="icon green">static</span> </span>enable<span class="signature">(name)</span><span class="type-signature"> &rarr; {boolean}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_Breakpoint.js.html">lib/Breakpoint.js</a></code>,
+                <code><a href="lib_Breakpoint.js.html#line275">line 275</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Enable a previously disabled breakpoint</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name or number of the breakpoint. If multiple breakpoints with the same name are found, they are all enabled.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">boolean</span>
+
+
+
+
+
+- <p>Returns <code>true</code> if the breakpoint was found and enabled, false otherwise.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id=".find">
+            
+                <span class="type-signature"><span class="icon green">static</span> </span>find<span class="signature">(name)</span><span class="type-signature"> &rarr; {Array.&lt;<a href="Breakpoint.html">Breakpoint</a>>}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_Breakpoint.js.html">lib/Breakpoint.js</a></code>,
+                <code><a href="lib_Breakpoint.js.html#line236">line 236</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Find breakpoints with the corresponding 'name'</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the breakpoint(s) to find</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">Array.&lt;<a href="Breakpoint.html">Breakpoint</a>></span>
+
+
+
+
+
+- <p>An Array of Breakpoints that were found, or an empty array if none were found.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id=".run">
+            
+                <span class="type-signature"><span class="icon green">static</span> </span>run<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_Breakpoint.js.html">lib/Breakpoint.js</a></code>,
+                <code><a href="lib_Breakpoint.js.html#line223">line 223</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Resumes running after a breakpoint has been triggered</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id=".setBreakpoint">
+            
+                <span class="type-signature"><span class="icon green">static</span> </span>setBreakpoint<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_Breakpoint.js.html">lib/Breakpoint.js</a></code>,
+                <code><a href="lib_Breakpoint.js.html#line216">line 216</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Sets a new breakpoint</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="clear">
+            
+                <span class="type-signature"></span>clear<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_Breakpoint.js.html">lib/Breakpoint.js</a></code>,
+                <code><a href="lib_Breakpoint.js.html#line57">line 57</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Clears this breakpoint by removing it from the global breakpoint list</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="disable">
+            
+                <span class="type-signature"></span>disable<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_Breakpoint.js.html">lib/Breakpoint.js</a></code>,
+                <code><a href="lib_Breakpoint.js.html#line74">line 74</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Disables this breakpoint</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="enable">
+            
+                <span class="type-signature"></span>enable<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_Breakpoint.js.html">lib/Breakpoint.js</a></code>,
+                <code><a href="lib_Breakpoint.js.html#line81">line 81</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Enables this Breakpoint</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
     
 
     
@@ -1114,12 +1848,12 @@ event matches the criteria, <code>false</code> otherwise</p>
     
         <h4 class="name" id="matchEvent">
             
-                <span class="type-signature"></span>matchEvent<span class="signature">(event)</span><span class="type-signature"> &rarr; {boolean}</span>
+                <span class="type-signature"></span>matchEvent<span class="signature">(e)</span><span class="type-signature"> &rarr; {boolean}</span>
                 
             
             <div class="container-source members">
-                <code><a href="lib_EventFilter.js.html">lib/EventFilter.js</a></code>,
-                <code><a href="lib_EventFilter.js.html#line87">line 87</a></code>
+                <code><a href="lib_Breakpoint.js.html">lib/Breakpoint.js</a></code>,
+                <code><a href="lib_Breakpoint.js.html#line91">line 91</a></code>
             </div>
             
         </h4>
@@ -1131,7 +1865,7 @@ event matches the criteria, <code>false</code> otherwise</p>
 
     
     <div class="description">
-        <p>Indicates whether the event matches the criteria or not</p>
+        <p>Determines if this Breakpoint matches event 'e' based on the 'criteria' specified when the Breakpoint was created. Used to determine if the program should stop.</p>
     </div>
     
 
@@ -1167,7 +1901,7 @@ event matches the criteria, <code>false</code> otherwise</p>
 
         <tr>
             
-                <td class="name"><code>event</code></td>
+                <td class="name"><code>e</code></td>
             
 
             <td class="type">
@@ -1183,7 +1917,7 @@ event matches the criteria, <code>false</code> otherwise</p>
 
             
 
-            <td class="description last"><p>The event to evaluate against the criteria</p></td>
+            <td class="description last"><p>The event to be evaluated</p></td>
         </tr>
 
     
@@ -1217,14 +1951,102 @@ event matches the criteria, <code>false</code> otherwise</p>
 
 
 
-- <p>Returns <code>true</code> if the specified event matches the criteria specified in the
-constructor, <code>false</code> otherwise</p>
+- <p>Returns <code>true</code> if the event matches this Breakpoint's criteria, <code>false</code> otherwise</p>
 
 
 
 
             
     </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="toString">
+            
+                <span class="type-signature"></span>toString<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_Breakpoint.js.html">lib/Breakpoint.js</a></code>,
+                <code><a href="lib_Breakpoint.js.html#line118">line 118</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Converts the Breakpoint to a human-readable String</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
     
 
     
@@ -1293,7 +2115,7 @@ constructor, <code>false</code> otherwise</p>
 <script src="scripts/linenumber.js"></script>
 
     <script>
-        var id = 'EventFilter_sub'.replace(/"/g, '_');
+        var id = 'Breakpoint_sub'.replace(/"/g, '_');
         var selectedApi = document.getElementById(id); // do not use jquery selector
         var $selectedApi = $(selectedApi);
 
