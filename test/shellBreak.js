@@ -86,6 +86,8 @@ describe("%break", function() {
 
             await testMagic(
             // magic command
+                "%break list\n" +
+                "%break clear --all\n" +
                 "%break list\n",
                 // return value
                 undefined,
@@ -93,33 +95,6 @@ describe("%break", function() {
                 [
                     "Breakpoints:",
                     "(1)    bp1: \"all::sourceName:mySourceName\"",
-                ],
-                // stderr
-                [],
-                // print output
-                // true,
-            );
-
-            await testMagic(
-            // magic command
-                "%break clear\n",
-                // return value
-                undefined,
-                // stdout
-                [],
-                // stderr
-                [],
-                // print output
-                // true,
-            );
-
-            await testMagic(
-            // magic command
-                "%break list\n",
-                // return value
-                undefined,
-                // stdout
-                [
                     "No Breakpoints.",
                 ],
                 // stderr
@@ -128,9 +103,7 @@ describe("%break", function() {
                 // true,
             );
         });
-    });
 
-    describe("delete", function() {
         it("by name", async function() {
             new Breakpoint({
                 sourceName: "mySourceName",
@@ -140,7 +113,7 @@ describe("%break", function() {
             await testMagic(
             // magic command
                 "%break list\n" +
-                "%break delete bp1\n" +
+                "%break clear bp1\n" +
                 "%break list\n",
                 // return value
                 undefined,
@@ -166,7 +139,7 @@ describe("%break", function() {
             await testMagic(
             // magic command
                 "%break list\n" +
-                "%break delete 1\n" +
+                "%break clear 1\n" +
                 "%break list\n",
                 // return value
                 undefined,
@@ -197,7 +170,7 @@ describe("%break", function() {
             await testMagic(
                 // magic command
                 "%break list\n" +
-                "%break delete bp1 bp2\n" +
+                "%break clear bp1 bp2\n" +
                 "%break list\n",
                 // return value
                 undefined,
@@ -218,7 +191,7 @@ describe("%break", function() {
         it("errors on name not found", async function() {
             await testMagic(
                 // magic command
-                "%break delete bar\n",
+                "%break clear bar\n",
                 // return value
                 undefined,
                 // stdout
@@ -230,16 +203,63 @@ describe("%break", function() {
             );
         });
 
+        it("clears all if both 'name' and 'all' are specified", async function() {
+            new Breakpoint({
+                sourceName: "mySourceName1",
+                all: true,
+            });
+
+            new Breakpoint({
+                sourceName: "mySourceName2",
+                all: true,
+            });
+
+            await testMagic(
+                // magic command
+                "%break list\n" +
+                "%break clear bp1 --all\n" +
+                "%break list\n",
+                // return value
+                undefined,
+                // stdout
+                [
+                    "Breakpoints:",
+                    "(1)    bp1: \"all::sourceName:mySourceName1\"",
+                    "(2)    bp2: \"all::sourceName:mySourceName2\"",
+                    "No Breakpoints.",
+                ],
+                // stderr
+                [],
+                // print output
+                // true,
+            );
+        });
+
         it("errors on number not found", async function() {
             await testMagic(
                 // magic command
-                "%break delete 42\n",
+                "%break clear 42\n",
                 // return value
                 undefined,
                 // stdout
                 [],
                 // stderr
                 ["Breakpoint(s) not found: 42"],
+                // print output
+                // true,
+            );
+        });
+
+        it("errors if neither name nor all are specified", async function() {
+            await testMagic(
+                // magic command
+                "%break clear\n",
+                // return value
+                undefined,
+                // stdout
+                [],
+                // stderr
+                ["Must provide a list of breakpoint names or numbers to clear, or the --all flag to clear all breakpoints."],
                 // print output
                 // true,
             );
