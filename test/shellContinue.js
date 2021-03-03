@@ -1,7 +1,7 @@
 const {assert} = require("chai");
 const sinon = require("sinon");
 
-const {testMagic, getMagic} = require("./helpers/jupyterTest.js");
+const {testMagic} = require("./helpers/jupyterTest.js");
 const {Breakpoint, EventBase, EventBusBase, Log} = require("..");
 
 // helpers
