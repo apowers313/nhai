@@ -1,5 +1,6 @@
 const nethackShimCallback = require("./src/nethackCallback");
-const {init, Log} = require("./index");
+const crl = require("./index");
+const {init, Log} = crl;
 let nethackInternalLogger;
 let runCount = 0;
 /* global WebAssembly */
@@ -110,10 +111,12 @@ function printMemory() {
     }
 }
 
-/* int main(int argc, char **argv) */
-(async function() {
-    await init();
-    nethackInternalLogger = new Log("nethack-internal");
-    runNethack();
-})();
-
+module.exports = {
+    // eslint-disable-next-line jsdoc/require-jsdoc
+    runNethack: async function() {
+        await init();
+        nethackInternalLogger = new Log("nethack-internal");
+        runNethack();
+    },
+    crl,
+};
