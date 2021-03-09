@@ -17,7 +17,8 @@
     "test:quiet": "gulp test:quiet",
     "lint": "gulp lint",
     "coverage": "gulp coverage",
-    "docs": "gulp docs"
+    "docs": "gulp docs",
+    "experiment": "plop --plopfile templates/plopfile.js --dest tmp"
   },
   "author": "Adam Powers <apowers@ato.ms>",
   "repository": {
@@ -51,6 +52,7 @@
     "npm-watch": "^0.7.0",
     "nyc": "^15.1.0",
     "pinst": "^2.1.1",
+    "plop": "^2.7.4",
     "sinon": "^9.2.1",
     "standard-version": "^9.0.0",
     "std-mocks": "^1.0.1",
