@@ -63,7 +63,7 @@ function capacityToValue(val) {
 // }
 
 // eslint-disable-next-line jsdoc/require-jsdoc
-function setIntrinsic(name, value) {
+async function setIntrinsic(name, value) {
     if (ignoreList.has(name)) {
         return;
     }
@@ -72,7 +72,7 @@ function setIntrinsic(name, value) {
 
     let i = Component.get(name);
     checkInstance("setIntrinsic", "intrinsic", i, Component);
-    i.value = value;
+    await i.setValue(value);
 }
 
 function convertNethackName(name) {
