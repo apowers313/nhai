@@ -4,7 +4,7 @@ const {Grid} = require("./Grid.js");
 const vision = require("./nethackVision");
 const setIntrinsic = require("./nethackIntrinsic");
 const {actionQueue, getAction} = require("./nethackAction");
-const {Log} = require("../index");
+const {Log, Synchronize} = require("../index");
 const {trace, warn} = Log;
 
 // eslint-disable-next-line jsdoc/require-jsdoc
@@ -99,6 +99,7 @@ async function printGlyph(win, x, y, glyph, bkglyph) {
 }
 
 async function awaitAction() {
+    Synchronize.nextTick(); // TODO: refactor this call into Action class?
     await getAction();
     let ch = actionQueue.shift();
     trace("got action character:", ch);
