@@ -102,7 +102,7 @@ describe("Significance", function() {
                 min: 0,
                 max: 100,
             });
-            i.value = 50;
+            i.setValue(50);
 
             Synchronize.nextTick();
         });
@@ -126,7 +126,7 @@ describe("Significance", function() {
                 min: 0,
                 max: 100,
             });
-            i.value = 50;
+            i.setValue(50);
 
             Synchronize.nextTick();
         });
@@ -163,7 +163,7 @@ describe("Significance", function() {
                 min: 0,
                 max: 100,
             });
-            i1.value = 50;
+            i1.setValue(50);
 
             // .125 * 2 = .25
             Significance.setWeight("test2", 2);
@@ -171,7 +171,7 @@ describe("Significance", function() {
                 min: 10,
                 max: 26,
             });
-            i2.value = 12;
+            i2.setValue(12);
 
             // .1 * 20 = 2
             Significance.setWeight("test3", 20);
@@ -179,7 +179,7 @@ describe("Significance", function() {
                 min: -43,
                 max: 57,
             });
-            i3.value = -33;
+            i3.setValue(-33);
 
             Synchronize.nextTick();
         });
