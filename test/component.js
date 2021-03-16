@@ -99,5 +99,16 @@ describe("Component", function() {
             Component.register(c);
         });
     });
+
+    describe("sendEvent", function() {
+        it("returns Promise", function() {
+            let c = new Component("foo", "bar", TestEvent);
+            let ret = c.sendEvent("foo");
+            assert.instanceOf(ret, Promise);
+        });
+
+        it("emits event");
+        it("throws on bad type");
+    });
 });
 
