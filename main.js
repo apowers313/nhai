@@ -17,7 +17,7 @@ function buildWasmModule() {
             console.info(`NetHack run # ${runCount} completed with status: ${errorCode}`);
             printTimer();
             // run NetHack in an infinite loop
-            runNethack();
+            startNethack();
         },
         logReadFiles: true,
         // noExitRuntime: false,
@@ -29,8 +29,8 @@ function buildWasmModule() {
     };
 }
 
-// run NetHack
-function runNethack() {
+// start / restart NetHack
+function startNethack() {
     runCount++;
     console.info(`Starting NetHack: run #${runCount}`);
     printMemory();
@@ -116,7 +116,7 @@ module.exports = {
     runNethack: async function() {
         await init();
         nethackInternalLogger = new Log("nethack-internal");
-        runNethack();
+        startNethack();
     },
     crl,
 };
