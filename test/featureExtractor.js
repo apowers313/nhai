@@ -2,8 +2,8 @@ const {FeatureExtractor, Component, Perception, PerceptionEvent, EventFilter, Ev
 const {assert} = require("chai");
 
 describe("FeatureExtractor", function() {
-    afterEach(function() {
-        Perception.eventBus.removeAllListeners();
+    afterEach(async function() {
+        await Perception.eventBus.removeAllListeners();
         Component.clearList();
     });
 
@@ -13,34 +13,33 @@ describe("FeatureExtractor", function() {
     });
 
     describe("listen", function() {
-        it("catches events", function(done) {
+        it("catches events", async function() {
             let o = {beer: "yum"};
             let e = new PerceptionEvent("haptics", "perception");
             let fe = new FeatureExtractor("bob", function(... args) {
                 assert.strictEqual(args.length, 2);
                 assert.strictEqual(args[0], o);
                 assert.strictEqual(args[1], e);
-                done();
             });
             fe.listen("haptics");
-            e.emit("data", o);
+            await e.emit("data", o);
         });
 
-        it("emits return value", function(done) {
+        it("emits return value", async function() {
             let ret = {tequila: "blech"};
             let e = new PerceptionEvent("haptics", "perception");
             let fe = new FeatureExtractor("bob", function() {
                 return ret;
             });
             fe.listen("haptics");
-            e.emit("data");
 
             // listen for feature-extractor event
             let f = new EventFilter("allow", {eventType: "data", sourceType: "feature-extractor", sourceName: "bob", all: true});
             new EventListener(Perception.eventBus, f, function(feEvent) {
                 assert.strictEqual(feEvent.data, ret);
-                done();
             });
+
+            await e.emit("data");
         });
     });
 

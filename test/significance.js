@@ -4,14 +4,14 @@ const sinon = require("sinon");
 const sandbox = sinon.createSandbox();
 
 describe("Significance", function() {
-    beforeEach(function() {
-        Synchronize.init();
+    beforeEach(async function() {
+        await Synchronize.init();
     });
 
-    afterEach(function() {
-        Synchronize.shutdown();
+    afterEach(async function() {
+        await Synchronize.shutdown();
         Component.clearList();
-        Significance.eventBus.removeAllListeners();
+        await Significance.eventBus.removeAllListeners();
         Significance.clearWeights();
     });
 
@@ -42,11 +42,11 @@ describe("Significance", function() {
             sandbox.restore();
         });
 
-        it("catches intrinsic change", function() {
+        it("catches intrinsic change", async function() {
             let s = new Significance();
 
             let e = new SignificanceEvent("test", "intrinsic");
-            e.emit("change", {
+            await e.emit("change", {
                 oldVal: 1,
                 newVal: 2,
                 intrinsic: {},
@@ -55,37 +55,40 @@ describe("Significance", function() {
             assert.strictEqual(s.getChange.args[0][0], e);
         });
 
-        it("fires significance", function(done) {
-            Significance.eventBus.on("significance", (e) => {
+        it("fires significance", async function() {
+            let spy = sinon.spy((e) => {
                 assert.isObject(e.data);
                 assert.strictEqual(e.data.significance, 0);
                 assert.isArray(e.data.changes);
                 assert.strictEqual(e.data.changes.length, 0);
-                done();
             });
+            let evt = Significance.eventBus.on("significance", spy);
 
-            new Significance();
-            Synchronize.nextTick();
+            await Significance.init();
+            await Synchronize.nextTick();
+            await evt;
+            assert.strictEqual(spy.callCount, 1);
         });
     });
 
     describe("weight", function() {
-        it("no change", function(done) {
-            Significance.eventBus.on("significance", (e) => {
+        it("no change", async function() {
+            let spy = sinon.spy((e) => {
                 assert.isObject(e.data);
                 assert.strictEqual(e.data.significance, 0);
                 assert.isArray(e.data.changes);
                 assert.strictEqual(e.data.changes.length, 0);
-                done();
             });
+            let evt = Significance.eventBus.on("significance", spy);
 
-            new Significance();
-            console.log("doing tick");
-            Synchronize.nextTick();
+            await Significance.init();
+            await Synchronize.nextTick();
+            await evt;
+            assert.strictEqual(spy.callCount, 1);
         });
 
-        it("no weight", function(done) {
-            Significance.eventBus.on("significance", (e) => {
+        it("no weight", async function() {
+            let spy = sinon.spy((e) => {
                 assert.isObject(e.data);
                 assert.strictEqual(e.data.significance, 0.5);
                 assert.isArray(e.data.changes);
@@ -93,22 +96,24 @@ describe("Significance", function() {
                 assert.strictEqual(e.data.changes[0].type, "test");
                 assert.strictEqual(e.data.changes[0].val, 0.5);
                 assert.strictEqual(e.data.changes[0].weightedVal, 0.5);
-                done();
             });
 
-            new Significance();
+            await Significance.init();
+            let evt = Significance.eventBus.on("significance", spy);
 
             let i = new Intrinsic("test", {
                 min: 0,
                 max: 100,
             });
-            i.setValue(50);
+            await i.setValue(50);
 
-            Synchronize.nextTick();
+            await Synchronize.nextTick();
+            await evt;
+            assert.strictEqual(spy.callCount, 1);
         });
 
-        it("weighted", function(done) {
-            Significance.eventBus.on("significance", (e) => {
+        it("weighted", async function() {
+            let spy = sinon.spy((e) => {
                 assert.isObject(e.data);
                 assert.strictEqual(e.data.significance, 2);
                 assert.isArray(e.data.changes);
@@ -116,23 +121,25 @@ describe("Significance", function() {
                 assert.strictEqual(e.data.changes[0].type, "test");
                 assert.strictEqual(e.data.changes[0].val, 0.5);
                 assert.strictEqual(e.data.changes[0].weightedVal, 2);
-                done();
             });
 
-            new Significance();
+            await Significance.init();
+            let evt = Significance.eventBus.on("significance", spy);
 
             Significance.setWeight("test", 4);
             let i = new Intrinsic("test", {
                 min: 0,
                 max: 100,
             });
-            i.setValue(50);
+            await i.setValue(50);
 
-            Synchronize.nextTick();
+            await Synchronize.nextTick();
+            await evt;
+            assert.strictEqual(spy.callCount, 1);
         });
 
-        it("multi-change, multi-weight", function(done) {
-            Significance.eventBus.on("significance", (e) => {
+        it("multi-change, multi-weight", async function() {
+            let spy = sinon.spy((e) => {
                 assert.isObject(e.data);
                 assert.strictEqual(e.data.significance, 2.75);
                 assert.isArray(e.data.changes);
@@ -152,18 +159,17 @@ describe("Significance", function() {
                 assert.strictEqual(e.data.changes[2].type, "test3");
                 assert.strictEqual(e.data.changes[2].val, 0.1);
                 assert.strictEqual(e.data.changes[2].weightedVal, 2);
-
-                done();
             });
 
-            new Significance();
+            await Significance.init();
+            let evt = Significance.eventBus.on("significance", spy);
 
             // .5 * 1 = .5
             let i1 = new Intrinsic("test1", {
                 min: 0,
                 max: 100,
             });
-            i1.setValue(50);
+            await i1.setValue(50);
 
             // .125 * 2 = .25
             Significance.setWeight("test2", 2);
@@ -171,17 +177,19 @@ describe("Significance", function() {
                 min: 10,
                 max: 26,
             });
-            i2.setValue(12);
+            await i2.setValue(12);
 
             // .1 * 20 = 2
-            Significance.setWeight("test3", 20);
+            await Significance.setWeight("test3", 20);
             let i3 = new Intrinsic("test3", {
                 min: -43,
                 max: 57,
             });
-            i3.setValue(-33);
+            await i3.setValue(-33);
 
-            Synchronize.nextTick();
+            await Synchronize.nextTick();
+            await evt;
+            assert.strictEqual(spy.callCount, 1);
         });
     });
 });

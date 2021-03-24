@@ -25,9 +25,9 @@ const delta1to2 = [
 ];
 
 describe("DeltaFeatureExtractor", function() {
-    beforeEach(function() {
+    beforeEach(async function() {
         Component.clearList();
-        Perception.eventBus.removeAllListeners();
+        await Perception.eventBus.removeAllListeners();
     });
 
     it("is FeatureExtractor", function() {
@@ -53,14 +53,12 @@ describe("DeltaFeatureExtractor", function() {
             assert.isNull(ret2);
         });
 
-        it("catches perception 'data' and emits delta 'data'", function(done) {
+        it("catches perception 'data' and emits delta 'data'", async function() {
             // setup
             let dfe = new DeltaFeatureExtractor();
             dfe.listen("vision");
             let deltaSpy = sinon.spy(dfe, "createDelta");
-            let eventSpy = sinon.spy(eventCb);
-            Perception.eventBus.on("data", eventSpy);
-            function eventCb(evt) {
+            let eventSpy = sinon.spy((evt) => {
                 switch (eventSpy.callCount) {
                 case 1:
                 case 2:
@@ -71,16 +69,16 @@ describe("DeltaFeatureExtractor", function() {
                     assert.strictEqual(evt.sourceName, "delta");
                     assert.strictEqual(evt.sourceType, "feature-extractor");
                     assert.deepEqual(evt.data, delta1to2);
-                    setTimeout(done, 10);
                     return;
                 default:
                     throw new Error("too many events");
                 }
-            }
+            });
+            await Perception.eventBus.on("data", eventSpy);
 
             // send first screen
             let pe1 = new PerceptionEvent("vision", "perception");
-            pe1.emit("data", screen1);
+            await pe1.emit("data", screen1);
             assert.strictEqual(deltaSpy.callCount, 1);
             assert.strictEqual(deltaSpy.args[0].length, 2);
             assert.strictEqual(deltaSpy.args[0][0], screen1);
@@ -89,7 +87,7 @@ describe("DeltaFeatureExtractor", function() {
 
             // send second screen
             let pe2 = new PerceptionEvent("vision", "perception");
-            pe2.emit("data", screen2);
+            await pe2.emit("data", screen2);
             assert.strictEqual(deltaSpy.callCount, 2);
             assert.strictEqual(deltaSpy.args[1].length, 2);
             assert.strictEqual(deltaSpy.args[1][0], screen2);

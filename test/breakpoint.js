@@ -1,43 +1,17 @@
-const {Breakpoint, EventBase, EventBusBase} = require("..");
+const {Breakpoint} = require("..");
 
 const {assert} = require("chai");
 const sinon = require("sinon");
-
+const {testBus, TestEvent, delay, doesNotSettle} = require("./helpers/helpers.js");
 process.on("unhandledRejection", (err) => {
     console.log("GOT ERROR:", err);
     throw err;
 });
 
-// helpers
-let testBus;
-
-class TestEvent extends EventBase {
-    get sourceName() {
-        return "mySourceName";
-    }
-
-    get sourceType() {
-        return "mySourceType";
-    }
-
-    get allowedEventTypes() {
-        return new Set(["foo", "bar"]);
-    }
-
-    get eventBus() {
-        return testBus;
-    }
-}
-
-testBus = new EventBusBase(TestEvent);
-
-function delay(ms) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-}
-
 describe("Breakpoint", function() {
+    beforeEach(function() {
+        Breakpoint.init();
+    });
     afterEach(function() {
         testBus.removeAllListeners();
         Breakpoint.clearAll();
@@ -54,7 +28,7 @@ describe("Breakpoint", function() {
             testBus.on("foo", cbSpy);
             Breakpoint.setBreakpoint();
 
-            te.emit("foo");
+            await doesNotSettle(te.emit("foo"));
             assert.strictEqual(cbSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
 
@@ -72,7 +46,7 @@ describe("Breakpoint", function() {
             // Breakpoint.setBreakpoint();
 
             assert.strictEqual(cbSpy.callCount, 0);
-            te.emit("foo");
+            await te.emit("foo");
             assert.isFalse(Breakpoint.inBreak);
 
             // Breakpoint.run();
@@ -91,7 +65,7 @@ describe("Breakpoint", function() {
                 all: true,
             });
 
-            te.emit("foo");
+            await doesNotSettle(te.emit("foo"));
             assert.strictEqual(cbSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
 
@@ -122,7 +96,7 @@ describe("Breakpoint", function() {
             });
 
             // break on foo event
-            te.emit("foo");
+            await doesNotSettle(te.emit("foo"));
             assert.strictEqual(fooSpy.callCount, 0);
             assert.strictEqual(barSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
@@ -133,7 +107,7 @@ describe("Breakpoint", function() {
             assert.isFalse(Breakpoint.inBreak);
 
             // break on bar event
-            te.emit("bar");
+            await doesNotSettle(te.emit("bar"));
             assert.strictEqual(fooSpy.callCount, 1);
             assert.strictEqual(barSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
@@ -158,7 +132,7 @@ describe("Breakpoint", function() {
             });
 
             // break on foo event
-            te.emit("foo");
+            await doesNotSettle(te.emit("foo"));
             assert.strictEqual(fooSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
 
@@ -168,7 +142,7 @@ describe("Breakpoint", function() {
             assert.isFalse(Breakpoint.inBreak);
 
             // break on bar event
-            te.emit("foo");
+            await doesNotSettle(te.emit("foo"));
             assert.strictEqual(fooSpy.callCount, 1);
             assert.isTrue(Breakpoint.inBreak);
 
@@ -193,14 +167,14 @@ describe("Breakpoint", function() {
 
             for (let i = 0; i < 9; i++) {
                 // break on foo event
-                te.emit("foo");
+                await te.emit("foo");
                 assert.strictEqual(fooSpy.callCount, i + 1);
                 assert.isFalse(Breakpoint.inBreak);
             }
             assert.strictEqual(fooSpy.callCount, 9);
 
             // break on bar event
-            te.emit("foo");
+            await doesNotSettle(te.emit("foo"));
             assert.strictEqual(fooSpy.callCount, 9);
             assert.isTrue(Breakpoint.inBreak);
 
@@ -226,14 +200,14 @@ describe("Breakpoint", function() {
 
             for (let i = 0; i < 9; i++) {
                 // break on foo event
-                te.emit("foo");
+                await te.emit("foo");
                 assert.strictEqual(fooSpy.callCount, i + 1);
                 assert.isFalse(Breakpoint.inBreak);
             }
             assert.strictEqual(fooSpy.callCount, 9);
 
             // break on bar event
-            te.emit("foo");
+            await doesNotSettle(te.emit("foo"));
             assert.strictEqual(fooSpy.callCount, 9);
             assert.isTrue(Breakpoint.inBreak);
 
@@ -245,14 +219,14 @@ describe("Breakpoint", function() {
 
             for (let i = 0; i < 9; i++) {
                 // break on foo event
-                te.emit("foo");
+                await te.emit("foo");
                 assert.strictEqual(fooSpy.callCount, i + 11);
                 assert.isFalse(Breakpoint.inBreak);
             }
             assert.strictEqual(fooSpy.callCount, 19);
 
             // break on bar event
-            te.emit("foo");
+            await doesNotSettle(te.emit("foo"));
             assert.strictEqual(fooSpy.callCount, 19);
             assert.isTrue(Breakpoint.inBreak);
 
@@ -283,7 +257,7 @@ describe("Breakpoint", function() {
             });
 
             // break on foo event
-            te.emit("foo");
+            await doesNotSettle(te.emit("foo"));
             assert.strictEqual(fooSpy.callCount, 0);
             assert.strictEqual(barSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
@@ -294,7 +268,7 @@ describe("Breakpoint", function() {
             assert.isFalse(Breakpoint.inBreak);
 
             // break on bar event
-            te.emit("bar");
+            await doesNotSettle(te.emit("bar"));
             assert.strictEqual(fooSpy.callCount, 1);
             assert.strictEqual(barSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
@@ -319,7 +293,7 @@ describe("Breakpoint", function() {
             });
 
             // break on foo event
-            te.emit("foo");
+            await doesNotSettle(te.emit("foo"));
             assert.strictEqual(fooSpy.callCount, 0);
             assert.strictEqual(barSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
@@ -330,7 +304,7 @@ describe("Breakpoint", function() {
             assert.isFalse(Breakpoint.inBreak);
 
             // break on bar event
-            te.emit("bar");
+            await doesNotSettle(te.emit("bar"));
             assert.strictEqual(fooSpy.callCount, 1);
             assert.strictEqual(barSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
@@ -357,7 +331,7 @@ describe("Breakpoint", function() {
             });
 
             // break on foo event
-            te.emit("foo");
+            await doesNotSettle(te.emit("foo"));
             assert.strictEqual(fooSpy.callCount, 0);
             assert.isTrue(Breakpoint.inBreak);
 
@@ -368,7 +342,7 @@ describe("Breakpoint", function() {
             assert.isFalse(Breakpoint.inBreak);
 
             // don't break on foo event again
-            te.emit("foo");
+            await te.emit("foo");
             await delay(5);
             assert.strictEqual(fooSpy.callCount, 2);
             assert.isFalse(Breakpoint.inBreak);
@@ -448,11 +422,11 @@ describe("Breakpoint", function() {
             }, "foo");
             assert.strictEqual(bp.toString(), "foo: \"all::sourceName:mySourceName\" (0/10)");
 
-            te.emit("foo");
+            await te.emit("foo");
             assert.strictEqual(cbSpy.callCount, 1);
             assert.strictEqual(bp.toString(), "foo: \"all::sourceName:mySourceName\" (1/10)");
 
-            te.emit("foo");
+            await te.emit("foo");
             assert.strictEqual(cbSpy.callCount, 2);
             assert.strictEqual(bp.toString(), "foo: \"all::sourceName:mySourceName\" (2/10)");
         });

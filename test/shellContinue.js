@@ -1,47 +1,9 @@
 const {assert} = require("chai");
 const sinon = require("sinon");
+const {testBus, TestEvent, delay, doesNotSettle, debugLine} = require("./helpers/helpers.js");
 
 const {testMagic} = require("./helpers/jupyterTest.js");
-const {Breakpoint, EventBase, EventBusBase, Log} = require("..");
-
-// helpers
-let testBus;
-
-class TestEvent extends EventBase {
-    get sourceName() {
-        return "mySourceName";
-    }
-
-    get sourceType() {
-        return "mySourceType";
-    }
-
-    get allowedEventTypes() {
-        return new Set(["foo", "bar"]);
-    }
-
-    get eventBus() {
-        return testBus;
-    }
-}
-
-testBus = new EventBusBase(TestEvent);
-
-function delay(ms) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-}
-
-// lines from Log include timestamps, color, etc.
-// this looks to make sure the debug line has the part we care about
-function debugLine(expectedLine) {
-    return (receivedLine) => {
-        if (receivedLine.indexOf(expectedLine) === -1) {
-            throw new Error(`expected line '${expectedLine}' not found in '${receivedLine}'`);
-        }
-    };
-}
+const {Breakpoint, Log} = require("..");
 
 describe("%continue", function() {
     before(function() {
@@ -59,7 +21,7 @@ describe("%continue", function() {
         testBus.on("foo", cbSpy);
         Breakpoint.setBreakpoint();
 
-        te.emit("foo");
+        await doesNotSettle(te.emit("foo"));
         assert.strictEqual(cbSpy.callCount, 0);
         assert.isTrue(Breakpoint.inBreak);
 

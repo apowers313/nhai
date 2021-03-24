@@ -1,28 +1,6 @@
-const {Component, EventBase, EventBusBase} = require("../index");
+const {Component} = require("../index");
 const {assert} = require("chai");
-
-// helpers
-let testBus;
-
-class TestEvent extends EventBase {
-    get sourceName() {
-        return "dummy";
-    }
-
-    get sourceType() {
-        return "test";
-    }
-
-    get allowedEventTypes() {
-        return new Set(["register", "foo", "bar"]);
-    }
-
-    get eventBus() {
-        return testBus;
-    }
-}
-
-testBus = new EventBusBase(TestEvent);
+const {TestEvent} = require("./helpers/helpers.js");
 
 describe("Component", function() {
     afterEach(function() {

@@ -99,7 +99,7 @@ async function printGlyph(win, x, y, glyph, bkglyph) {
 }
 
 async function awaitAction() {
-    Synchronize.nextTick(); // TODO: refactor this call into Action class?
+    await Synchronize.nextTick(); // TODO: refactor this call into Action class?
     await getAction();
     let ch = actionQueue.shift();
     trace("got action character:", ch);

@@ -6,8 +6,8 @@ process.on("unhandledRejection", (err) => {
 });
 
 describe("Trace", function() {
-    afterEach(function() {
-        Perception.eventBus.removeAllListeners();
+    afterEach(async function() {
+        await Perception.eventBus.removeAllListeners();
         Trace.clearEventHistory();
         // Trace.run();
     });

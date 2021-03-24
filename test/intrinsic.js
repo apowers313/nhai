@@ -2,20 +2,15 @@ const chai = require("chai");
 const chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 const {assert} = chai;
+const sinon = require("sinon");
+const {delay} = require("./helpers/helpers.js");
 
 const {Intrinsic, Component, Significance} = require("..");
 
-// helpers
-function delay(ms) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-}
-
 describe("Intrinsic", function() {
-    afterEach(function() {
+    afterEach(async function() {
         Component.clearList();
-        Significance.eventBus.removeAllListeners();
+        await Significance.eventBus.removeAllListeners();
     });
 
     it("is Component", function() {
@@ -73,7 +68,7 @@ describe("Intrinsic", function() {
 
             class GoldIntrinsic extends Intrinsic {
                 setValue(val) {
-                    super.setValue(val.match(goldRegex).groups.goldval);
+                    return super.setValue(val.match(goldRegex).groups.goldval);
                 }
             }
 
@@ -98,23 +93,25 @@ describe("Intrinsic", function() {
             assert.strictEqual(gi.getValue(), 4);
         });
 
-        it("emits 'change'", async function(done) {
+        it("emits 'change'", async function() {
             let i = new Intrinsic("test");
-            Significance.eventBus.on("change", (e) => {
+            let spy = sinon.spy((e) => {
                 assert.strictEqual(e.type, "change");
                 assert.isObject(e.data);
                 assert.strictEqual(e.data.oldVal, null);
                 assert.strictEqual(e.data.newVal, 3.14159);
                 assert.strictEqual(e.data.intrinsic, i);
-                done();
             });
+            let evt = Significance.eventBus.on("change", spy);
             await i.setValue(3.14159);
+            await evt;
+            assert.strictEqual(spy.callCount, 1);
         });
 
         it("doesn't emit change if value is the same", async function() {
             let i = new Intrinsic("test");
             await i.setValue(3.14159);
-            Significance.eventBus.on("change", () => {
+            await Significance.eventBus.on("change", () => {
                 assert.fail("should not have emitted change event");
             });
             await i.setValue(3.14159);

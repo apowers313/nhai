@@ -1,5 +1,9 @@
+const chai = require("chai");
+const chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
+const {assert} = chai;
+
 const {Synchronize, Config, Log} = require("../index");
-const {assert} = require("chai");
 const {spy, stub} = require("sinon");
 
 let origWatchdog = Config.get("environment-sync-watchdog-timeout");
@@ -14,10 +18,10 @@ describe("Synchronize", function() {
         Log.setStdoutLevel(Config.get("log-level"));
     });
 
-    afterEach(function() {
+    afterEach(async function() {
         Config.set("environment-synchronous", true);
         Config.set("environment-sync-watchdog-timeout", origWatchdog);
-        Synchronize.shutdown();
+        await Synchronize.shutdown();
     });
 
     it("is Function", function() {
@@ -28,26 +32,25 @@ describe("Synchronize", function() {
         it("throws if environment is asychronous", function() {
             Config.set("environment-synchronous", false);
             Synchronize.init();
-            assert.throws(() => {
-                Synchronize.nextTick();
-            }, Error, "Synchronize.nextTick should only be called in a synchronous environment (see: Config('environment-synchronous'))");
+
+            return assert.isRejected(Synchronize.nextTick(), Error, "Synchronize.nextTick should only be called in a synchronous environment (see: Config('environment-synchronous'))");
         });
 
         it("throws if not initialized", function() {
-            assert.throws(() => {
-                Synchronize.nextTick();
-            }, Error, "Please call Synchronize.init() before Synchronize.nextTick()");
+            return assert.isRejected(Synchronize.nextTick(), Error, "Please call Synchronize.init() before Synchronize.nextTick()");
         });
 
-        it("calls callback", function() {
+        it("calls callback", async function() {
             let cb = spy();
-            Synchronize.init();
-            Synchronize.register(cb);
+            await Synchronize.init();
+            await Synchronize.register(cb);
             assert.strictEqual(cb.callCount, 0);
-            Synchronize.nextTick();
+            await Synchronize.nextTick();
             assert.strictEqual(cb.callCount, 1);
-            assert.strictEqual(cb.args[0].length, 1);
-            assert.strictEqual(cb.args[0][0], 1);
+
+            assert.strictEqual(cb.args[0].length, 2);
+            assert.isObject(cb.args[0][0]); // event object
+            assert.strictEqual(cb.args[0][1], 1);
         });
     });
 
@@ -100,8 +103,8 @@ describe("Synchronize", function() {
                 wd = spy(Synchronize, "syncWatchdog");
                 Config.set("environment-sync-watchdog-timeout", 10);
                 Synchronize.init();
-                intervalHandle = setInterval(() => {
-                    Synchronize.nextTick();
+                intervalHandle = setInterval(async() => {
+                    await Synchronize.nextTick();
                 }, 3);
                 setTimeout(() => {
                     assert.strictEqual(wd.callCount, 3);

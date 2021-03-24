@@ -11,8 +11,8 @@ describe("PerceptionEvent", function() {
 });
 
 describe("Perception", function() {
-    afterEach(function() {
-        Perception.eventBus.removeAllListeners();
+    afterEach(async function() {
+        await Perception.eventBus.removeAllListeners();
         Component.clearList();
     });
 
@@ -52,14 +52,13 @@ describe("Perception", function() {
             }, TypeError, "Perception.input expected 'data' to be a object, got: 3");
         });
 
-        it("emits an input event", function(done) {
+        it("emits an input event", async function() {
             let o = {foo: "bar"};
-            Perception.eventBus.on("data", (e) => {
+            await Perception.eventBus.on("data", (e) => {
                 process.nextTick(() => {
                     assert.instanceOf(e, PerceptionEvent);
                     assert.strictEqual(e.type, "data");
                     assert.strictEqual(e.data, o);
-                    done();
                 });
             });
 
