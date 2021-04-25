@@ -52,6 +52,7 @@
     "jsdoc": "^3.6.6",
     "magicpatch-test": "^1.1.2",
     "mocha": "^8.2.1",
+    "mockery": "^2.1.0",
     "npm-watch": "^0.7.0",
     "nyc": "^15.1.0",
     "pinst": "^2.1.1",
@@ -65,10 +66,13 @@
   },
   "dependencies": {
     "@neth4ck/neth4ck": "^1.0.4",
+    "ajv": "^6.12.5",
     "bunyan": "^1.8.14",
     "bunyan-debug-stream": "^2.0.0",
     "cosmiconfig": "^7.0.0",
+    "handlebars": "^4.7.7",
     "random": "^2.2.0",
+    "redisgraph.js": "^2.3.0",
     "seedrandom": "^3.0.5"
   },
   "husky": {
