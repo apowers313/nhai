@@ -1,12 +1,17 @@
 const {assert} = require("chai");
+const path = require("path");
 
 const {Utility} = require("../index");
-const {checkType, checkInstance, randomSeed, randomFloat, randomInt} = Utility;
+const {checkType, checkInstance, randomSeed, randomFloat, randomInt, resolveFileOrString} = Utility;
+const {testTemplateContents, cytoscapeTemplateContents} = require("./helpers/helpers.js");
 
 // helpers
 class TestClass {}
 
 class OtherClass {}
+
+const basedir = path.resolve(__dirname, "../assets/hbs");
+const ext = ".hbs";
 
 describe("Utility", function() {
     describe("checkType", function() {
@@ -143,6 +148,40 @@ describe("Utility", function() {
             assert.notStrictEqual(randomFloat(), r1);
             assert.notStrictEqual(randomFloat(), r2);
             assert.notStrictEqual(randomFloat(), r3);
+        });
+    });
+
+    describe("resolveFileOrString", function() {
+        it("resolves absolute path", function() {
+            let t = resolveFileOrString(path.resolve(__dirname, "./helpers/data.hbs"), {basedir, ext});
+            assert.strictEqual(t, testTemplateContents);
+        });
+
+        it("resolves relative path", function() {
+            let t = resolveFileOrString("./test/helpers/data.hbs", {basedir, ext});
+            assert.strictEqual(t, testTemplateContents);
+        });
+
+        it("resolves asset dir path", function() {
+            let t = resolveFileOrString("cytoscapeInit.hbs", {basedir, ext});
+            assert.strictEqual(t, cytoscapeTemplateContents);
+        });
+
+        it("appends .hbs if not found", function() {
+            let t = resolveFileOrString("cytoscapeInit", {basedir, ext});
+            assert.strictEqual(t, cytoscapeTemplateContents);
+        });
+
+        it("returns string if multi-line", function() {
+            let testTemplate = "{{foo}}\n{{bar}}";
+            let t = resolveFileOrString(testTemplate, {basedir, ext});
+            assert.strictEqual(t, testTemplate);
+        });
+
+        it("returns string if file not found", function() {
+            let testTemplate = "{{foo}}{{bar}}";
+            let t = resolveFileOrString(testTemplate, {basedir, ext});
+            assert.strictEqual(t, testTemplate);
         });
     });
 });

@@ -85,6 +85,18 @@ function debugLine(expectedLine) {
     };
 }
 
+const testTemplateContents = `Test template {{name}}
+
+{{foo}}!`;
+const cytoscapeTemplateContents = `<script>
+requirejs.config({
+    paths: {
+        cytoscape: [
+        ]
+    }
+})
+</script>`;
+
 module.exports = {
     delay,
     doesNotSettle,
@@ -93,4 +105,6 @@ module.exports = {
     TestFilterEvent,
     testBusListenerCount,
     debugLine,
+    testTemplateContents,
+    cytoscapeTemplateContents,
 };
