@@ -9,7 +9,7 @@ const nodemon = require("gulp-nodemon");
 let {spawn} = require("child_process");
 const browserSync = require("browser-sync").create();
 
-const mochaPreload = "test/helpers/jupyterTest.js";
+const mochaPreload = "test/helpers/preload.js";
 const sources = ["src/**/*.js", "lib/**/*.js", "index.js", "main.js"];
 const tests = ["test/**/*.js"];
 const helpers = ["test/helpers/*.js"];
