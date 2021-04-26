@@ -1,0 +1,25 @@
+{
+  "$id": "https://example.com/address.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Person",
+  "type": "object",
+  "properties": {
+    "address": {
+      "type": "string",
+      "description": "The address for the delivery."
+    },
+    "city": {
+      "type": "string",
+      "description": "The US city for delivery."
+    },
+    "zipcode": {
+      "description": "The US zip code of the address.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "person": {
+      "$ref": "https://example.com/person.schema.json"
+    }
+  },
+  "required": ["address"]
+}
