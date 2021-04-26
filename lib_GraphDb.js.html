@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: src/Grid.js | NHAI</title>
+    <title>Source: lib/GraphDb.js | NHAI</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -52,296 +52,101 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>const {checkType, checkInstance, createHiddenProp} = require("../index").Utility;
-
-function checkBounds(max, val) {
-    // TODO: check to make sure val is a number
-    if (val >= max) {
-        throw new RangeError(`Attempting to access value out of bounds: requested ${val}, max is ${max - 1}`);
-    }
-
-    if (val &lt; 0) {
-        throw new RangeError(`Attempting to access value out of bounds: requested ${val}`);
-    }
-}
-
-function getProp(name) {
-    if (name[0] === "_") {
-        throw new Error(`attempting to access private property ${name}`);
-    }
-
-    let n = Number.parseInt(name);
-    if (Number.isInteger(n)) {
-        return n;
-    }
-
-    return name;
-}
-
-class yValue {
-    constructor(dataBuf, height, x, opts = {}) {
-        createHiddenProp(this, "_height", height, true);
-        createHiddenProp(this, "_baseOffset", height * x, true);
-        createHiddenProp(this, "_dataBuf", dataBuf, true);
-        this.serializer = opts.serializer || defaultSerializer;
-        this.converter = opts.converter || defaultConverter;
-
-        return new Proxy(this, {
-            get: this.getHandler.bind(this),
-            set: this.setHandler.bind(this),
-        });
-    }
-
-    // eslint-disable-next-line no-unused-vars
-    getHandler(target, idx, receiver) {
-        idx = getProp(idx);
-
-        if (Number.isInteger(idx)) {
-            checkBounds(this._height, idx);
-            let offset = this._baseOffset + idx;
-            return this._dataBuf[offset];
-        }
-
-        throw new Error(`can't get property ${idx}`);
-    }
-
-    // eslint-disable-next-line no-unused-vars
-    setHandler(target, idx, value, receiver) {
-        idx = getProp(idx);
-
-        if (Number.isInteger(idx)) {
-            checkBounds(this._height, idx);
-            let offset = this._baseOffset + idx;
-            this._dataBuf[offset] = this.converter(value);
-            return true;
-        }
-
-        throw new Error(`can't set property ${idx}`);
-    }
-}
+            <pre class="prettyprint source linenums"><code>const {Config} = require("./Config");
+const RedisGraph = require("redisgraph.js").Graph;
+console.log("RedisGraph", RedisGraph);
+let graph = null;
 
 /**
- * A two-dimensional array class
+ * Interface to raw Graph Database functionality for queries and node / edge manipulation
  */
-class Grid {
+class GraphDb {
     /**
-     * Creates a new two dimensional array
+     * Raw query to the database
      *
-     * @param {number}   width           - The width of the Grid
-     * @param {height}   height          - The height of the Grid
-     * @param {object}   opts            - Options
-     * @param {Function} opts.serializer - A function that converts values from a number to a string for `toString`. Function accepts a single 'num' argument that is the Number to be converted and returns a string.
-     * @param {Function} opts.converter  - A function that converts values to be stored in the Grid. Function accepts a single 'val' argument and returns an number.
+     * @param  {string} queryStr A [Cipher]{@link https://www.opencypher.org/} query string
+     * @returns {Object}          The query result. Currently the [RedisGraph ResultSet]{@link https://redisgraph.github.io/redisgraph.js/ResultSet.html} object
      */
-    constructor(width, height, opts = {}) {
-        createHiddenProp(this, "_width", width, true);
-        createHiddenProp(this, "_height", height, true);
-
-        let db;
-        if (opts.buffer &amp;&amp; (opts.buffer instanceof Uint8Array)) {
-            if (opts.buffer.byteLength !== (width * height)) {
-                throw new Error("Grid constructor 'opts.buffer' was wrong size, didn't match width * height");
-            }
-
-            db = Uint8Array.from(opts.buffer);
-        } else {
-            db = new Uint8Array(width * height);
-        }
-
-        createHiddenProp(this, "_dataBuf", db, true);
-
-        let xArray = [];
-        for (let x = 0; x &lt; width; x++) {
-            xArray[x] = new yValue(this._dataBuf, height, x, opts);
-        }
-
-        createHiddenProp(this, "_xArray", xArray, true);
-        this.serializer = opts.serializer || defaultSerializer;
-        this.converter = opts.converter || defaultConverter;
-
-        return new Proxy(this, {
-            get: getHandler.bind(this),
-            set: setHandler.bind(this),
-        });
+    static async query(queryStr) {
+        graphCheck("GraphDb.query");
+        // XXX: this returns redisgraph's ResultSet object and creates a dependency on their API. Replace with an abstraction?
+        return graph.query(queryStr);
     }
 
-    /** How wide the Grid is */
-    get width() {
-        return this._width;
-    }
+    // TODO: addNode
+    // TODO: getNode
+    // TODO: addEdge
+    // TODO: getEdge
+    // TODO: batch
 
-    /** How tall the Grid is */
-    get height() {
-        return this._height;
-    }
-
-    /** A {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array|Uint8Array} for the raw data underlying the Grid */
-    get dataBuf() {
-        return this._dataBuf;
-    }
-
-    // eslint-disable-next-line jsdoc/require-jsdoc
-    get [Symbol.toStringTag]() {
-        return "Grid";
+    /**
+     * Initialize the connection to the Graph Database. Uses {@link Config} values to specify the connection host, port, and options.
+     *
+     * @returns {Promise} A Promise that resolves when initialization is complete.
+     */
+    static async init() {
+        let dbName = Config.get("graphdb-name");
+        let serverName = Config.get("redisgraph-server");
+        let serverPort = Config.get("redisgraph-port");
+        let serverOptions = Config.get("redisgraph-options");
+        let optsStr = serverOptions ? `with options: ${serverOptions}` : "without options";
+        console.info(`Connecting to Database '${serverName}:${serverPort}/${dbName}' ${optsStr}`);
+        graph = new RedisGraph(dbName, serverName, serverPort, serverOptions);
     }
 
     /**
-     * Convert the Grid to a human-readable string. If `converter` was specified as an option during construction, it is used to
-     * convert each element.
+     * Shutdown the connection to the Graph Database
      *
-     * @returns {string} A human-readable string representing the Grid.
+     * @returns {Promise} A Promise that resolves when shutdown is complete.
      */
-    toString() {
-        let output = "";
-
-        for (let y = 0; y &lt; this.height; y++) {
-            // output += "\"";
-            for (let x = 0; x &lt; this.width; x++) {
-                output += this.serializer(this[x][y]);
-            }
-
-            // output += "\"\\n +\n";
-            output += "\n";
-        }
-
-        return output;
-    }
-
-    /**
-     * Creates a copy of the Grid with the same values but different underlying data.
-     *
-     * @returns {Grid} A duplicate of the Grid
-     */
-    copy() {
-        let ret = new Grid(this.width, this.height, {
-            serializer: this.serializer,
-            converter: this.converter,
-            buffer: this.dataBuf,
-        });
-
+    static async shutdown() {
+        graphCheck("GraphDb.shutdown");
+        let ret = graph.close();
+        graph = null;
         return ret;
     }
 
     /**
-     * Resets all data in the Grid to zero.
+     * Resets the Graph Database, destroying all data. Primarily used for testing.
+     *
+     * @returns {Promise} A Promise that resolves when all data has been deleted.
      */
-    clear() {
-        this.dataBuf.fill(0, 0, this.dataBuf.buffer.length);
+    static async wipe() {
+        graphCheck("GraphDb.reset");
+        graph.deleteGraph();
+        // return GraphDb.shutdown();
     }
 
     /**
-     * Iterates all the cells of the Grid
+     * The underlying graph object. Used for testing and should not be used programmatically since this Object may change.
      *
-     * @param   {Function} cb Called for each cell of the Grid. Signature is `cb(value, x, y, grid)`.
+     * @returns {Object} The graph database interface object. Please don't use this.
      */
-    forEach(cb) {
-        checkType("forEach", "cb", cb, "function");
-        for (let y = 0; y &lt; this.height; y++) {
-            for (let x = 0; x &lt; this.width; x++) {
-                cb(this[x][y], x, y, this);
-            }
-        }
-    }
-
-    /**
-     * Creates a new Grid from an Array of strings.
-     *
-     * @param   {Array.&lt;string>} val An array of equal length strings to set the initial value of the Grid.
-     * The Grid height will be equal to the number of elements in the array, and the width will be equal to
-     * the length of the strings.
-     */
-    static from(val) {
-        if (Array.isArray(val)) {
-            checkType("Grid.from", "val[0]", val[0], "string");
-            // TODO: assuming array of strings
-            // TODO: all lines are the same length
-            let w = val[0].length;
-            let h = val.length;
-            let g = new Grid(w, h);
-
-            g.forEach((v, x, y) => {
-                g[x][y] = val[y][x];
-            });
-
-            return g;
-        }
-
-        // TODO: .from(ArrayBuffer,x,y)
-        throw new TypeError(`Grid.from got unexpected type: ${val}`);
-    }
-
-    /**
-     * Compares two Grids and returns an Array of the differences. Grids must be the same height and width.
-     *
-     * @param {Grid} src - The first grid to compare.
-     * @param {Grid} dst - The second grid to compare.
-     *
-     * @returns {Array.&lt;object>|null}     An Array of Objects describing the differences. Object for each change is `{x, y, srcVal, dstVal}`. Returns `null` if there are no differences.
-     */
-    static diff(src, dst) {
-        checkInstance("diff", "src", src, Grid);
-        checkInstance("diff", "dst", dst, Grid);
-        if (src.height !== dst.height || src.width !== dst.width) {
-            throw new Error(`diff expected Grids to be same size: src(${src.width},${src.height}) vs dst(${dst.width},${dst.height})`);
-        }
-
-        let ret = [];
-        src.forEach((v, x, y) => {
-            if (src[x][y] !== dst[x][y]) {
-                ret.push({
-                    x,
-                    y,
-                    srcVal: src[x][y],
-                    dstVal: dst[x][y],
-                });
-            }
-        });
-
-        return ret.length ? ret : null;
+    static get graph() {
+        graphCheck("GraphDb.graph");
+        return graph;
     }
 }
 
-// eslint-disable-next-line no-unused-vars
-function getHandler(target, idx, receiver) {
-    idx = getProp(idx);
+// class GraphNode {
+//     // TODO: getNeighbors
+// }
 
-    if (Number.isInteger(idx)) {
-        checkBounds(this._width, idx);
-        return this._xArray[idx];
+// class GraphEdge {
+
+// }
+
+function graphCheck(fnName) {
+    if (!graph) {
+        throw new Error(`${fnName}: database not connected`);
     }
-
-    return this[idx];
 }
 
-// eslint-disable-next-line no-unused-vars
-function setHandler(target, idx, value, receiver) {
-    // console.log("Grid setHandler");
-    // idx = getProp(idx);
-    // if (Number.isInteger(idx)) throw new Error(`can't set 'x' value: ${idx}`);
-    throw new Error(`can't set property ${idx}`);
-}
-
-function defaultSerializer(val) {
-    if (val === undefined) {
-        return "    ";
-    }
-
-    return val.toString().padStart(4);
-}
-
-function defaultConverter(val) {
-    if (typeof val === "number") {
-        return val;
-    }
-
-    if (typeof val === "string" &amp;&amp; val.length === 1) {
-        return (val === " ") ? 0 : val.charCodeAt(0);
-    }
-
-    throw new Error(`unable to convert value ${val} to number`);
-}
-
-module.exports = {Grid};
+module.exports = {
+    GraphDb,
+    // GraphNode,
+    // GraphEdge,
+};
 </code></pre>
         </article>
     </section>

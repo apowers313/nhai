@@ -1,10 +1,8 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: src/Grid.js | NHAI</title>
+    <title>Class: PipelineStage | NHAI</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -49,302 +47,1703 @@
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>const {checkType, checkInstance, createHiddenProp} = require("../index").Utility;
+        <h2><span class="attribs"><span class="type-signature"></span></span>PipelineStage<span class="signature">(name, opts)</span><span class="type-signature"> &rarr; {<a href="PipelineStage.html">PipelineStage</a>}</span></h2>
+        
+            <div class="class-description"><p>A single stage of a Pipeline. Stages are strung together to create the Pipeline.</p></div>
+        
+    
+</header>
 
-function checkBounds(max, val) {
-    // TODO: check to make sure val is a number
-    if (val >= max) {
-        throw new RangeError(`Attempting to access value out of bounds: requested ${val}, max is ${max - 1}`);
-    }
+<article>
+    
+        <div class="container-overview">
+        
+            
 
-    if (val &lt; 0) {
-        throw new RangeError(`Attempting to access value out of bounds: requested ${val}`);
-    }
-}
+<dt>
+    
+        <h4 class="name" id="PipelineStage">
+            
+                new <span class="type-signature"></span>PipelineStage<span class="signature">(name, opts)</span><span class="type-signature"> &rarr; {<a href="PipelineStage.html">PipelineStage</a>}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_PipelineStage.js.html">lib/PipelineStage.js</a></code>,
+                <code><a href="lib_PipelineStage.js.html#line9">line 9</a></code>
+            </div>
+            
+        </h4>
 
-function getProp(name) {
-    if (name[0] === "_") {
-        throw new Error(`attempting to access private property ${name}`);
-    }
+        
+    
+</dt>
+<dd>
 
-    let n = Number.parseInt(name);
-    if (Number.isInteger(n)) {
-        return n;
-    }
+    
+    <div class="description">
+        <p>Creates a new PipelineStage</p>
+    </div>
+    
 
-    return name;
-}
+    
 
-class yValue {
-    constructor(dataBuf, height, x, opts = {}) {
-        createHiddenProp(this, "_height", height, true);
-        createHiddenProp(this, "_baseOffset", height * x, true);
-        createHiddenProp(this, "_dataBuf", dataBuf, true);
-        this.serializer = opts.serializer || defaultSerializer;
-        this.converter = opts.converter || defaultConverter;
+    
 
-        return new Proxy(this, {
-            get: this.getHandler.bind(this),
-            set: this.setHandler.bind(this),
-        });
-    }
+    
 
-    // eslint-disable-next-line no-unused-vars
-    getHandler(target, idx, receiver) {
-        idx = getProp(idx);
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-        if (Number.isInteger(idx)) {
-            checkBounds(this._height, idx);
-            let offset = this._baseOffset + idx;
-            return this._dataBuf[offset];
-        }
+        <th>Type</th>
 
-        throw new Error(`can't get property ${idx}`);
-    }
+        
 
-    // eslint-disable-next-line no-unused-vars
-    setHandler(target, idx, value, receiver) {
-        idx = getProp(idx);
+        
 
-        if (Number.isInteger(idx)) {
-            checkBounds(this._height, idx);
-            let offset = this._baseOffset + idx;
-            this._dataBuf[offset] = this.converter(value);
-            return true;
-        }
+        <th class="last">Description</th>
+    </tr>
+    </thead>
 
-        throw new Error(`can't set property ${idx}`);
-    }
-}
+    <tbody>
+    
 
-/**
- * A two-dimensional array class
- */
-class Grid {
-    /**
-     * Creates a new two dimensional array
-     *
-     * @param {number}   width           - The width of the Grid
-     * @param {height}   height          - The height of the Grid
-     * @param {object}   opts            - Options
-     * @param {Function} opts.serializer - A function that converts values from a number to a string for `toString`. Function accepts a single 'num' argument that is the Number to be converted and returns a string.
-     * @param {Function} opts.converter  - A function that converts values to be stored in the Grid. Function accepts a single 'val' argument and returns an number.
-     */
-    constructor(width, height, opts = {}) {
-        createHiddenProp(this, "_width", width, true);
-        createHiddenProp(this, "_height", height, true);
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
 
-        let db;
-        if (opts.buffer &amp;&amp; (opts.buffer instanceof Uint8Array)) {
-            if (opts.buffer.byteLength !== (width * height)) {
-                throw new Error("Grid constructor 'opts.buffer' was wrong size, didn't match width * height");
-            }
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
 
-            db = Uint8Array.from(opts.buffer);
-        } else {
-            db = new Uint8Array(width * height);
-        }
 
-        createHiddenProp(this, "_dataBuf", db, true);
+            
+            </td>
 
-        let xArray = [];
-        for (let x = 0; x &lt; width; x++) {
-            xArray[x] = new yValue(this._dataBuf, height, x, opts);
-        }
+            
 
-        createHiddenProp(this, "_xArray", xArray, true);
-        this.serializer = opts.serializer || defaultSerializer;
-        this.converter = opts.converter || defaultConverter;
+            
 
-        return new Proxy(this, {
-            get: getHandler.bind(this),
-            set: setHandler.bind(this),
-        });
-    }
+            <td class="description last"><p>The name of this stage</p></td>
+        </tr>
 
-    /** How wide the Grid is */
-    get width() {
-        return this._width;
-    }
+    
 
-    /** How tall the Grid is */
-    get height() {
-        return this._height;
-    }
+        <tr>
+            
+                <td class="name"><code>opts</code></td>
+            
 
-    /** A {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array|Uint8Array} for the raw data underlying the Grid */
-    get dataBuf() {
-        return this._dataBuf;
-    }
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
 
-    // eslint-disable-next-line jsdoc/require-jsdoc
-    get [Symbol.toStringTag]() {
-        return "Grid";
-    }
 
-    /**
-     * Convert the Grid to a human-readable string. If `converter` was specified as an option during construction, it is used to
-     * convert each element.
-     *
-     * @returns {string} A human-readable string representing the Grid.
-     */
-    toString() {
-        let output = "";
+            
+            </td>
 
-        for (let y = 0; y &lt; this.height; y++) {
-            // output += "\"";
-            for (let x = 0; x &lt; this.width; x++) {
-                output += this.serializer(this[x][y]);
-            }
+            
 
-            // output += "\"\\n +\n";
-            output += "\n";
-        }
+            
 
-        return output;
-    }
+            <td class="description last"><p>Options for this stage</p></td>
+        </tr>
 
-    /**
-     * Creates a copy of the Grid with the same values but different underlying data.
-     *
-     * @returns {Grid} A duplicate of the Grid
-     */
-    copy() {
-        let ret = new Grid(this.width, this.height, {
-            serializer: this.serializer,
-            converter: this.converter,
-            buffer: this.dataBuf,
-        });
+    
+    </tbody>
+</table>
 
-        return ret;
-    }
+    </div>
+    
 
-    /**
-     * Resets all data in the Grid to zero.
-     */
-    clear() {
-        this.dataBuf.fill(0, 0, this.dataBuf.buffer.length);
-    }
+    
 
-    /**
-     * Iterates all the cells of the Grid
-     *
-     * @param   {Function} cb Called for each cell of the Grid. Signature is `cb(value, x, y, grid)`.
-     */
-    forEach(cb) {
-        checkType("forEach", "cb", cb, "function");
-        for (let y = 0; y &lt; this.height; y++) {
-            for (let x = 0; x &lt; this.width; x++) {
-                cb(this[x][y], x, y, this);
-            }
-        }
-    }
+    
 
-    /**
-     * Creates a new Grid from an Array of strings.
-     *
-     * @param   {Array.&lt;string>} val An array of equal length strings to set the initial value of the Grid.
-     * The Grid height will be equal to the number of elements in the array, and the width will be equal to
-     * the length of the strings.
-     */
-    static from(val) {
-        if (Array.isArray(val)) {
-            checkType("Grid.from", "val[0]", val[0], "string");
-            // TODO: assuming array of strings
-            // TODO: all lines are the same length
-            let w = val[0].length;
-            let h = val.length;
-            let g = new Grid(w, h);
+    
 
-            g.forEach((v, x, y) => {
-                g[x][y] = val[y][x];
-            });
+    
 
-            return g;
-        }
+    
 
-        // TODO: .from(ArrayBuffer,x,y)
-        throw new TypeError(`Grid.from got unexpected type: ${val}`);
-    }
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
 
-    /**
-     * Compares two Grids and returns an Array of the differences. Grids must be the same height and width.
-     *
-     * @param {Grid} src - The first grid to compare.
-     * @param {Grid} dst - The second grid to compare.
-     *
-     * @returns {Array.&lt;object>|null}     An Array of Objects describing the differences. Object for each change is `{x, y, srcVal, dstVal}`. Returns `null` if there are no differences.
-     */
-    static diff(src, dst) {
-        checkInstance("diff", "src", src, Grid);
-        checkInstance("diff", "dst", dst, Grid);
-        if (src.height !== dst.height || src.width !== dst.width) {
-            throw new Error(`diff expected Grids to be same size: src(${src.width},${src.height}) vs dst(${dst.width},${dst.height})`);
-        }
 
-        let ret = [];
-        src.forEach((v, x, y) => {
-            if (src[x][y] !== dst[x][y]) {
-                ret.push({
-                    x,
-                    y,
-                    srcVal: src[x][y],
-                    dstVal: dst[x][y],
-                });
-            }
-        });
 
-        return ret.length ? ret : null;
-    }
-}
+<span class="param-type"><a href="PipelineStage.html">PipelineStage</a></span>
 
-// eslint-disable-next-line no-unused-vars
-function getHandler(target, idx, receiver) {
-    idx = getProp(idx);
 
-    if (Number.isInteger(idx)) {
-        checkBounds(this._width, idx);
-        return this._xArray[idx];
-    }
 
-    return this[idx];
-}
 
-// eslint-disable-next-line no-unused-vars
-function setHandler(target, idx, value, receiver) {
-    // console.log("Grid setHandler");
-    // idx = getProp(idx);
-    // if (Number.isInteger(idx)) throw new Error(`can't set 'x' value: ${idx}`);
-    throw new Error(`can't set property ${idx}`);
-}
 
-function defaultSerializer(val) {
-    if (val === undefined) {
-        return "    ";
-    }
+- <p>The newly created PipelineStage</p>
 
-    return val.toString().padStart(4);
-}
 
-function defaultConverter(val) {
-    if (typeof val === "number") {
-        return val;
-    }
 
-    if (typeof val === "string" &amp;&amp; val.length === 1) {
-        return (val === " ") ? 0 : val.charCodeAt(0);
-    }
 
-    throw new Error(`unable to convert value ${val} to number`);
-}
+            
+    </div>
+    
 
-module.exports = {Grid};
-</code></pre>
-        </article>
-    </section>
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+        
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+
+<dt>
+<h4 class="name" id="name">
+    <span class="type-signature"></span>name<span class="type-signature"> :string</span>
+    
+    <div class="container-source members">
+        <code><a href="lib_PipelineStage.js.html">lib/PipelineStage.js</a></code>,
+        <code><a href="lib_PipelineStage.js.html#line20">line 20</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>The name of this stage</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="nextStage">
+    <span class="type-signature"></span>nextStage<span class="type-signature"> :Array.&lt;<a href="PipelineStage.html">PipelineStage</a>></span>
+    
+    <div class="container-source members">
+        <code><a href="lib_PipelineStage.js.html">lib/PipelineStage.js</a></code>,
+        <code><a href="lib_PipelineStage.js.html#line29">line 29</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Outputs connected to this stage</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Array.&lt;<a href="PipelineStage.html">PipelineStage</a>></span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+                
+
+<dt>
+    
+        <h4 class="name" id=".clearAll">
+            
+                <span class="type-signature"><span class="icon green">static</span> </span>clearAll<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_PipelineStage.js.html">lib/PipelineStage.js</a></code>,
+                <code><a href="lib_PipelineStage.js.html#line172">line 172</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Removes all PipelineStages that were registered with <code>register</code>. Mostly used for testing.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id=".clearConverters">
+            
+                <span class="type-signature"><span class="icon green">static</span> </span>clearConverters<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_PipelineStage.js.html">lib/PipelineStage.js</a></code>,
+                <code><a href="lib_PipelineStage.js.html#line165">line 165</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Removes all converters that were registered with <code>registerConverter</code>. Mostly used for testing.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id=".create">
+            
+                <span class="type-signature"><span class="icon green">static</span> </span>create<span class="signature">(name, opts)</span><span class="type-signature"> &rarr; {<a href="PipelineStage.html">PipelineStage</a>}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_PipelineStage.js.html">lib/PipelineStage.js</a></code>,
+                <code><a href="lib_PipelineStage.js.html#line101">line 101</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Creates a new stage with the corresponding name and the specified options</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The name of the stage to create. Name is resolved to a stage using hte global registry (see <code>register</code>)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>opts</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The options for creating this stage</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="PipelineStage.html">PipelineStage</a></span>
+
+
+
+
+
+- <p>The newly created PipelineStage</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id=".findConverter">
+            
+                <span class="type-signature"><span class="icon green">static</span> </span>findConverter<span class="signature">(inputType, outputType)</span><span class="type-signature"> &rarr; {function}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_PipelineStage.js.html">lib/PipelineStage.js</a></code>,
+                <code><a href="lib_PipelineStage.js.html#line141">line 141</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Retreive a converter function that can convert from <code>inputType</code> to <code>outputType</code></p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>inputType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the input type</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>outputType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of the output type</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">function</span>
+
+
+
+
+
+- <p>Returns a function that can perform the conversion, or undefined if one doesn't exist</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id=".register">
+            
+                <span class="type-signature"><span class="icon green">static</span> </span>register<span class="signature">(name, fn, force)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_PipelineStage.js.html">lib/PipelineStage.js</a></code>,
+                <code><a href="lib_PipelineStage.js.html#line83">line 83</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Register a new stage in the global registry</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The name of this stage</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The function to execute when this stage is run</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>force</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>If true, foreces registration even if a stage with the same name already exists</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id=".registerConverter">
+            
+                <span class="type-signature"><span class="icon green">static</span> </span>registerConverter<span class="signature">(inputType, outputType, fn, force)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_PipelineStage.js.html">lib/PipelineStage.js</a></code>,
+                <code><a href="lib_PipelineStage.js.html#line119">line 119</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Register a function for converting between types. Used to automatically convert data types between Pipeline stages</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>inputType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The name of the input type</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>outputType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The name of the output type</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>A function that takes data of type <code>inputType</code>, converts it to <code>outputType</code>, and returns the converted value</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>force</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>If true, forces registration even if an existing converter for the <code>inputType</code>/<code>outputType</code> pair already exists</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="run">
+            
+                <span class="type-signature"><span class="icon green">async</span> </span>run<span class="signature">(input)</span><span class="type-signature"> &rarr; {Promise.&lt;any>}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_PipelineStage.js.html">lib/PipelineStage.js</a></code>,
+                <code><a href="lib_PipelineStage.js.html#line60">line 60</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Executes this stage of the pipeline with the specified input</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>input</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The data to use to execute this stage of the Pipeline</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">Promise.&lt;any></span>
+
+
+
+
+
+- <p>A Promise that resolves to the result of this stage or rejects with an Error.</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="setOutput">
+            
+                <span class="type-signature"></span>setOutput<span class="signature">(stage, force)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="lib_PipelineStage.js.html">lib/PipelineStage.js</a></code>,
+                <code><a href="lib_PipelineStage.js.html#line38">line 38</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Set the next stage after this one. Will automatically convert between data types using a converter if necessary.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>stage</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="PipelineStage.html">PipelineStage</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The next stage</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>force</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>If true, sets the next stage even if one already exists.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            </dl>
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
@@ -361,7 +1760,7 @@ module.exports = {Grid};
 <script src="scripts/linenumber.js"></script>
 
     <script>
-        var id = '_sub'.replace(/"/g, '_');
+        var id = 'PipelineStage_sub'.replace(/"/g, '_');
         var selectedApi = document.getElementById(id); // do not use jquery selector
         var $selectedApi = $(selectedApi);
 
