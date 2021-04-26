@@ -7,6 +7,9 @@
     "lib": "lib",
     "test": "test"
   },
+  "engines": {
+    "node": ">=14"
+  },
   "scripts": {
     "ready": "gulp ready",
     "dev:test": "gulp dev:test",
