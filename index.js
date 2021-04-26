@@ -7,12 +7,15 @@ const {Context} = require("./lib/Context");
 const {EventBase, EventBusBase, EventListener} = require("./lib/EventBase");
 const {EventFilter} = require("./lib/EventFilter");
 const {FeatureExtractor} = require("./lib/FeatureExtractor");
+const {GraphDb, GraphEdge, GraphNode} = require("./lib/GraphDb");
+const {HtmlTemplate} = require("./lib/HtmlTemplate");
 const {Intrinsic} = require("./lib/Intrinsic");
 const {Jupyter} = require("./lib/Jupyter");
 const Log = require("./lib/Log");
 const {Perception, PerceptionEvent, PerceptionModule} = require("./lib/Perception");
 const {Pipeline} = require("./lib/Pipeline");
 const {PipelineStage} = require("./lib/PipelineStage");
+const {Schema} = require("./lib/Schema");
 const {Significance, SignificanceEvent} = require("./lib/Significance");
 const {Synchronize} = require("./lib/Synchronize");
 const {Trace} = require("./lib/Trace");
@@ -32,6 +35,10 @@ module.exports = {
     EventFilter,
     EventListener,
     FeatureExtractor,
+    GraphDb,
+    GraphEdge,
+    GraphNode,
+    HtmlTemplate,
     Intrinsic,
     Jupyter,
     Log,
@@ -41,6 +48,7 @@ module.exports = {
     Pipeline,
     PipelineStage,
     Significance,
+    Schema,
     SignificanceEvent,
     Synchronize,
     Utility,
