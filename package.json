@@ -18,7 +18,7 @@
     "lint": "gulp lint",
     "coverage": "gulp coverage",
     "docs": "gulp docs",
-    "experiment": "plop --plopfile templates/plopfile.js --dest experiments"
+    "experiment": "plop --plopfile assets/plop/plopfile.js --dest experiments"
   },
   "author": "Adam Powers <apowers@ato.ms>",
   "repository": {
