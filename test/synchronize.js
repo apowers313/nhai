@@ -100,6 +100,7 @@ describe("Synchronize", function() {
             });
 
             it("repeats every X ms", function(done) {
+                this.retries(3); // XXX: this test can be a little flakey...
                 wd = spy(Synchronize, "syncWatchdog");
                 Config.set("environment-sync-watchdog-timeout", 10);
                 Synchronize.init();
