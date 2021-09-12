@@ -27,7 +27,7 @@ jobs:
       run: npm install -g magicpatch
 
     - name: Security Audit
-      run: npm audit
+      run: npm audit --audit-level=high --only=prod
 
     - name: List Modules
       run: npm ls
