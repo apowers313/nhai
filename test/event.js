@@ -1,5 +1,6 @@
 const {EventBase, EventBusBase, EventFilter, EventListener} = require("../index");
 const {assert} = require("chai");
+const sinon = require("sinon");
 const {delay, TestEvent, testBus, TestFilterEvent, testBusListenerCount} = require("./helpers/helpers.js");
 
 describe("EventBusBase", function() {
@@ -661,4 +662,48 @@ describe("EventListener", function() {
     });
 
     it("catches both");
+
+    describe("listenAllList", function() {
+        it("is Array", function() {
+            assert.isArray(EventListener.listenAllList);
+        });
+    });
+
+    describe("clearListenAll", function() {
+        afterEach(function() {
+            EventListener.clearListenAll();
+        });
+
+        it("catches event", async function() {
+            assert.strictEqual(EventListener.listenAllList.length, 0);
+            EventListener.listenAll(() => {});
+            assert.strictEqual(EventListener.listenAllList.length, 1);
+            EventListener.clearListenAll();
+            assert.strictEqual(EventListener.listenAllList.length, 0);
+        });
+    });
+
+    describe("listenAll", function() {
+        afterEach(function() {
+            EventListener.clearListenAll();
+        });
+
+        it("catches event", async function() {
+            let te = new TestEvent();
+            const cbSpy = sinon.spy();
+
+            assert.strictEqual(EventListener.listenAllList.length, 0);
+            EventListener.listenAll(cbSpy);
+            assert.strictEqual(EventListener.listenAllList.length, 1);
+            assert.strictEqual(cbSpy.callCount, 0);
+
+            await te.emit("foo", 42);
+
+            assert.strictEqual(cbSpy.callCount, 1);
+            assert.strictEqual(cbSpy.args[0].length, 1);
+            assert.isObject(cbSpy.args[0][0]);
+            assert.strictEqual(cbSpy.args[0][0].type, "foo");
+            assert.strictEqual(cbSpy.args[0][0].data, 42);
+        });
+    });
 });
