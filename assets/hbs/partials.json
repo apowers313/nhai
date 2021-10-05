@@ -1,3 +1,5 @@
 {
-    "cytoscapeInit": "cytoscapeInit.hbs"
+    "cytoscapeInit": "cytoscapeInit.hbs",
+    "visionStatus": "visionStatus.hbs",
+    "statusImg": "statusImg.hbs"
 }

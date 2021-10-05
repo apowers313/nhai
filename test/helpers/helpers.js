@@ -4,6 +4,7 @@ const {EventBase, EventBusBase} = require("../..");
 const {assert} = require("chai");
 
 let testBus;
+let testSyncBus;
 
 class TestEvent extends EventBase {
     get sourceName() {
@@ -20,6 +21,24 @@ class TestEvent extends EventBase {
 
     get eventBus() {
         return testBus;
+    }
+}
+
+class TestSync extends EventBase {
+    get sourceName() {
+        return "synchronize";
+    }
+
+    get sourceType() {
+        return "synchronize";
+    }
+
+    get allowedEventTypes() {
+        return new Set(["tick"]);
+    }
+
+    get eventBus() {
+        return testSyncBus;
     }
 }
 
@@ -50,6 +69,7 @@ class TestFilterEvent extends EventBase {
 }
 
 testBus = new EventBusBase(TestEvent);
+testSyncBus = new EventBusBase(TestSync);
 function testBusListenerCount() {
     let names = testBus.eventNames();
     if (names.length === 0) {
@@ -101,7 +121,9 @@ module.exports = {
     delay,
     doesNotSettle,
     testBus,
+    testSyncBus,
     TestEvent,
+    TestSync,
     TestFilterEvent,
     testBusListenerCount,
     debugLine,
