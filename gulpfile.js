@@ -20,6 +20,7 @@ const markdown = ["**/*.md"];
 const documentation = [... sources, ... markdown, ... css];
 const all = [... js, ... support];
 const jsDocConfig = require("./.jsdoc-conf.json");
+const nodePlop = require("node-plop");
 
 /* ************
  * TESTING
@@ -167,6 +168,31 @@ function audit(done) {
     let aud = spawn(cmd, args, opts).on("close", done);
 }
 
+/* ************
+ * EXPERIMENT
+ **************/
+async function experiment() {
+    return doPlop("experiment");
+}
+
+async function experimentSave() {
+    return doPlop("archive");
+}
+
+async function doPlop(cmd) {
+    const plop = nodePlop("./assets/plop/plopfile.js");
+    const exp = plop.getGenerator(cmd);
+    console.log("exp", exp);
+    let answers = await exp.runPrompts();
+    let res = await exp.runActions(answers);
+    console.log("res", res);
+}
+
+/* ************
+ * INTEGRATION TESTING
+ **************/
+async function integration() {}
+
 module.exports = {
     audit,
     test,
@@ -181,4 +207,9 @@ module.exports = {
     "dev:coverage": watchCoverage,
     "dev:docs": watchDocs,
     "dev:main": watchMain,
+    experiment,
+    "exp": experiment,
+    "exp:run": experiment,
+    "exp:save": experimentSave,
+    integration,
 };

@@ -8,7 +8,6 @@ coverage
 docs.json
 .nhairc.js
 log/*
-.ipynb_checkpoints/
-tmp
-experiment.json
-supervisord.conf
+.ipynb_checkpoints
+./tmp
+.github
