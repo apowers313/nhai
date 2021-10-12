@@ -11,10 +11,11 @@ const browserSync = require("browser-sync").create();
 
 const mochaPreload = "test/helpers/preload.js";
 const sources = ["src/**/*.js", "lib/**/*.js", "index.js", "main.js"];
-const tests = ["test/**/*.js"];
+const unitTests = ["test/*.js"];
+const integrationTests = ["test/integration/test.js"];
 const helpers = ["test/helpers/*.js"];
 const support = ["gulpfile.js", "package.json", ".eslintrc.js", "docs.json"];
-const js = [... sources, ... tests, ... helpers];
+const js = [... sources, ... unitTests, ... helpers];
 const css = ["./jsdoc.css"];
 const markdown = ["**/*.md"];
 const documentation = [... sources, ... markdown, ... css];
@@ -26,7 +27,7 @@ const nodePlop = require("node-plop");
  * TESTING
  **************/
 function test(testReporter = "spec") {
-    return src(tests)
+    return src(unitTests)
         .pipe(mocha({
             file: mochaPreload,
             reporter: testReporter,
@@ -155,7 +156,7 @@ function watchMain(done) {
 /* ************
  * RELEASE
  **************/
-const ready = parallel(test, audit, lint, coverage, docs);
+const ready = parallel(test, audit, lint, coverage, docs, integration);
 
 function audit(done) {
     let cmd = "npm";
@@ -191,7 +192,13 @@ async function doPlop(cmd) {
 /* ************
  * INTEGRATION TESTING
  **************/
-async function integration() {}
+async function integration(testReporter = "spec") {
+    return src(integrationTests)
+        .pipe(mocha({
+            reporter: testReporter,
+            exit: true,
+        }));
+}
 
 module.exports = {
     audit,
