@@ -110,14 +110,14 @@ function createExperiment(answers) {
     // build docker image
     actions.push(async() => {
         console.log("running build...");
-        await spawnAsync(... `docker build --build-arg JUPYTER_FILE=./${newJupyterFile} --tag ${expConf.dockerImage} .`.split(" "));
+        await spawnAsync(`docker build --build-arg JUPYTER_FILE=./${newJupyterFile} --tag ${expConf.dockerImage} .`);
         fs.rmSync(`./${newJupyterFile}`);
     });
 
     // run docker image
     actions.push(async() => {
         console.log("running image...");
-        return spawnAsync(... `docker run -p 6379:6379 -p 8080:8080 -p 8888:8888 -it --name ${expConf.dockerContainer} ${expConf.dockerImage}`.split(" "));
+        return spawnAsync(`docker run -p 6379:6379 -p 8080:8080 -p 8888:8888 -it --name ${expConf.dockerContainer} ${expConf.dockerImage}`);
     });
 
     return actions;
@@ -128,7 +128,7 @@ function restoreExperiment(answers) {
 
     // docker container start
     actions.push(async() => {
-        return spawnAsync(... `docker container start -ai ${expConf.dockerContainer}`.split(" "));
+        return spawnAsync(`docker container start -ai ${expConf.dockerContainer}`);
     });
 
     return actions;
@@ -150,14 +150,14 @@ function archiveExperiment(answers, deactivate = true) {
         console.log("copying file...");
         let from = `${expConf.dockerContainer}:/home/apowers/${path.basename(expConf.jupyterFile)}`;
         let to = path.resolve(projectDir, "./experiments");
-        return spawnAsync(... `docker cp ${from} ${to}`.split(" "));
+        return spawnAsync(`docker cp ${from} ${to}`);
     });
 
     if (answers.push) {
         // push Docker container to repo
         actions.push(async() => {
             console.log("storing docker...");
-            return spawnAsync(... `docker push ${expConf.dockerContainer}`.split(" "));
+            return spawnAsync(`docker push ${expConf.dockerContainer}`);
         });
     }
 
@@ -168,7 +168,10 @@ function saveConf() {
     fs.writeFileSync(expConfFile, JSON.stringify(expConf, null, 4), {encoding: "utf8"});
 }
 
-function spawnAsync(cmd, ... args) {
+function spawnAsync(str) {
+    let args = str.split(" ");
+    let cmd = args.shift();
+
     if (typeof cmd !== "string") {
         throw new Error("expected 'cmd' to be string, got", cmd);
     }
