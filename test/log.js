@@ -32,12 +32,12 @@ describe("Log", function() {
         let output = stdMocks.flush();
         assert.strictEqual(output.stdout.length, 6);
         assert.strictEqual(output.stderr.length, 0);
-        assert.match(output.stdout[0], /^.*nhai TRACE: \u001b\[37mtrace uno\u001b\[39m\n$/);
-        assert.match(output.stdout[1], /^.*nhai DEBUG: \u001b\[36mdebug deux\u001b\[39m\n$/);
-        assert.match(output.stdout[2], /^.*nhai INFO: {2}\u001b\[32minfo thrice\u001b\[39m\n$/);
-        assert.match(output.stdout[3], /^.*nhai WARN: {2}\u001b\[33mwarn fier\u001b\[39m\n$/);
-        assert.match(output.stdout[4], /^.*nhai ERROR: \u001b\[31merror go\u001b\[39m\n$/);
-        assert.match(output.stdout[5], /^.*nhai FATAL: \u001b\[41mfatal roku\u001b\[49m\n$/);
+        assert.match(output.stdout[0], /^.*nhai TRACE: \[main\] \u001b\[37mtrace uno\u001b\[39m\n$/);
+        assert.match(output.stdout[1], /^.*nhai DEBUG: \[main\] \u001b\[36mdebug deux\u001b\[39m\n$/);
+        assert.match(output.stdout[2], /^.*nhai INFO: {2}\[main\] \u001b\[32minfo thrice\u001b\[39m\n$/);
+        assert.match(output.stdout[3], /^.*nhai WARN: {2}\[main\] \u001b\[33mwarn fier\u001b\[39m\n$/);
+        assert.match(output.stdout[4], /^.*nhai ERROR: \[main\] \u001b\[31merror go\u001b\[39m\n$/);
+        assert.match(output.stdout[5], /^.*nhai FATAL: \[main\] \u001b\[41mfatal roku\u001b\[49m\n$/);
     });
 
     it("child logger", function() {
@@ -72,7 +72,7 @@ describe("Log", function() {
         let output = stdMocks.flush();
         assert.strictEqual(output.stdout.length, 1);
         assert.strictEqual(output.stderr.length, 0);
-        assert.match(output.stdout[0], /^.*nhai INFO: {2}\u001b\[32mthis is a test\u001b\[39m\n$/);
+        assert.match(output.stdout[0], /^.*nhai INFO: {2}\[main\] \u001b\[32mthis is a test\u001b\[39m\n$/);
 
         // If testing against raw JSON output:
         // let logObj = JSON.parse(output.stdout[0]);
@@ -80,10 +80,10 @@ describe("Log", function() {
         // assert.strictEqual(logObj.msg, "this is a test");
     });
 
-    describe("getLogger", function() {
+    describe("getBaseLogger", function() {
         it("returns singleton", function() {
-            let l1 = Log.getLogger();
-            let l2 = Log.getLogger();
+            let l1 = Log.getBaseLogger();
+            let l2 = Log.getBaseLogger();
             assert.strictEqual(l1, l2);
             assert.isArray(l1.streams);
             assert.strictEqual(l1.streams.length, Config.get("log-file-enabled") ? 2 : 1);
@@ -102,8 +102,8 @@ describe("Log", function() {
             let output = stdMocks.flush();
             assert.strictEqual(output.stdout.length, 2);
             assert.strictEqual(output.stderr.length, 0);
-            assert.match(output.stdout[0], /^.*nhai TRACE: \u001b\[37mwhee!\u001b\[39m\n$/);
-            assert.match(output.stdout[1], /^.*nhai INFO: {2}\u001b\[32mserious\u001b\[39m\n$/);
+            assert.match(output.stdout[0], /^.*nhai TRACE: \[main\] \u001b\[37mwhee!\u001b\[39m\n$/);
+            assert.match(output.stdout[1], /^.*nhai INFO: {2}\[main\] \u001b\[32mserious\u001b\[39m\n$/);
 
             stdMocks.use();
             Log.setStdoutLevel("info");
@@ -112,9 +112,10 @@ describe("Log", function() {
             stdMocks.restore();
 
             output = stdMocks.flush();
+            console.log("output", output);
             assert.strictEqual(output.stdout.length, 1);
             assert.strictEqual(output.stderr.length, 0);
-            assert.match(output.stdout[0], /^.*nhai INFO: {2}\u001b\[32mharumph\u001b\[39m\n$/);
+            assert.match(output.stdout[0], /^.*nhai INFO: {2}\[main\] \u001b\[32mharumph\u001b\[39m\n$/);
 
             Log.setStdoutLevel("trace");
         });
@@ -201,10 +202,10 @@ describe("Log", function() {
         it("adds a stream to the Logger", function() {
             Log.addStream(newStream);
 
-            let l = Log.getLogger();
+            let l = Log.getMainLogger();
             assert.isArray(l.streams);
-            assert.strictEqual(l.streams.length, Config.get("log-file-enabled") ? 3 : 2);
-            assert.strictEqual(l.streams[Config.get("log-file-enabled") ? 2 : 1].name, newStream.name);
+            assert.strictEqual(l.streams.length, 2);
+            assert.strictEqual(l.streams[1].name, newStream.name);
 
             stdMocks.use();
             Log.fatal("foo");
