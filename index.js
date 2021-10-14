@@ -4,6 +4,7 @@ const {Breakpoint} = require("./lib/Breakpoint");
 const {Component} = require("./lib/Component");
 const {Config} = require("./lib/Config");
 const {Context} = require("./lib/Context");
+const {Edge} = require("./lib/Edge");
 const {EventBase, EventBusBase, EventListener} = require("./lib/EventBase");
 const {EventFilter} = require("./lib/EventFilter");
 const {FeatureExtractor} = require("./lib/FeatureExtractor");
@@ -12,13 +13,16 @@ const {HtmlTemplate} = require("./lib/HtmlTemplate");
 const {Intrinsic} = require("./lib/Intrinsic");
 const {Jupyter} = require("./lib/Jupyter");
 const Log = require("./lib/Log");
+const {Node} = require("./lib/Node");
 const {Perception, PerceptionEvent, PerceptionModule} = require("./lib/Perception");
 const {Pipeline} = require("./lib/Pipeline");
 const {PipelineStage} = require("./lib/PipelineStage");
 const {Schema} = require("./lib/Schema");
 const {Significance, SignificanceEvent} = require("./lib/Significance");
+const {StatusImage} = require("./lib/StatusImage");
 const {Synchronize} = require("./lib/Synchronize");
 const {Trace} = require("./lib/Trace");
+const {TransientObject} = require("./lib/TransientObject");
 const Utility = require("./lib/Utility");
 
 module.exports = {
@@ -30,6 +34,7 @@ module.exports = {
     Component,
     Config,
     Context,
+    Edge,
     EventBase,
     EventBusBase,
     EventFilter,
@@ -42,6 +47,7 @@ module.exports = {
     Intrinsic,
     Jupyter,
     Log,
+    Node,
     Perception,
     PerceptionEvent,
     PerceptionModule,
@@ -50,7 +56,9 @@ module.exports = {
     Significance,
     Schema,
     SignificanceEvent,
+    StatusImage,
     Synchronize,
     Utility,
     Trace,
+    TransientObject,
 };
