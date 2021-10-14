@@ -80,7 +80,7 @@ describe("TransientObject", function() {
         });
 
         it("deleteId succeeds", async function() {
-            let to = new TransientObject({id: 123});
+            new TransientObject({id: 123});
             assert.isTrue(TransientObject.cache.has(123));
 
             let ret = await TransientObject.deleteId(123);
