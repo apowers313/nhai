@@ -156,12 +156,14 @@ function watchMain(done) {
 /* ************
  * RELEASE
  **************/
-const ready = parallel(test, audit, lint, coverage, docs, integration);
+const ready = parallel(audit, lint, test, coverage, docs, integration);
 
 function audit(done) {
     let cmd = "npm";
     let args = [
         "audit",
+        "--only=prod",
+        "--audit-level=high",
     ];
     let opts = {
         stdio: "inherit",
