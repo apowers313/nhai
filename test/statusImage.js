@@ -2,7 +2,7 @@ const {StatusImage, EventListener, HtmlTemplate} = require("../index");
 const {assert} = require("chai");
 const {TestEvent, TestSync} = require("./helpers/helpers.js");
 
-describe.skip("StatusImage", function() {
+describe("StatusImage", function() {
     afterEach(function() {
         EventListener.clearListenAll();
     });
@@ -54,7 +54,7 @@ describe.skip("StatusImage", function() {
             assert.strictEqual(d, "Test template \n\n42!");
         });
 
-        it.only("renders SVG", async function() {
+        it("renders SVG", async function() {
             let si = new StatusImage("statusImg.hbs", ["foo"]);
 
             let te = new TestEvent();
