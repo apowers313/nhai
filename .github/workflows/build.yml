@@ -21,7 +21,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: Install
-      run: npm install
+      run: npm install --audit false
 
     - name: Install magicpatch
       run: npm install -g magicpatch
