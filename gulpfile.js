@@ -202,6 +202,13 @@ async function integration(testReporter = "spec") {
         }));
 }
 
+/* ************
+ * DEV DOCKER
+ **************/
+async function devDocker() {
+    return doPlop("dev-docker");
+}
+
 module.exports = {
     audit,
     test,
@@ -216,6 +223,7 @@ module.exports = {
     "dev:coverage": watchCoverage,
     "dev:docs": watchDocs,
     "dev:main": watchMain,
+    "dev:docker": devDocker,
     experiment,
     "exp": experiment,
     "exp:run": experiment,

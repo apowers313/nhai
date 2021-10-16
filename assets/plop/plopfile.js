@@ -77,6 +77,19 @@ module.exports = function(plop) {
             return archiveExperiment({push: true}, false);
         },
     });
+
+    plop.setGenerator("dev-docker", {
+        descrption: "launches docker for development",
+        prompts: [],
+        actions: function() {
+            let actions = [];
+
+            buildDocker(actions, `nhai-dev-image-${date.compactDate}`);
+            runDocker(actions, `nhai-dev-image-${date.compactDate}`, `nhai-dev-container-${date.compactDate}${date.timestamp}`);
+
+            return actions;
+        },
+    });
 };
 
 function createExperiment(answers) {
@@ -108,17 +121,10 @@ function createExperiment(answers) {
     });
 
     // build docker image
-    actions.push(async() => {
-        console.log("running build...");
-        await spawnAsync(`docker build --build-arg JUPYTER_FILE=./${newJupyterFile} --tag ${expConf.dockerImage} .`);
-        fs.rmSync(`./${newJupyterFile}`);
-    });
+    buildDocker(actions, expConf.dockerImage, newJupyterFile, true);
 
     // run docker image
-    actions.push(async() => {
-        console.log("running image...");
-        return spawnAsync(`docker run -p 6379:6379 -p 8080:8080 -p 8888:8888 -it --name ${expConf.dockerContainer} ${expConf.dockerImage}`);
-    });
+    runDocker(actions, expConf.dockerImage, expConf.dockerContainer);
 
     return actions;
 }
@@ -164,11 +170,29 @@ function archiveExperiment(answers, deactivate = true) {
     return actions;
 }
 
+function buildDocker(actions, imageName, jupyterFile = "test/integration/integration-test.ipynb", delJup = false) {
+    actions.push(async() => {
+        console.log("running build...");
+        await spawnAsync(`docker build --build-arg JUPYTER_FILE=./${jupyterFile} --tag ${imageName} .`);
+        if (delJup) {
+            fs.rmSync(`./${jupyterFile}`);
+        }
+    });
+}
+
+function runDocker(actions, imageName, containerName) {
+    actions.push(async() => {
+        console.log("running image...");
+        return spawnAsync(`docker run -p 6379:6379 -p 8080:8080 -p 8888:8888 -it --name ${containerName} ${imageName}`);
+    });
+}
+
 function saveConf() {
     fs.writeFileSync(expConfFile, JSON.stringify(expConf, null, 4), {encoding: "utf8"});
 }
 
 function spawnAsync(str) {
+    console.log("Running command:", str);
     let args = str.split(" ");
     let cmd = args.shift();
 
@@ -179,12 +203,6 @@ function spawnAsync(str) {
     let opts = {
         stdio: "inherit",
     };
-
-    // // XXX TODO -- this is for debugging only
-    // args.unshift(cmd);
-    // cmd = "echo";
-    console.log("CMD:", cmd);
-    console.log("ARGS:", args);
 
     return new Promise((resolve, reject) => {
         spawn(cmd, args, opts).on("close", (code) => {
@@ -214,6 +232,7 @@ function getDate() {
 
     d.dashDate = `${d.year}-${d.month}-${d.day}`;
     d.compactDate = `${d.year}${d.month}${d.day}`;
+    d.timestamp = `${d.hour}${d.minute}${d.second}`;
 
     return d;
 }
