@@ -72,12 +72,9 @@ describe("Synchronize", function() {
     describe("synchronous", function() {
         describe("watchdog", function() {
             let wd;
-            let intervalHandle;
-            afterEach(function() {
+            afterEach(async function() {
                 wd.restore();
-                if (intervalHandle) {
-                    clearInterval(intervalHandle);
-                }
+                await Synchronize.shutdown();
             });
 
             it("throws if nextTick not called", function(done) {
@@ -112,6 +109,7 @@ describe("Synchronize", function() {
                 await delay(90);
                 await Synchronize.nextTick();
                 await delay(90);
+                Synchronize.pauseWatchdog();
                 assert.strictEqual(wd.callCount, 3);
             });
         });
