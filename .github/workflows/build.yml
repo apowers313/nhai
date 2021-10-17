@@ -31,6 +31,8 @@ jobs:
 
     - name: Security Audit
       run: npm audit --omit=dev --audit-level=high
+      env:
+        NODE_ENV: production
       continue-on-error: true
 
     - name: List Modules
