@@ -32,7 +32,7 @@ jobs:
     - name: Security Audit
       run: npm audit --omit=dev --audit-level=critical
       env:
-        NODE_ENV=production
+        NODE_ENV: production
       continue-on-error: true
 
     - name: List Modules
