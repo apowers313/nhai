@@ -27,8 +27,7 @@ jobs:
       run: npm install -g magicpatch
 
     - name: Security Audit
-      run: npm audit --only=prod --audit-level=high
-      continue-on-error: true
+      run: gulp audit
 
     - name: List Modules
       run: npm ls
@@ -46,7 +45,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
-        node-version: [14.x, 16.x]
+        node-version: [14.x]
 
     steps:
     - name: Git checkout
