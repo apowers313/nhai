@@ -27,14 +27,15 @@ jobs:
       run: npm install -g magicpatch
 
     - name: Security Audit
-      run: gulp audit
+      run: npm audit --only=prod --audit-level=high
+      continue-on-error: true
 
     - name: List Modules
       run: npm ls
       continue-on-error: true
 
     - name: Lint
-      run: npm run lint
+      run: gulp lint
 
   test:
 
