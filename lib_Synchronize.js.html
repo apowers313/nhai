@@ -112,7 +112,6 @@ class Synchronize {
      * Initialize the Synchronize system
      */
     static init() {
-        console.print("Synchronize: init");
         tickCount = 0;
         isSync = Config.get("environment-synchronous");
         initialized = true;
@@ -194,7 +193,6 @@ class Synchronize {
      * The default synchronus watchdog. Mostly used internally and exposed for testing.
      */
     static syncWatchdog() {
-        console.print(`Synchronize: syncWatchdog had tick: ${hadTick} (${process.hrtime()})`);
         if (!hadTick) {
             throw new Error(`Synchronize synchronous watchdog timed out after ${Config.get("environment-sync-watchdog-timeout")}ms without Synchronize.nextTick() being called`);
         }
@@ -226,7 +224,6 @@ class Synchronize {
 }
 
 async function _nextTick() {
-    console.print("Synchronize: _nextTick", process.hrtime());
     tickCount++;
     let e = new SynchronizeEvent("synchronize", "synchronize");
     return e.emit("tick", tickCount);
