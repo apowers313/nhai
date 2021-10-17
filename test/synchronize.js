@@ -3,8 +3,9 @@ const chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 const {assert} = chai;
 
-const {Synchronize, Config, Log} = require("../index");
+const {Synchronize, Config, Log, Utility} = require("../index");
 const {spy, stub} = require("sinon");
+const {delay} = Utility;
 
 let origWatchdog = Config.get("environment-sync-watchdog-timeout");
 
@@ -99,18 +100,19 @@ describe("Synchronize", function() {
                 }, 12);
             });
 
-            it("repeats every X ms", function(done) {
-                this.retries(3); // XXX: this test can be a little flakey...
+            it("repeats every X ms", async function() {
+                // this.retries(3); // XXX: this test can be a little flakey...
                 wd = spy(Synchronize, "syncWatchdog");
-                Config.set("environment-sync-watchdog-timeout", 10);
-                Synchronize.init();
-                intervalHandle = setInterval(async() => {
-                    await Synchronize.nextTick();
-                }, 3);
-                setTimeout(() => {
-                    assert.strictEqual(wd.callCount, 3);
-                    done();
-                }, 35);
+                Config.set("environment-sync-watchdog-timeout", 100);
+                await Synchronize.init();
+                await delay(90);
+                await Synchronize.nextTick();
+                await delay(90);
+                await Synchronize.nextTick();
+                await delay(90);
+                await Synchronize.nextTick();
+                await delay(90);
+                assert.strictEqual(wd.callCount, 3);
             });
         });
     });
