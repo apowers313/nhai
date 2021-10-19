@@ -77,7 +77,8 @@
     "handlebars": "^4.7.7",
     "random": "^2.2.0",
     "redisgraph.js": "^2.3.0",
-    "seedrandom": "^3.0.5"
+    "seedrandom": "^3.0.5",
+    "uuid": "^8.3.2"
   },
   "husky": {
     "hooks": {
