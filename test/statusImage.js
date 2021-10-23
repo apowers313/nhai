@@ -61,7 +61,7 @@ describe("StatusImage", function() {
             await te.emit("foo", 42);
 
             let d = si.render();
-            console.log(d);
+            // console.log(d);
             // assert.strictEqual(d, "Test template \n\n42!");
         });
 
