@@ -183,7 +183,7 @@ function buildDocker(actions, imageName, jupyterFile = "test/integration/integra
 function runDocker(actions, imageName, containerName) {
     actions.push(async() => {
         console.log("running image...");
-        return spawnAsync(`docker run -p 6379:6379 -p 8080:8080 -p 8888:8888 -it --name ${containerName} ${imageName}`);
+        return spawnAsync(`docker run -p 6379:6379 -p 8080:8080 -p 8888:8888 -p 8088:8088 -p 8000:8000 -it --name ${containerName} ${imageName}`);
     });
 }
 
