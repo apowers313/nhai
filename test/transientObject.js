@@ -2,6 +2,10 @@ const {TransientObject} = require("..");
 const {assert} = require("chai");
 
 describe("TransientObject", function() {
+    afterEach(function() {
+        TransientObject.cache.clear();
+    });
+
     it("is a Function", function() {
         assert.isFunction(TransientObject);
     });
@@ -35,7 +39,7 @@ describe("TransientObject", function() {
     describe("Proxy", function() {
         describe("getter", function() {
             it("throws if not loaded", function() {
-                let to = new TransientObject();
+                let to = new TransientObject({id: 123});
 
                 assert.throws(() => {
                     // eslint-disable-next-line no-unused-vars
@@ -44,7 +48,7 @@ describe("TransientObject", function() {
             });
 
             it("intercepts getter", async function() {
-                let to = new TransientObject();
+                let to = new TransientObject({id: 123});
                 await to.load();
 
                 assert.isFalse(to.isDirty);
@@ -54,7 +58,7 @@ describe("TransientObject", function() {
 
         describe("setter", function() {
             it("throws if not loaded", function() {
-                let to = new TransientObject();
+                let to = new TransientObject({id: 123});
 
                 assert.throws(() => {
                     to.foo = "bar";
@@ -62,7 +66,7 @@ describe("TransientObject", function() {
             });
 
             it("setter for defined value", async function() {
-                let to = new TransientObject();
+                let to = new TransientObject({id: 123});
                 await to.load();
 
                 assert.isFalse(to.isDirty);
@@ -130,11 +134,11 @@ describe("TransientObject", function() {
         assert.strictEqual(to.toString(), "{\"beer\":\"yum\"}");
     });
 
-    it("toJson", async function() {
+    it("toJSON", async function() {
         let to = new TransientObject();
         await to.load();
 
         to.beer = "yum";
-        assert.strictEqual(to.toJson(), "{\"beer\":\"yum\"}");
+        assert.strictEqual(to.toJSON(), "{\"beer\":\"yum\"}");
     });
 });

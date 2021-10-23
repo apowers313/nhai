@@ -2,12 +2,15 @@ const {assert} = require("chai");
 const {GraphDb} = require("../index");
 const {redisGraphMockData} = require("./helpers/redisGraphMock");
 
+// NOTE: these tests will run on a real database if 'registerMock("redisgraph.js", ...)' is commented out in ./helpers/preload.js
+
 describe("GraphDb", function() {
     beforeEach(async function() {
         await GraphDb.init();
     });
 
     afterEach(async function() {
+        await GraphDb.wipe();
         await GraphDb.shutdown();
     });
 
@@ -19,34 +22,41 @@ describe("GraphDb", function() {
         it("runs query", async function() {
             redisGraphMockData({
                 resultSet: {
-                    hasNext: [true, false],
+                    hasNext: [false, false, false, true, false],
                     size: [1],
                 },
                 record: {
-                    get: ["roi"],
+                    values: [[{id: 0, label: "person", properties: {name: "roi", age: 32}}]],
                 },
             });
-            await GraphDb.query("CREATE (:person{name:'roi',age:32})");
-            await GraphDb.query("CREATE (:person{name:'amit',age:30})");
-            await GraphDb.query("MATCH (a:person), (b:person) WHERE (a.name = 'roi' AND b.name='amit') CREATE (a)-[:knows]->(b)");
-            let res = await GraphDb.query("MATCH (a:person)-[:knows]->(:person) RETURN a.name");
-            assert.strictEqual(res.size(), 1);
-            assert.isTrue(res.hasNext());
-            let record = res.next();
-            assert.strictEqual(record.get("a.name"), "roi");
-            assert.isFalse(res.hasNext());
+
+            let res;
+            res = await GraphDb.query("CREATE (:person{name:'roi',age:32})");
+            assert.isArray(res);
+            assert.strictEqual(res.length, 0);
+
+            res = await GraphDb.query("CREATE (:person{name:'amit',age:30})");
+            assert.isArray(res);
+            assert.strictEqual(res.length, 0);
+
+            res = await GraphDb.query("MATCH (a:person), (b:person) WHERE (a.name = 'roi' AND b.name='amit') CREATE (a)-[:knows]->(b)");
+            assert.isArray(res);
+            assert.strictEqual(res.length, 0);
+
+            res = await GraphDb.query("MATCH (a:person)-[:knows]->(:person) RETURN a");
+            // res = [ [ Node { id: 0, label: 'person', properties: [Object] } ] ]
+            assert.isArray(res);
+            // one match returned
+            assert.strictEqual(res.length, 1);
+            // one node in the match
+            assert.strictEqual(res[0].length, 1);
+
+            // n = { id: 0, label: 'person', properties: {name: "roi", age: 32} }
+            let n = res[0][0];
+            assert.isNumber(n.id);
+            assert.strictEqual(n.label, "person");
+            assert.deepEqual(n.properties, {name: "roi", age: 32});
             return GraphDb.wipe();
         });
-
-        // it.only("foo", async function() {
-        //     await GraphDb.query("CREATE (:person{name:'roi',age:32})");
-        //     await GraphDb.query("CREATE (:person{name:'amit',age:30})");
-        //     await GraphDb.query("MATCH (a:person), (b:person) WHERE (a.name = 'roi' AND b.name='amit') CREATE (a)<-[:knows]-(b)");
-        //     let res = await GraphDb.query("MATCH (:person)-[:knows]->(a:person) RETURN a");
-        //     assert.isTrue(res.hasNext());
-        //     let record = res.next();
-        //     console.log(record.get("a"));
-        //     return GraphDb.wipe();
-        // });
     });
 });
