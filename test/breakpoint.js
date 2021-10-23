@@ -12,6 +12,7 @@ describe("Breakpoint", function() {
     beforeEach(function() {
         Breakpoint.init();
     });
+
     afterEach(function() {
         testBus.removeAllListeners();
         Breakpoint.clearAll();
