@@ -1,4 +1,4 @@
-const {Node, GraphDb, Log, TransientObject} = require("..");
+const {Node, Edge, GraphDb, Log, TransientObject} = require("..");
 const {assert} = require("chai");
 const {redisGraphMockData} = require("./helpers/redisGraphMock");
 
@@ -13,6 +13,11 @@ describe("Node", function() {
 
     it("is Function", function() {
         assert.isFunction(Node);
+    });
+
+    it("sets type", function() {
+        let n = new Node();
+        assert.deepEqual(n.types, ["node"]);
     });
 
     describe("constructor", function() {
@@ -65,7 +70,7 @@ describe("Node", function() {
 
             // setup
             let nodeId = "09014b80-dff4-4f6e-a83a-0219bfb7c4ad";
-            await GraphDb.query(`CREATE (:node{nodeId:'${nodeId}'})`);
+            await GraphDb.query(`CREATE (   :node:foo:bar {nodeId:'${nodeId}'})`);
             let n = new Node(nodeId);
             assert.isFalse(n.isLoaded);
 
@@ -131,11 +136,11 @@ describe("Node", function() {
 
             // store
             let ret = await n.store();
-            assert.isArray(ret);
-            assert.strictEqual(ret.length, 1);
-            assert.isArray(ret[0]);
-            assert.strictEqual(ret[0].length, 1);
-            assert.isNumber(ret[0][0]);
+            // assert.isArray(ret);
+            // assert.strictEqual(ret.length, 1);
+            // assert.isArray(ret[0]);
+            // assert.strictEqual(ret[0].length, 1);
+            // assert.isNumber(ret[0][0]);
 
             // after
             match = await GraphDb.query(`MATCH (n:node {nodeId:'${n.id}'}) RETURN n`);
@@ -150,14 +155,98 @@ describe("Node", function() {
         });
 
         it("updates existing node");
+
+        // it("stores nodes", function() {
+        //     throw new Error("not implemented");
+        // });
+    });
+
+    describe("get", function() {
+        it("returns same node", function() {
+            let n = new Node();
+            let n2 = Node.get(n);
+            assert.strictEqual(n, n2);
+        });
+
+        it("returns same as ID", function() {
+            let n = new Node();
+            let n2 = Node.get(n.id);
+            assert.strictEqual(n, n2);
+        });
     });
 
     describe("connectTo", function() {
-        it("creates edge");
+        it("creates edge based on ID", function() {
+            let n = new Node();
+            let dst = new Node();
+            let e = n.connectTo(dst.id);
+            assert.instanceOf(e, Edge);
+            assert.strictEqual(e.src, n);
+            assert.strictEqual(e.dst, dst);
+            assert.strictEqual(n.srcEdges[0], e);
+        });
+
+        it("creates edge based on Node", function() {
+            let n = new Node();
+            let dst = new Node();
+            let e = n.connectTo(dst);
+            assert.instanceOf(e, Edge);
+            assert.strictEqual(e.src, n);
+            assert.strictEqual(e.dst, dst);
+            assert.strictEqual(n.srcEdges[0], e);
+        });
+
+        it("sets edge type", function() {
+            let n = new Node();
+            let src = new Node();
+            let e = n.connectTo(src, "foo");
+            assert.instanceOf(e, Edge);
+            assert.deepEqual(e.types, ["foo"]);
+        });
+
+        it("throws if not node or id string", function() {
+            let n = new Node();
+            assert.throws(() => {
+                n.connectTo(3);
+            }, TypeError, "Node.get expected 'n' to be a string, got: 3");
+        });
     });
 
     describe("connectFrom", function() {
-        it("creates edge");
+        it("creates edge based on ID", function() {
+            let n = new Node();
+            let src = new Node();
+            let e = n.connectFrom(src.id);
+            assert.instanceOf(e, Edge);
+            assert.strictEqual(e.dst, n);
+            assert.strictEqual(e.src, src);
+            assert.strictEqual(n.dstEdges[0], e);
+        });
+
+        it("creates edge based on Node", function() {
+            let n = new Node();
+            let src = new Node();
+            let e = n.connectFrom(src);
+            assert.instanceOf(e, Edge);
+            assert.strictEqual(e.dst, n);
+            assert.strictEqual(e.src, src);
+            assert.strictEqual(n.dstEdges[0], e);
+        });
+
+        it("sets edge type", function() {
+            let n = new Node();
+            let src = new Node();
+            let e = n.connectFrom(src, "foo");
+            assert.instanceOf(e, Edge);
+            assert.deepEqual(e.types, ["foo"]);
+        });
+
+        it("throws if not node or id string", function() {
+            let n = new Node();
+            assert.throws(() => {
+                n.connectFrom(3);
+            }, TypeError, "Node.get expected 'n' to be a string, got: 3");
+        });
     });
 
     describe("create", function() {

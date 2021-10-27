@@ -1,4 +1,4 @@
-const {Edge, Node, Log, TransientObject} = require("..");
+const {Edge, Node, Log, GraphDb, TransientObject} = require("..");
 const {assert} = require("chai");
 
 describe("Edge", function() {
@@ -26,7 +26,8 @@ describe("Edge", function() {
             assert.strictEqual(e.id, edgeId1);
 
             // type is correct
-            assert.strictEqual(e.type, "foo");
+            assert.strictEqual(e.types.length, 1);
+            assert.strictEqual(e.types[0], "foo");
 
             // data is correct
             assert.deepEqual(e.data, {beer: "yum"});
@@ -63,7 +64,8 @@ describe("Edge", function() {
             assert.strictEqual(e1.id, edgeId1);
 
             // type is correct
-            assert.strictEqual(e1.type, "foo");
+            assert.strictEqual(e1.types.length, 1);
+            assert.strictEqual(e1.types[0], "foo");
 
             // data is correct
             assert.deepEqual(e1.data, {beer: "yum"});
@@ -88,7 +90,8 @@ describe("Edge", function() {
             assert.strictEqual(e2.id, edgeId2);
 
             // type is correct
-            assert.strictEqual(e2.type, "bar");
+            assert.strictEqual(e2.types.length, 1);
+            assert.strictEqual(e2.types[0], "bar");
 
             // data is correct
             assert.deepEqual(e2.data, {wine: "fun"});
@@ -109,5 +112,22 @@ describe("Edge", function() {
         });
 
         it("doesn't overwrite cached object");
+    });
+
+    describe("connect", function() {
+        it("connects two nodes", function() {
+            let src = new Node();
+            let dst = new Node();
+            let e = Edge.connect(src, dst);
+            assert.isArray(e.types);
+            assert.strictEqual(e.types.length, 1);
+            assert.strictEqual(e.types[0], "edge");
+            assert.strictEqual(e.src, src);
+            assert.strictEqual(e.dst, dst);
+            assert.strictEqual(src.srcEdges.length, 1);
+            assert.strictEqual(src.srcEdges[0], e);
+            assert.strictEqual(dst.dstEdges.length, 1);
+            assert.strictEqual(dst.dstEdges[0], e);
+        });
     });
 });
