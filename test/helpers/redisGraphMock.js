@@ -1,7 +1,6 @@
 /* eslint-disable jsdoc/require-jsdoc */
 
-// const mockery = require("mockery");
-// const sinon = require("sinon");
+// XXX: this mock is loaded in ./preload.js
 
 let mockData;
 const debug = false;
@@ -25,6 +24,7 @@ function redisGraphMockData(data = {}) {
         },
         record: {
             get: data.record?.get ?? [],
+            values: data.record?.values ?? [],
         },
     };
 
@@ -85,10 +85,22 @@ class RecordMock {
         log("RecordMock: constructor");
     }
 
+    next() {
+        log("RecordMock: next");
+        return this;
+    }
+
     get(... args) {
         log("RecordMock: get:", args);
         let ret = mockData.record?.get.shift();
         log("RecordMock: get result:", ret);
+        return ret;
+    }
+
+    values(... args) {
+        log("RecordMock: values:", args);
+        let ret = mockData.record?.values.shift();
+        log("RecordMock: values result:", ret);
         return ret;
     }
 }

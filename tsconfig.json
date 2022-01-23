@@ -5,5 +5,20 @@
     ],
     "exclude": [
         "node_modules"
-    ]
+    ],
+    "compilerOptions": {
+        "target": "ESNext",
+        "lib": [
+            "ESNext"
+        ],
+        "outDir": "./.ts-node",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "strict": true,
+        "sourceMap": true,
+        "inlineSources": true,
+        "types": [
+            "node"
+        ],
+    }
 }

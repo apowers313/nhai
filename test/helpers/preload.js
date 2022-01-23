@@ -4,6 +4,6 @@ mockery.enable({
     // warnOnReplace: false,
     warnOnUnregistered: false,
 });
-mockery.registerMock("redisgraph.js", require("./redisGraphMock"));
+// mockery.registerMock("redisgraph.js", require("./redisGraphMock"));
 
 require("./jupyterTest.js");
