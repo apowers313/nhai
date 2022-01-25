@@ -103,7 +103,7 @@ const defaultConfigMap = new Map(
          * Maximum number of lines to print from the stack dump. Applies globally.
          *
          * @name log-error-stack-length
-         * @type {integer}
+         * @type {number}
          * @default 64
          */
         ["log-error-stack-length", 64],
@@ -228,13 +228,13 @@ const defaultConfigMap = new Map(
 );
 
 let configMap = new Map();
-let configFiles = [];
+let configFiles: Array<string> = [];
 let loadComplete = false;
 
 /**
  * The global configuration object for getting and setting configuration values.
  */
-class Config {
+export class Config {
     /**
      * Initializes the configuration, reading config files and such
      */
@@ -273,7 +273,7 @@ class Config {
      * @param {string} key - The name of the configuration value to retrieve
      * @returns {*}     The configuration value
      */
-    static get(key) {
+    static get(key: string) {
         // checkType("Config.get", "key", key, "string");
         return configMap.get(key);
     }
@@ -284,7 +284,7 @@ class Config {
      * @param {string} key - The name of the configuration value to assign
      * @param {*}      val - The value to assign
      */
-    static set(key, val) {
+    static set(key: string, val: unknown) {
         // checkType("Config.set", "key", key, "string");
         configMap.set(key, val);
     }
@@ -308,7 +308,7 @@ class Config {
      *
      * @param   {object} confObj An Object where every key is a config parameter name and the associated value is the config value
      */
-    static load(confObj) {
+    static load(confObj: Record<string, unknown>) {
         const {checkType} = require("./Utility");
         checkType("Config.load", "confObj", confObj, "object");
 
@@ -351,5 +351,3 @@ async function loadAppConfig() {
 
 // set defaults
 Config.reset();
-
-module.exports = {Config};

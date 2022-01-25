@@ -1,5 +1,6 @@
+import {Config} from "../mod";
+
 const {assert} = require("chai");
-const {Config} = require("..");
 const fs = require("fs");
 const path = require("path");
 const os = require("os");
@@ -13,12 +14,12 @@ const jsonHelperPath = path.join(__dirname, "helpers", "config.json");
 const jsConfigPath = path.join(workingDir, ".nhairc.js");
 const yamlConfigPath = path.join(workingDir, ".nhairc");
 const jsonConfigPath = path.join(workingDir, ".nhairc.json");
-function copyFile(srcPath, dstPath) {
+function copyFile(srcPath: string, dstPath: string) {
     let data = fs.readFileSync(srcPath);
     fs.writeFileSync(dstPath, data);
 }
 
-function deleteFile(path) {
+function deleteFile(path: string) {
     fs.unlinkSync(path);
 }
 
