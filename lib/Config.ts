@@ -6,8 +6,8 @@
  * @module Config
  */
 
+import * as path from "path";
 import {cosmiconfigSync} from "cosmiconfig";
-import path from "path";
 const cosmiconfigOpts = {};
 
 const defaultConfigMap = new Map(
