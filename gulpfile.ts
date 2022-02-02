@@ -1,5 +1,5 @@
 /* eslint-disable jsdoc/require-jsdoc */
-import {dest, parallel, series, src, watch} from "gulp";
+import {parallel, src, watch} from "gulp";
 import {spawn} from "child_process";
 
 const eslint = require("gulp-eslint7");
@@ -44,17 +44,17 @@ function mocha(opts: MochaOpts, done: () => void) {
     spawn(cmd, args, {stdio: "inherit"}).on("close", done);
 }
 
-exports.test = function(done: () => void) {
+exports.test = function test(done: () => void) {
     mocha({}, done);
 };
 
-exports["test:quiet"] = function(done: () => void) {
+exports["test:quiet"] = function testQuiet(done: () => void) {
     mocha({
         reporter: "min",
     }, done);
 };
 
-exports["dev:test"] = function() {
+exports["dev:test"] = function devTest() {
     return watch(all, (done: () => void) => {
         mocha({
             reporter: "min",
@@ -71,12 +71,12 @@ function esl() {
         .pipe(eslint.format());
 }
 
-exports.lint = function() {
+exports.lint = function lint() {
     return esl()
         .pipe(eslint.failAfterError());
 };
 
-exports["dev:lint"] = function() {
+exports["dev:lint"] = function devLint() {
     return watch(all, function() {
         return esl();
     });
@@ -91,12 +91,12 @@ function istanbul(done: () => void) {
         "--reporter=text",
         "--reporter=html",
         "--reporter=lcov",
-        "ts-mocha",
+        "mocha",
     ];
     spawn(cmd, args, {stdio: "inherit"}).on("close", done);
 }
 
-exports.coverage = function(done: () => void) {
+exports.coverage = function coverage(done: () => void) {
     istanbul(done);
 };
 
@@ -168,22 +168,29 @@ exports["dev:docs"] = parallel(docsBrowserSync, docsRefresh);
 // }
 
 /* ************
+ * AUDIT
+ **************/
+exports.audit = function audit(done) {
+    const cmd = "npm";
+    const args = [
+        "audit",
+        "--only=prod",
+        "--audit-level=high",
+    ];
+    spawn(cmd, args, {stdio: "inherit"}).on("close", done);
+};
+
+/* ************
  * PUSH
  **************/
-// export const ready = parallel(audit, lint, test, coverage, docs, integration);
-
-// function audit(done) {
-//     let cmd = "npm";
-//     let args = [
-//         "audit",
-//         "--only=prod",
-//         "--audit-level=high",
-//     ];
-//     let opts = {
-//         stdio: "inherit",
-//     };
-//     let aud = spawn(cmd, args, opts).on("close", done);
-// }
+export const ready = parallel(
+    exports.audit,
+    exports.lint,
+    exports.test,
+    exports.coverage,
+    exports.docs,
+    // exports.integration,
+);
 
 /* ************
  * EXPERIMENT
