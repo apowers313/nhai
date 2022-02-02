@@ -32,6 +32,9 @@ module.exports = {
             memberSyntaxSortOrder: ["none", "all", "multiple", "single"],
             allowSeparatedGroups: false,
         }],
+        // fixes
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": ["error"],
         // TODO: turn these off
         "@typescript-eslint/no-require-imports": "off",
         "@typescript-eslint/no-var-requires": "off",
