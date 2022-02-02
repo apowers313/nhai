@@ -1,0 +1,12 @@
+// specification: https://mochajs.org/#configuring-mocha-nodejs
+// examples: https://github.com/mochajs/mocha/tree/master/example/config
+{
+    // "extension": ["test.ts"],
+    "require": ["ts-node/register"],
+    "file": [
+        "test/config.test.ts",
+        "test/log.test.ts"
+    ],
+    "recursive": true,
+    "reporter": "spec"
+}

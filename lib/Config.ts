@@ -6,8 +6,8 @@
  * @module Config
  */
 
-const path = require("path");
-let {cosmiconfigSync} = require("cosmiconfig");
+import {cosmiconfigSync} from "cosmiconfig";
+import path from "path";
 const cosmiconfigOpts = {};
 
 const defaultConfigMap = new Map(
@@ -26,6 +26,7 @@ const defaultConfigMap = new Map(
          * @name app-version
          * @type {string}
          */
+        // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-member-access
         ["app-version", require("../package.json").version],
         /**
          * Whether the debugger should break on the first event after the program starts.
@@ -227,8 +228,14 @@ const defaultConfigMap = new Map(
     ],
 );
 
+export interface ConfigFile {
+    config: Record<string, unknown>,
+    filepath: string,
+    isEmpty?: boolean,
+}
+
 let configMap = new Map();
-let configFiles: Array<string> = [];
+const configFiles: Array<ConfigFile> = [];
 let loadComplete = false;
 
 /**
@@ -238,7 +245,7 @@ export class Config {
     /**
      * Initializes the configuration, reading config files and such
      */
-    static async init() {
+    static async init(): Promise<void> {
         if (Config.isLoaded) {
             return;
         }
@@ -254,7 +261,7 @@ export class Config {
     }
 
     /** the path to the configuration file that was loaded, or null if none was loaded */
-    static get fileList() {
+    static get fileList(): ConfigFile[] {
         return configFiles;
     }
 
@@ -263,7 +270,7 @@ export class Config {
      *
      * @returns {Map} A map containing key / value pairs of configuration settings
      */
-    static getConfig() {
+    static getConfig(): Map<string, unknown> {
         return configMap;
     }
 
@@ -273,7 +280,8 @@ export class Config {
      * @param {string} key - The name of the configuration value to retrieve
      * @returns {*}     The configuration value
      */
-    static get(key: string) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    static get(key: string): any {
         // checkType("Config.get", "key", key, "string");
         return configMap.get(key);
     }
@@ -284,7 +292,7 @@ export class Config {
      * @param {string} key - The name of the configuration value to assign
      * @param {*}      val - The value to assign
      */
-    static set(key: string, val: unknown) {
+    static set(key: string, val: unknown): void {
         // checkType("Config.set", "key", key, "string");
         configMap.set(key, val);
     }
@@ -292,11 +300,11 @@ export class Config {
     /**
      * Reset all config values to their defaults and remove any non-default values
      */
-    static reset() {
+    static reset():void {
         configMap.clear();
         configFiles.length = 0;
 
-        for (let entry of defaultConfigMap.entries()) {
+        for (const entry of defaultConfigMap.entries()) {
             configMap.set(... entry);
         }
 
@@ -308,11 +316,8 @@ export class Config {
      *
      * @param   {object} confObj An Object where every key is a config parameter name and the associated value is the config value
      */
-    static load(confObj: Record<string, unknown>) {
-        const {checkType} = require("./Utility");
-        checkType("Config.load", "confObj", confObj, "object");
-
-        for (let key of Object.keys(confObj)) {
+    static load(confObj: Record<string, unknown>): Map<string, unknown> {
+        for (const key of Object.keys(confObj)) {
             // console.info(`merging: '${key}' = '${confObj[key]}'`);
             Config.set(key, confObj[key]);
         }
@@ -323,16 +328,20 @@ export class Config {
     }
 
     /** boolean indicating whether a configuration has been loaded */
-    static get isLoaded() {
+    static get isLoaded(): boolean {
         return loadComplete;
     }
 }
 
-async function loadAppConfig() {
-    let appName = Config.get("app-name");
-    let explorerSync = cosmiconfigSync(appName, cosmiconfigOpts);
+function loadAppConfig() {
+    const appName = Config.get("app-name");
+    if (typeof appName !== "string") {
+        throw new Error("Config: appName not set");
+    }
 
-    let configResult = explorerSync.search();
+    const explorerSync = cosmiconfigSync(appName, cosmiconfigOpts);
+
+    const configResult = explorerSync.search();
     if (!configResult) {
         return null;
     }
@@ -340,7 +349,7 @@ async function loadAppConfig() {
     // console.info("found config:", configResult);
 
     if (typeof configResult.config !== "object" && typeof configResult.config !== "undefined") {
-        throw new Error(`Error loading config (did not produce a config Object): ${configResult.filename}`);
+        throw new Error(`Error loading config (did not produce a config Object): ${configResult.filepath}`);
     } else {
         Config.load(configResult.config);
     }

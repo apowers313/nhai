@@ -1,32 +1,59 @@
-const path = require("path");
+import * as Logger from "bunyan";
+import * as path from "path";
+import {Config} from "./Config";
+import bunyanDebugStream from "bunyan-debug-stream";
 
-const bunyan = require("bunyan");
-const bunyanDebugStream = require("bunyan-debug-stream");
-
-const {Config} = require("./Config");
-
-let baseLogger;
-let mainLogger;
+let baseLogger: Logger;
+let mainLogger: Log;
 let stdoutStream;
 let fileStream;
 
-let origConsoleLog = console.log;
-let origConsoleTrace = console.trace;
-let origConsoleDebug = console.debug;
-let origConsoleInfo = console.info;
-let origConsoleWarn = console.warn;
-let origConsoleError = console.error;
+const origConsoleLog = console.log;
+const origConsoleTrace = console.trace;
+const origConsoleDebug = console.debug;
+const origConsoleInfo = console.info;
+const origConsoleWarn = console.warn;
+const origConsoleError = console.error;
 
 Error.stackTraceLimit = Config.get("log-error-stack-length");
 
-/**
- * Application logging utilities
- */
-class Log {
+export type LogLevelStrings = "trace" | "debug" | "info" | "warn" | "error" | "fatal";
+
+interface HumanDateTime {
+    year: string,
+    month: string,
+    day: string,
+    hour: string,
+    minute: string,
+    second: string
+}
+
+function getHumanDateTime(): HumanDateTime {
+    const numericDateTime: Intl.DateTimeFormatOptions = {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+    };
+
+    const ret = new Intl.DateTimeFormat("default", numericDateTime)
+        .formatToParts()
+        .reduce((acc, v) => Object({... acc, [v.type]: v.value}), {});
+
+    return (ret as HumanDateTime);
+}
+
+// eslint-disable-next-line jsdoc/require-jsdoc
+export class Log {
+    logger: Logger;
+
     /**
      * Initializes the Logger
      */
-    static init() {
+    static init(): Log {
         // XXX: for some reason this breaks tests
         // if (mainLogger) {
         //     return mainLogger;
@@ -36,7 +63,8 @@ class Log {
         stdoutStream = bunyanDebugStream({
             basepath: path.join(__dirname, ".."),
             prefixers: {
-                component: function(val) {
+                // eslint-disable-next-line
+                component: function(val: unknown) {
                     return val;
                 },
             },
@@ -46,10 +74,11 @@ class Log {
             },
             forceColor: Config.get("log-force-color"),
             showPid: false,
-        });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any);
 
         // base logger
-        baseLogger = bunyan.createLogger({
+        baseLogger = Logger.createLogger({
             name: Config.get("app-name"),
             stream: stdoutStream,
             level: Config.get("log-level"),
@@ -58,20 +87,10 @@ class Log {
 
         // file
         if (Config.get("log-file-enabled")) {
-            let numericDateTime = {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: false,
-            };
-            let d = new Intl.DateTimeFormat("default", numericDateTime)
-                .formatToParts()
-                .reduce((acc, v) => Object({... acc, [v.type]: v.value}), {});
+            const d = getHumanDateTime();
 
             fileStream = {
+                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                 path: `${Config.get("log-file-path")}/${Config.get("log-file-prefix")}-${d.year}${d.month}${d.day}-${d.hour}${d.minute}${d.second}${Config.get("log-file-suffix")}`,
                 level: Config.get("log-file-level"),
             };
@@ -99,7 +118,8 @@ class Log {
         console.info = Log.info;
         console.warn = Log.warn;
         console.error = Log.error;
-        console.print = (... args) => origConsoleLog(... args);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, jsdoc/require-jsdoc
+        (console as any).print = (... args: unknown[]) => origConsoleLog(... args);
     }
 
     /**
@@ -112,15 +132,16 @@ class Log {
         console.info = origConsoleInfo;
         console.warn = origConsoleWarn;
         console.error = origConsoleError;
-        delete console.print;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        delete (console as any).print;
     }
 
     /**
      * Constructs a child logger with the same attributes as the default logger.
      *
-     * @param {string} name - The name of this module, which will be logged with each line.
+     * @param name - The name of this module, which will be logged with each line.
      */
-    constructor(name) {
+    constructor(name: string) {
         this.logger = baseLogger.child({component: name});
     }
 
@@ -128,20 +149,18 @@ class Log {
      * Log a message at the `fatal` level.
      *
      * @function
-     * @param   {...*}  args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
-     * @returns {undefined}     No return
      */
     get fatal() {
         return this._fatal.bind(this);
     }
 
     // eslint-disable-next-line jsdoc/require-jsdoc
-    _fatal(... args) {
-        this.logger.fatal(... args);
+    _fatal(fmt: unknown, ... args: unknown[]) {
+        this.logger.fatal(fmt, ... args);
         if (Config.get("log-error-stack")) {
-            let t = {};
+            const t = {};
             Error.captureStackTrace(t);
-            this.logger.fatal(t.stack);
+            this.logger.fatal((t as Error).stack);
         }
     }
 
@@ -149,20 +168,18 @@ class Log {
      * Log a message at the `error` level.
      *
      * @function
-     * @param   {...*}  args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
-     * @returns {undefined}     No return
      */
     get error() {
         return this._error.bind(this);
     }
 
     // eslint-disable-next-line jsdoc/require-jsdoc
-    _error(... args) {
-        this.logger.error(... args);
+    _error(fmt: unknown, ... args: unknown[]) {
+        this.logger.error(fmt, ... args);
         if (Config.get("log-error-stack")) {
-            let t = {};
+            const t = {};
             Error.captureStackTrace(t);
-            this.logger.error(t.stack);
+            this.logger.error((t as Error).stack);
         }
     }
 
@@ -170,90 +187,82 @@ class Log {
      * Log a message at the `warn` level.
      *
      * @function
-     * @param   {...*}  args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
-     * @returns {undefined}     No return
      */
     get warn() {
         return this._warn.bind(this);
     }
 
     // eslint-disable-next-line jsdoc/require-jsdoc
-    _warn(... args) {
-        this.logger.warn(... args);
+    _warn(fmt: unknown, ... args: unknown[]) {
+        this.logger.warn(fmt, ... args);
     }
 
     /**
      * Log a message at the `info` level.
      *
      * @function
-     * @param   {...*}  args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
-     * @returns {undefined}     No return
      */
     get info() {
         return this._info.bind(this);
     }
 
     // eslint-disable-next-line jsdoc/require-jsdoc
-    _info(... args) {
-        this.logger.info(... args);
+    _info(fmt: unknown, ... args: unknown[]) {
+        this.logger.info(fmt, ... args);
     }
 
     /**
      * Log a message at the `debug` level.
      *
      * @function
-     * @param   {...*}  args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
-     * @returns {undefined}     No return
      */
     get debug() {
         return this._debug.bind(this);
     }
 
     // eslint-disable-next-line jsdoc/require-jsdoc
-    _debug(... args) {
-        this.logger.debug(... args);
+    _debug(fmt: unknown, ... args: unknown[]) {
+        this.logger.debug(fmt, ... args);
     }
 
     /**
      * Log a message at the `trace` level.
      *
      * @function
-     * @param   {...*}  args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
-     * @returns {undefined}     No return
      */
     get trace() {
         return this._trace.bind(this);
     }
 
     // eslint-disable-next-line jsdoc/require-jsdoc
-    _trace(... args) {
-        this.logger.trace(... args);
+    _trace(fmt: unknown, ... args: unknown[]) {
+        this.logger.trace(fmt, ... args);
     }
 
     /**
      * Returns the logger object created by {@link https://github.com/trentm/node-bunyan|Bunyan}
      *
-     * @returns {object} The {@link https://github.com/trentm/node-bunyan#constructor-api|object created by} `createLogger`
+     * @returns The {@link https://github.com/trentm/node-bunyan#constructor-api|object created by} `createLogger`
      */
-    static getBaseLogger() {
+    static getBaseLogger(): Logger {
         return baseLogger;
     }
 
     /**
      * Returns the child logger object named `main`
      *
-     * @returns {object} The {@link https://github.com/trentm/node-bunyan#constructor-api|object created by} `createLogger`
+     * @returns The {@link https://github.com/trentm/node-bunyan#constructor-api|object created by} `createLogger`
      */
-    static getMainLogger() {
+    static getMainLogger(): Logger {
         return mainLogger.logger;
     }
 
     /**
      * Sets the logging level of messages. All messages at or above this level will be logged.
      *
-     * @param {"trace" | "debug" | "info" | "warn" | "error" | "fatal" | number} level A recognized log level string or a number associated with the {@link https://github.com/trentm/node-bunyan#levels|log level}.
+     * @param level A recognized log level string or a number associated with the {@link https://github.com/trentm/node-bunyan#levels|log level}.
      */
-    static setStdoutLevel(level) {
+    static setStdoutLevel(level: LogLevelStrings | number) {
         if (typeof level === "string") {
             level = Log.nameToLevel(level);
         }
@@ -275,7 +284,7 @@ class Log {
      * and `levelValue` a corresponding number for the current log level.
      */
     static getStdoutLevel() {
-        let s = getStdoutStream();
+        const s = getStdoutStream();
 
         return {
             levelName: Log.levelToName(s.level),
@@ -287,20 +296,19 @@ class Log {
      * Adds a stream to the logger. See {@link https://www.npmjs.com/package/bunyan#streams|Bunyan documentation} for details.
      * Note that {@link https://www.npmjs.com/|NPM} has logging streams for nearly any logging service (syslog, CloudWatch, Slack, Logstash, etc.)
      *
-     * @param {object} obj The stream object to be added.
+     * @param str The stream object to be added, as defined by Bunyan
      */
-    static addStream(obj) {
-        mainLogger.logger.addStream(obj);
+    static addStream(str: Logger.Stream) {
+        mainLogger.logger.addStream(str);
     }
 
     /**
      * Uses the original `console.log` to write the args to `process.stdout`
      *
      * @function
-     * @param   {...*}  args          See {@link https://nodejs.org/api/console.html|Console} for a description of arguments
-     * @returns {undefined}     No return
+     * @param args          See {@link https://nodejs.org/api/console.html|Console} for a description of arguments
      */
-    static print(... args) {
+    static print(... args: undefined[]) {
         return origConsoleLog(... args);
     }
 
@@ -308,80 +316,79 @@ class Log {
      * Uses the original `console.error` to write the args to `process.stderr`
      *
      * @function
-     * @param   {...*}  args          See {@link https://nodejs.org/api/console.html|Console} for a description of arguments
-     * @returns {undefined}     No return
+     * @param args          See {@link https://nodejs.org/api/console.html|Console} for a description of arguments
      */
-    static printErr(... args) {
+    static printErr(... args: unknown[]) {
         return origConsoleError(... args);
     }
 
     /**
      * Log a message at the `fatal` level.
      *
-     * @param   {...*}  args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
-     * @returns {undefined}     No return
+     * @param fmt           See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
+     * @param args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
      */
-    static fatal(... args) {
-        mainLogger.fatal(... args);
+    static fatal(fmt: unknown, ... args: unknown[]) {
+        mainLogger.fatal(fmt, ... args);
     }
 
     /**
      * Log a message at the `error` level.
      *
-     * @param   {...*}  args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
-     * @returns {undefined}     No return
+     * @param fmt           See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
+     * @param args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
      */
-    static error(... args) {
-        mainLogger.error(... args);
+    static error(fmt: unknown, ... args: unknown[]) {
+        mainLogger.error(fmt, ... args);
     }
 
     /**
      * Log a message at the `warn` level.
      *
-     * @param   {...*}  args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
-     * @returns {undefined}     No return
+     * @param fmt           See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
+     * @param args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
      */
-    static warn(... args) {
-        mainLogger.warn(... args);
+    static warn(fmt: unknown, ... args: unknown[]) {
+        mainLogger.warn(fmt, ... args);
     }
 
     /**
      * Log a message at the `info` level.
      *
-     * @param   {...*}  args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
-     * @returns {undefined}     No return
+     * @param fmt           See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
+     * @param args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
      */
-    static info(... args) {
-        mainLogger.info(... args);
+    static info(fmt: unknown, ... args: unknown[]) {
+        mainLogger.info(fmt, ... args);
     }
 
     /**
      * Log a message at the `debug` level.
      *
-     * @param   {...*}  args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
-     * @returns {undefined}     No return
+     * @param fmt           See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
+     * @param args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
      */
-    static debug(... args) {
-        mainLogger.debug(... args);
+    static debug(fmt: unknown, ... args: unknown[]) {
+        mainLogger.debug(fmt, ... args);
     }
 
     /**
      * Log a message at the `trace` level.
      *
-     * @param   {...*}  args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
-     * @returns {undefined}     No return
+     * @param fmt           See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
+     * @param args          See {@link https://github.com/trentm/node-bunyan|Bunyan} documentation for a description of possible args
      */
-    static trace(... args) {
-        mainLogger.trace(... args);
+    static trace(fmt: unknown, ... args: unknown[]) {
+        mainLogger.trace(fmt, ... args);
     }
 
     /**
      * Convert name to a logging level number (e.g. "error" -> 50)
      *
-     * @param   {string} name The logging level name to convert
-     * @returns {number}      The logging level number
+     * @param   name The logging level name to convert
+     * @returns      The logging level number
      */
-    static nameToLevel(name) {
+    static nameToLevel(name: string) {
         switch (name) {
         case "trace": return 10;
         case "debug": return 20;
@@ -396,10 +403,10 @@ class Log {
     /**
      * Convert logging level number to a name (e.g. 50 -> "error")
      *
-     * @param {number} level The logging level number to convert
-     * @returns {number}      The logging level name
+     * @param level The logging level number to convert
+     * @returns      The logging level name
      */
-    static levelToName(level) {
+    static levelToName(level: number): LogLevelStrings {
         switch (level) {
         case 10: return "trace";
         case 20: return "debug";
@@ -413,9 +420,9 @@ class Log {
 }
 
 function getStdoutStream() {
-    let {0: s} = mainLogger.logger.streams.filter((s) => s.stream === stdoutStream);
+    // XXX: apparently Logger.streams is not intended to be public interface
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const {0: s} = (mainLogger.logger as any).streams.filter((s: Logger.Stream) => s.stream === stdoutStream);
 
     return s;
 }
-
-module.exports = Log;

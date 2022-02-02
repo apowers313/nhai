@@ -1,36 +1,25 @@
 {
+    "source": {
+        "includePattern": "\\.ts$",
+        "excludePattern": "\\.test\\.ts$"
+    },
+    "sourceType": "module",
+    "recurseDepth": 10,
     "tags": {
-        "allowUnknownTags": false
+        "allowUnknownTags": true
     },
     "plugins": [
-        "plugins/markdown"
+        "plugins/markdown",
+        "node_modules/better-docs/typescript"
     ],
     "opts": {
         "systemName": "NHAI",
-        "copyright": "Copyright 2020, Adam Powers",
-        "template": "node_modules/tui-jsdoc-template",
+        "copyright": "Copyright 2022, Adam Powers",
+        "template": "node_modules/better-docs",
         "readme": "README.md",
         "encoding": "utf8",
         "destination": "docs/",
         "recurse": true,
         "verbose": true
-    },
-    "templates": {
-        "name": "NHAI",
-        "footerText": "TEST FOOTER",
-        "useCollapsibles": true,
-        "logo": {
-            "url": "https://upload.wikimedia.org/wikipedia/commons/c/ca/1x1.png",
-            "width": "1px",
-            "height": "1px",
-            "link": "https://apowers313.github.io/nhai/"
-        },
-        "css": [
-            "jsdoc.css"
-        ]
-    },
-    "docdash": {
-        "static": true,
-        "sort": true
     }
 }

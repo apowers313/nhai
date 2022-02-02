@@ -1,7 +1,13 @@
 {
     "extends": "ts-node/node16/tsconfig.json",
     "include": [
-        "**/*"
+        ".eslintrc.js",
+        "gulpfile.ts",
+        "mod.ts",
+        "lib/Config.ts",
+        "test/config.test.ts",
+        "lib/Log.ts",
+        "test/log.test.ts"
     ],
     "exclude": [
         "node_modules"
@@ -17,9 +23,17 @@
         "strict": true,
         "sourceMap": true,
         "inlineSources": true,
+        "noImplicitAny": false,
+        "strictNullChecks": true,
         "types": [
             "node",
-            "mocha"
-        ],
+            "mocha",
+            "chai",
+            "bunyan"
+        ]
+    },
+    "typedocOptions": {
+        "out": "docs",
+        "entryPoints": "mod.ts"
     }
 }

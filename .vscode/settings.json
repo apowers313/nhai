@@ -2,10 +2,12 @@
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true
     },
-    "[javascript]": {
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-    },
-    "[typescript]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
-    }
+    "eslint.enable": true,
+    "eslint.format.enable": true,
+    "eslint.run": "onType",
+    "eslint.alwaysShowStatus": true,
+    "eslint.validate": [
+        "javascript",
+        "typescript"
+    ]
 }

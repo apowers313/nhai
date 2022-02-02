@@ -1,22 +1,21 @@
 /* eslint-disable no-control-regex */
 
-const {Log, Config} = require("../index");
-const {assert} = require("chai");
-const stdMocks = require("std-mocks");
+import {Config} from "../lib/Config";
+import {Log} from "../lib/Log";
+import {assert} from "chai";
+import stdMocks from "std-mocks";
+import Logger from "bunyan";
 
 const newStream = {
     name: "newStream",
     stream: process.stderr,
-    level: "fatal",
+    level: "fatal" as Logger.LogLevel,
 };
 
 describe("Log", function() {
     beforeEach(function() {
-        Log.init();
-    });
-
-    it("is Function", function() {
         assert.isFunction(Log);
+        Log.init();
     });
 
     it("log at all levels", function() {
@@ -85,8 +84,8 @@ describe("Log", function() {
             let l1 = Log.getBaseLogger();
             let l2 = Log.getBaseLogger();
             assert.strictEqual(l1, l2);
-            assert.isArray(l1.streams);
-            assert.strictEqual(l1.streams.length, Config.get("log-file-enabled") ? 2 : 1);
+            assert.isArray((l1 as any).streams);
+            assert.strictEqual((l1 as any).streams.length, Config.get("log-file-enabled") ? 2 : 1);
             // console.log("logger", l1);
         });
     });
@@ -120,28 +119,10 @@ describe("Log", function() {
             Log.setStdoutLevel("trace");
         });
 
-        it("throws on no argument", function() {
-            assert.throws(() => {
-                Log.setStdoutLevel();
-            }, TypeError, "setStdoutLevel expected level to be a number and a multiple of 10 between 0 and 61");
-        });
-
-        it("throws on unexpected type", function() {
-            assert.throws(() => {
-                Log.setStdoutLevel({});
-            }, TypeError, "setStdoutLevel expected level to be a number and a multiple of 10 between 0 and 61");
-        });
-
         it("throws on bad number", function() {
             assert.throws(() => {
                 Log.setStdoutLevel(7);
             }, TypeError, "setStdoutLevel expected level to be a number and a multiple of 10 between 0 and 61");
-        });
-
-        it("throws on unknown name", function() {
-            assert.throws(() => {
-                Log.setStdoutLevel("bob");
-            }, TypeError, "unknown log level name: bob");
         });
     });
 
@@ -203,9 +184,9 @@ describe("Log", function() {
             Log.addStream(newStream);
 
             let l = Log.getMainLogger();
-            assert.isArray(l.streams);
-            assert.strictEqual(l.streams.length, 2);
-            assert.strictEqual(l.streams[1].name, newStream.name);
+            assert.isArray((l as any).streams);
+            assert.strictEqual((l as any).streams.length, 2);
+            assert.strictEqual((l as any).streams[1].name, newStream.name);
 
             stdMocks.use();
             Log.fatal("foo");
@@ -219,7 +200,7 @@ describe("Log", function() {
             assert.strictEqual(jsonMsg.msg, "foo");
 
             // cleanup
-            l.streams.pop();
+            (l as any).streams.pop();
         });
     });
 });
