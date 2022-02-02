@@ -5,7 +5,8 @@
     "require": ["ts-node/register"],
     "file": [
         "test/config.test.ts",
-        "test/log.test.ts"
+        "test/log.test.ts",
+        "test/utility.test.ts"
     ],
     "recursive": true,
     "reporter": "spec"

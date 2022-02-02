@@ -1,90 +1,22 @@
-const {assert} = require("chai");
-const path = require("path");
-
-const {Utility} = require("../index");
-const {checkType, checkInstance, randomSeed, randomFloat, randomInt, resolveFileOrString} = Utility;
-const {testTemplateContents, cytoscapeTemplateContents} = require("./helpers/helpers.js");
-
-// helpers
-class TestClass {}
-
-class OtherClass {}
+import * as path from "path";
+import {cytoscapeTemplateContents, testTemplateContents} from "./helpers/helpers";
+import {Utility} from "../mod";
+import {assert} from "chai";
+const {randomSeed, randomFloat, randomInt, resolveFileOrString} = Utility;
 
 const basedir = path.resolve(__dirname, "../assets/hbs");
 const ext = ".hbs";
 
 describe("Utility", function() {
-    describe("checkType", function() {
-        it("throws on wrong type", function() {
-            assert.throws(() => {
-                checkType("myFn", "testVal", 3, "string");
-            }, TypeError, "myFn expected 'testVal' to be a string, got: 3");
-        });
-
-        it("allows right type", function() {
-            checkType("myFn", "testVal", 3, "number");
-        });
-
-        it("allows class", function() {
-            checkType("myFn", "testClass", TestClass, "class");
-        });
-
-        it("throws if class is not function", function() {
-            let testClass = new TestClass();
-            assert.throws(() => {
-                checkType("myFn", "testClass", testClass, "class");
-            }, TypeError, "myFn expected 'testClass' to be a class, got: [object Object]");
-        });
-
-        it("throws if class is undefined", function() {
-            assert.throws(() => {
-                checkType("myFn", "testClass", undefined, "class");
-            }, TypeError, "myFn expected 'testClass' to be a class, got: undefined");
-        });
-
-        // it("throws if class is not declared as class", function() {
-        //     function testClass() {}
-        //     assert.throws(() => {
-        //         checkType("myFn", "testClass", testClass, "class");
-        //     }, TypeError, "myFn expected 'testClass' to be a class");
-        // });
-    });
-
-    describe("checkInstance", function() {
-        it("throws on wrong instance", function() {
-            assert.throws(() => {
-                let otherClass = new OtherClass();
-                checkInstance("myFn", "otherClass", otherClass, TestClass);
-            }, TypeError, "myFn expected 'otherClass' to be instanceof TestClass, got: OtherClass");
-        });
-
-        it("throws on non-object", function() {
-            assert.throws(() => {
-                checkInstance("myFn", "otherClass", 3, TestClass);
-            }, TypeError, "myFn expected 'otherClass' to be a object, got: 3");
-        });
-
-        it("throws on undefined", function() {
-            assert.throws(() => {
-                checkInstance("myFn", "otherClass", undefined, TestClass);
-            }, TypeError, "myFn expected 'otherClass' to be a object, got: undefined");
-        });
-
-        it("allows right instance", function() {
-            let testClass = new TestClass();
-            checkInstance("myFn", "testClass", testClass, TestClass);
-        });
-    });
-
     describe("random", function() {
         it("returns random float", function() {
-            let f = randomFloat();
+            const f = randomFloat();
             assert.isNumber(f);
             assert.isFalse(f % 1 === 0);
         });
 
         it("returns random int", function() {
-            let i = randomInt();
+            const i = randomInt();
             assert.isNumber(i);
             assert.isTrue(i % 1 === 0);
         });
@@ -130,9 +62,9 @@ describe("Utility", function() {
 
         it("undefined seed is non-deterministic", function() {
             randomSeed();
-            let r1 = randomFloat();
-            let r2 = randomFloat();
-            let r3 = randomFloat();
+            const r1 = randomFloat();
+            const r2 = randomFloat();
+            const r3 = randomFloat();
             randomSeed();
             assert.notStrictEqual(randomFloat(), r1);
             assert.notStrictEqual(randomFloat(), r2);
@@ -141,9 +73,9 @@ describe("Utility", function() {
 
         it("null seed is non-deterministic", function() {
             randomSeed(null);
-            let r1 = randomFloat();
-            let r2 = randomFloat();
-            let r3 = randomFloat();
+            const r1 = randomFloat();
+            const r2 = randomFloat();
+            const r3 = randomFloat();
             randomSeed(null);
             assert.notStrictEqual(randomFloat(), r1);
             assert.notStrictEqual(randomFloat(), r2);
@@ -153,34 +85,34 @@ describe("Utility", function() {
 
     describe("resolveFileOrString", function() {
         it("resolves absolute path", function() {
-            let t = resolveFileOrString(path.resolve(__dirname, "./helpers/data.hbs"), {basedir, ext});
+            const t = resolveFileOrString(path.resolve(__dirname, "./helpers/data.hbs"), {basedir, ext});
             assert.strictEqual(t, testTemplateContents);
         });
 
         it("resolves relative path", function() {
-            let t = resolveFileOrString("./test/helpers/data.hbs", {basedir, ext});
+            const t = resolveFileOrString("./test/helpers/data.hbs", {basedir, ext});
             assert.strictEqual(t, testTemplateContents);
         });
 
         it("resolves asset dir path", function() {
-            let t = resolveFileOrString("cytoscapeInit.hbs", {basedir, ext});
+            const t = resolveFileOrString("cytoscapeInit.hbs", {basedir, ext});
             assert.strictEqual(t, cytoscapeTemplateContents);
         });
 
         it("appends .hbs if not found", function() {
-            let t = resolveFileOrString("cytoscapeInit", {basedir, ext});
+            const t = resolveFileOrString("cytoscapeInit", {basedir, ext});
             assert.strictEqual(t, cytoscapeTemplateContents);
         });
 
         it("returns string if multi-line", function() {
-            let testTemplate = "{{foo}}\n{{bar}}";
-            let t = resolveFileOrString(testTemplate, {basedir, ext});
+            const testTemplate = "{{foo}}\n{{bar}}";
+            const t = resolveFileOrString(testTemplate, {basedir, ext});
             assert.strictEqual(t, testTemplate);
         });
 
         it("returns string if file not found", function() {
-            let testTemplate = "{{foo}}{{bar}}";
-            let t = resolveFileOrString(testTemplate, {basedir, ext});
+            const testTemplate = "{{foo}}{{bar}}";
+            const t = resolveFileOrString(testTemplate, {basedir, ext});
             assert.strictEqual(t, testTemplate);
         });
     });

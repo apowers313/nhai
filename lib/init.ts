@@ -9,6 +9,7 @@ const {HtmlTemplate} = require("./HtmlTemplate");
 const {Schema} = require("./Schema");
 const {GraphDb} = require("./GraphDb");
 const {Context} = require("./Context");
+const { Utility } = require("./Utility");
 const {trace, debug, info, warn} = Log;
 
 /**
@@ -18,6 +19,9 @@ module.exports = async function init() {
     await Config.init();
     await Log.init();
     await Breakpoint.init();
+
+    // initial seed
+    Utility.randomSeed(Config.get("random-seed"));
 
     let dateTimeOptions = {
         weekday: "long",

@@ -7,7 +7,9 @@
         "lib/Config.ts",
         "test/config.test.ts",
         "lib/Log.ts",
-        "test/log.test.ts"
+        "test/log.test.ts",
+        "lib/Utility.ts",
+        "test/utility.test.ts"
     ],
     "exclude": [
         "node_modules"
