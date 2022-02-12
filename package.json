@@ -79,6 +79,7 @@
     "handlebars": "^4.7.7",
     "random": "^2.2.0",
     "redisgraph.js": "^2.3.0",
+    "rxjs": "^7.5.4",
     "seedrandom": "^3.0.5",
     "ts-node": "^10.4.0",
     "uuid": "^8.3.2"
