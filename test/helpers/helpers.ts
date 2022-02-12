@@ -1,78 +1,56 @@
 /* eslint-disable jsdoc/require-jsdoc */
 
-import {EventBase, EventBusBase} from "../../mod";
+import {Event, EventBus} from "../../mod";
 import {assert} from "chai";
 
-export class TestEvent extends EventBase {
-    get sourceName() {
-        return "mySourceName";
-    }
+export interface TestData {
+    value: string;
+}
 
-    get sourceType() {
-        return "mySourceType";
+export class TestEvent extends Event {
+    type: "test";
+    data: TestData;
+
+    constructor(value: TestData) {
+        super();
+
+        this.type = "test";
+        this.data = value;
     }
 }
 
-export class TestSync extends EventBase {
-    get sourceName() {
-        return "synchronize";
-    }
+export class TestBus extends EventBus<TestEvent> {
 
-    get sourceType() {
-        return "synchronize";
-    }
-
-    get allowedEventTypes() {
-        return new Set(["tick"]);
-    }
-
-    get eventBus() {
-        return testSyncBus;
-    }
 }
 
-export class TestFilterEvent extends EventBase {
-    constructor(o) {
-        // TODO: dummy arguments to pass linting
-        super("foo", {});
+export const testEventBus = new TestBus("test");
 
-        // this.sourceName = o.sourceName;
-        // this.sourceType = o.sourceType;
-        this.type = o.eventType;
-    }
+// export class TestFilterEvent extends EventBase {
+//     constructor(o) {
+//         // TODO: dummy arguments to pass linting
+//         super("foo", {});
 
-    get sourceName() {
-        return this.sourceName || "empty";
-    }
+//         // this.sourceName = o.sourceName;
+//         // this.sourceType = o.sourceType;
+//         this.type = o.eventType;
+//     }
 
-    get sourceType() {
-        return this.sourceType || "empty";
-    }
+//     get sourceName() {
+//         return this.sourceName || "empty";
+//     }
 
-    get allowedEventTypes() {
-        return new Set(["register", "init"]);
-    }
+//     get sourceType() {
+//         return this.sourceType || "empty";
+//     }
 
-    get eventBus() {
-        return testBus;
-    }
-}
+//     get allowedEventTypes() {
+//         return new Set(["register", "init"]);
+//     }
 
-export class TestBus extends EventBusBase<TestEvent> {}
-
-export class TestSyncBus extends EventBusBase<TestSync> {}
-export const testBus: TestBus = new TestBus();
-export const testSyncBus = new TestSyncBus();
-
-export function testBusListenerCount() {
-    const names = (testBus as any).eventNames();
-    if (names.length === 0) {
-        return 0;
-    }
-
-    const totalCount = names.map((event) => (testBus as any).listenerCount(event));
-    return totalCount.reduce((total, num) => total + num);
-}
+//     get eventBus() {
+//         return testBus;
+//     }
+// }
 
 export function delay(ms) {
     return new Promise((resolve) => {
