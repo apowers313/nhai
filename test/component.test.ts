@@ -1,6 +1,11 @@
-const {Component} = require("../index");
-const {assert} = require("chai");
-const {TestEvent} = require("./helpers/helpers.js");
+import {TestEvent, testEventBus} from "./helpers/helpers";
+import {Component} from "../mod";
+import {assert} from "chai";
+// const {TestEvent} = require("./helpers/helpers.js");
+
+class TestComponent extends Component<TestEvent> {
+    eventBus = testEventBus;
+}
 
 describe("Component", function() {
     afterEach(function() {
@@ -8,31 +13,17 @@ describe("Component", function() {
     });
 
     it("can construct", function() {
-        let c = new Component("foo", "bar", TestEvent);
+        const c = new TestComponent("foo", "bar");
         assert.instanceOf(c, Component);
         assert.strictEqual(c.name, "foo");
         assert.strictEqual(c.type, "bar");
     });
 
-    it("throws on bad name", function() {
-        assert.throws(() => {
-            new Component(undefined, "type", TestEvent);
-        }, TypeError, "Component.constructor expected 'name' to be a string, got: undefined");
-    });
-
-    it("throws on bad type", function() {
-        assert.throws(() => {
-            new Component("name", 3, TestEvent);
-        }, TypeError, "Component.constructor expected 'type' to be a string, got: 3");
-    });
-
-    it("throws on unrecognized type");
-    it("throws on unrecognized module class");
     it("registers component");
 
     describe("get", function() {
         it("returns a Map", function() {
-            let l = Component.list;
+            const l = Component.list;
             assert.instanceOf(l, Map);
             assert.strictEqual(l.size, 0);
         });
@@ -40,7 +31,7 @@ describe("Component", function() {
 
     describe("clearList", function() {
         it("returns a Map", function() {
-            let l = Component.list;
+            const l = Component.list;
             assert.instanceOf(l, Map);
             assert.strictEqual(l.size, 0);
             l.set("foo", "bar");
@@ -52,37 +43,30 @@ describe("Component", function() {
 
     describe("register", function() {
         it("registers module", function() {
-            let c = new Component("myName", "myType", TestEvent);
+            const c = new TestComponent("myName", "myType");
             Component.register(c);
-            let l = Component.list;
+            const l = Component.list;
             assert.strictEqual(l.get("myName"), c);
         });
 
-        it("throws on registering non-Component", function() {
-            assert.throws(() => {
-                Component.register({});
-            }, TypeError, "Component.register expected 'comp' to be instanceof Component, got: Object");
-        });
-
         it("throws on duplicate name", function() {
-            new Component("myName", "myType1", TestEvent);
+            new TestComponent("myName", "myType1");
             assert.throws(() => {
-                new Component("myName", "myType2", TestEvent);
+                new TestComponent("myName", "myType2");
             });
         });
 
         it("allows re-registration of same object", function() {
-            let c = new Component("myName", "myType", TestEvent);
+            const c = new TestComponent("myName", "myType");
             Component.register(c);
             Component.register(c);
         });
     });
 
     describe("sendEvent", function() {
-        it("returns Promise", function() {
-            let c = new Component("foo", "bar", TestEvent);
-            let ret = c.sendEvent("foo");
-            assert.instanceOf(ret, Promise);
+        it("sends", function() {
+            const c = new TestComponent("foo", "bar");
+            c.sendEvent(new TestEvent({value: "foo"}));
         });
 
         it("emits event");

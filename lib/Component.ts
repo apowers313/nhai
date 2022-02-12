@@ -1,5 +1,5 @@
-const {EventBase, EventBusBase} = require("./EventBase");
-const {checkType, checkInstance} = require("./Utility");
+import {Event} from "./Event";
+import {EventBus} from "./EventBus";
 
 /**
  * A component that implements some functionality and communicates with other components. Used as a base class for various
@@ -9,41 +9,35 @@ const {checkType, checkInstance} = require("./Utility");
  * @property {type}      string     - The type of the component
  * @property {EventBase} eventClass - A constructor function for the class of events used by the component
  */
-class Component {
+export abstract class Component<EventType extends Event> {
+    name: string;
+    type: string;
+    abstract eventBus: EventBus<EventType>;
+
     /**
      * constructor
      *
      * @param {string}    name       - The name of the module.
      * @param {string}    type       - The type of the module
-     * @param {EventBase} eventClass - The class to use for events for this component
      *
      * @returns {Component}      The Object that was created
      */
-    constructor(name, type, eventClass) {
-        checkType("Component.constructor", "name", name, "string");
-        checkType("Component.constructor", "type", type, "string");
-        checkType("Component.constructor", "eventClass", eventClass, "class");
-        checkInstance("Component.constructor", "eventClass", eventClass.prototype, EventBase);
-
+    constructor(name: string, type: string) {
         this.name = name;
         this.type = type;
-        this.eventClass = eventClass;
 
         Component.register(this);
-        this.eventBus = this.eventClass.prototype.eventBus;
-        checkInstance("Component.constructor", "eventBus", this.eventBus, EventBusBase);
     }
 
     /**
      * Emits an event using the specified eventClass
      *
      * @param {string} type - The event type to emit
-     * @param {*}      data - The data to emit
+     * @param {*} data - The data to emit
+     * @param evt
      */
-    sendEvent(type, data) {
-        checkType("sendEvent", "type", type, "string");
-        let e = new this.eventClass(this.name, this.type);
-        return e.emit(type, data);
+    sendEvent(evt: EventType) {
+        this.eventBus.send(evt);
     }
 
     /**
@@ -51,8 +45,7 @@ class Component {
      *
      * @param   {Component} comp The component to be registered
      */
-    static register(comp) {
-        checkInstance("Component.register", "comp", comp, Component);
+    static register(comp: Component<any>) {
         if (componentMap.has(comp.name) && componentMap.get(comp.name) !== comp) {
             throw new Error("can't register a module with a duplicate name and a different object");
         }
@@ -87,5 +80,3 @@ class Component {
 }
 
 const componentMap = new Map();
-
-module.exports = {Component};
