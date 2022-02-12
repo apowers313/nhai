@@ -1,5 +1,4 @@
-let screens = [];
-module.exports = screens;
+export const screens: string[] = [];
 
 screens.push(
     "                                                                                \n" +
