@@ -35,8 +35,10 @@ module.exports = {
         // fixes
         "no-unused-vars": "off",
         "@typescript-eslint/no-unused-vars": ["error"],
+        "lines-between-class-members": "off",
+        "@typescript-eslint/lines-between-class-members": ["error", "always", {exceptAfterSingleLine: true}],
+        "@typescript-eslint/no-require-imports": "error",
         // TODO: turn these off
-        "@typescript-eslint/no-require-imports": "off",
         "@typescript-eslint/no-var-requires": "off",
         "@typescript-eslint/no-unsafe-assignment": "off",
         "@typescript-eslint/no-unsafe-return": "off",
