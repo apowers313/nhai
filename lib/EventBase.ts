@@ -1,66 +1,28 @@
 // TODO: use NodeEventTarget instead of EventEmitter; still experimental in nodejs v14.5
-const EventEmitter = require("promise-events");
-const {Breakpoint} = require("./Breakpoint");
-const {EventFilter} = require("./EventFilter");
-const {checkType, checkInstance} = require("./Utility");
+import {EventFilter, FilterFn} from "./EventFilter";
+import {Breakpoint} from "./Breakpoint";
+import EventEmitter from "promise-events";
+
+export type EventData = undefined | EventDataSingle | EventDataArray;
+export type EventDataArray = EventDataSingle[];
+export type EventDataSingle = unknown
 
 /**
  * Abstract base class for all the types of events
  */
-class EventBase {
-    /**
-     * Abstract constructor. Detects errors in derived classes.
-     */
-    constructor() {
-        checkInstance("EventBase.constructor", "allowedEventTypes", this.allowedEventTypes, Set);
-        checkInstance("EventBase.constructor", "eventBus", this.eventBus, EventBusBase);
-        checkType("EventBase.constructor", "sourceType", this.sourceType, "string");
-        checkType("EventBase.constructor", "sourceName", this.sourceName, "string");
-    }
+export abstract class EventBase {
+    /** the name of source of this event */
+    protected abstract sourceName: string;
+    /** the source type of this event */
+    protected abstract sourceType: string;
+    // abstract readonly eventBus: EventBusBase;
+    type: string;
+    data: EventData;
 
-    /**
-     * Returns a string representing the name of source of this event
-     *
-     * @returns {Set} Set of strings of valid event types
-     */
-    get sourceName() {
-        throw new Error("sourceName not implemented");
-    }
-
-    /**
-     * Returns a string that describe the source type of this event
-     *
-     * @returns {Set} Set of strings of valid event types
-     */
-    get sourceType() {
-        throw new Error("sourceType not implemented");
-    }
-
-    /**
-     * Returns a Set of strings that describe the valid types of sources
-     *
-     * @returns {Set} Set of strings of valid event types
-     */
-    // get allowedSourceTypes() {
-    //     throw new Error ("allowedSourceTypes not implemented");
-    // }
-
-    /**
-     * Returns a Set of strings that describe the valid types of events
-     *
-     * @returns {Set} Set of strings of valid event types
-     */
-    get allowedEventTypes() {
-        throw new Error("allowedEventTypes not implemented");
-    }
-
-    /**
-     * Returns a EventEmitter that will be used for the global event bus
-     *
-     * @returns {EventEmitter} The object that will be used as the global event bus for this kind of event
-     */
-    get eventBus() {
-        throw new Error("eventBus not implemented");
+    // eslint-disable-next-line jsdoc/require-jsdoc
+    constructor(type: string, data: EventData) {
+        this.type = type;
+        this.data = data;
     }
 
     /**
@@ -70,15 +32,15 @@ class EventBase {
      * @param   {object} data The optional data associated with the event
      * @returns {Promise.<boolean>} Returns a Promise resolving to `true` if the event had listeners, `false` otherwise
      */
-    async emit(type, ... data) {
-        if (!this.allowedEventTypes.has(type)) {
-            throw new TypeError(`event type '${type}' not one of the allowedEventTypes`);
-        }
+    // async emit(type: string, ... data: EventDataArray) {
+    //     if (!this.allowedEventTypes.has(type)) {
+    //         throw new TypeError(`event type '${type}' not one of the allowedEventTypes`);
+    //     }
 
-        this.type = type;
-        this.data = (data.length < 2) ? data[0] : data;
-        return this.eventBus.emit(type, this, ... data);
-    }
+    //     this.type = type;
+    //     this.data = (data.length < 2) ? data[0] : data;
+    //     return this.eventBus.emit(type, this, ... data);
+    // }
 
     /**
      * Convert an event to a human-readable string
@@ -90,34 +52,22 @@ class EventBase {
     }
 }
 
-const eventBusMap = new Set();
+const eventBusSet = new Set();
 
 /**
  * Abstract base class for all the event busses
  *
  * @extends EventEmitter
- * @property {Set} allowedEvenets - A `Set` of events that are allowed on this bus
  */
-class EventBusBase extends EventEmitter {
+export class EventBusBase<T extends EventBase> extends EventEmitter {
     /**
      * Creates a new event bus that can only send or receive a specific type of events
      *
-     * @param {EventBase} baseEvent - A class that implements EventBase. The event bus will only allow this type of event.
-     * @param {*}         args      - Arguments passed through to the {@link https://nodejs.org/api/events.html#events_class_eventemitter|EventEmitter} base class.
-     *
-     * @returns {EventBusBase}             The EventBusBase object
+     * @returns The EventBusBase object
      */
-    constructor(baseEvent, ... args) {
-        super(... args);
-
-        checkType("EventBusBase.constructor", "baseEvent", baseEvent, "class");
-        if (baseEvent === EventBase) {
-            throw new TypeError("constructor requires a class derived from EventBase but attempted to pass EventBase itself");
-        }
-
-        checkInstance("EventBusBase.constructor", "baseEvent", baseEvent.prototype, EventBase);
-        this._baseEvent = baseEvent;
-        eventBusMap.add(this);
+    constructor() {
+        super();
+        eventBusSet.add(this);
     }
 
     /**
@@ -127,15 +77,14 @@ class EventBusBase extends EventEmitter {
      * @throws TypeError on event that is wrong type
      */
     checkEvent(event) {
-        checkInstance("EventBusBase.checkEvent", "event", event, this._baseEvent);
         if (!event.type) {
             console.warn("Emitting event without a type:", event);
         }
     }
 
     // eslint-disable-next-line jsdoc/require-jsdoc
-    get allowedEvents() {
-        return this._baseEvent.prototype.allowedEventTypes;
+    async emit(eventName: string, event: T): Promise<void> {
+        throw new Error(`don't use emit: ${eventName} ${event}`);
     }
 
     /**
@@ -143,15 +92,15 @@ class EventBusBase extends EventEmitter {
      *
      * @param {string}    eventName - The name of the event
      * @param {EventBase} event     - An event that inherits from EventBase and is type of event described by `eventBase` in {@link EventBusBase.constructor}
-     * @param {...*}      [args]    - Any arguments
      *
      * @returns {Promise.<boolean>}          Returns a Promise that resolves to  `true` if the event had listeners; `false` otherwise
      */
-    async emit(eventName, event, ... args) {
+    async send(event: T): Promise<boolean> {
         this.checkEvent(event);
+        console.log("emitting:", event);
 
-        let ret = await Breakpoint.checkBreak(event, async() => {
-            return super.emit(eventName, event, ... args);
+        const ret = await Breakpoint.checkBreak(event, async() => {
+            return super.emit(event.type, event);
         });
 
         EventListener.listenAllList.forEach((fn) => {
@@ -164,20 +113,25 @@ class EventBusBase extends EventEmitter {
     /**
      * Returns a Map of the event busses that have been created
      *
-     * @returns {Map} A Map of the event busses, where the Map key is the name of the bus and the Map entry is the corresponding EventBusBase object
+     * @returns A Set of the event busses, where the Set entry is the corresponding EventBusBase object
      */
     static get eventBusList() {
-        return eventBusMap;
+        return eventBusSet;
     }
 }
 
-const listenAllList = [];
+export type ListenFn = (e: EventBase) => void;
+const listenAllList: ListenFn[] = [];
 
 /**
  * Listens for events on the specified {@link EventBusBase}, applying the specified {@link EventFilter}s before calling the
  * specified `callback`.
  */
-class EventListener {
+export class EventListener {
+    #callback: FilterFn;
+    filterList: EventFilter[];
+    attachedEvents: Set<string>;
+    bus: typeof EventBusBase;
     /**
      * Creates an event listener for the specified `bus`, calling the `callback` function for any events that meet pass the `filterList`
      *
@@ -189,21 +143,20 @@ class EventListener {
      *                                                    is received. Callback has a single argument of an {@link EventBase}
      *                                                    event.
      */
-    constructor(bus, filterList, callback) {
-        checkInstance("EventListener.constructor", "bus", bus, EventBusBase);
-        checkType("EventListener.constructor", "callback", callback, "function");
-        checkType("EventListener.constructor", "filterList", filterList, "object");
-
+    constructor(bus: typeof EventBusBase, filterList: EventFilter | EventFilter[], callback) {
+        let fl: EventFilter[];
         if (!Array.isArray(filterList)) {
-            filterList = [filterList];
+            fl = [filterList];
+        } else {
+            fl = filterList;
         }
 
-        this._callback = callback;
+        this.#callback = callback;
         this.filterList = [];
         this.attachedEvents = new Set();
         this.bus = bus;
-        if (filterList[0] !== null) {
-            filterList.forEach((f) => this.addFilter(f));
+        if (fl[0] !== null) {
+            fl.forEach((f) => this.addFilter(f));
         }
 
         // TODO: add all listeners
@@ -216,9 +169,7 @@ class EventListener {
      *
      * @param {EventFilter} filter The new filter to add.
      */
-    addFilter(filter) {
-        checkInstance("addFilter", "filter", filter, EventFilter);
-
+    addFilter(filter: EventFilter) {
         this.filterList.push(filter);
         this.filterList.sort((e1, e2) => {
             return e1.priority - e2.priority;
@@ -237,11 +188,11 @@ class EventListener {
      */
     update() {
         // no events specified, listen for all allowable events
-        if (this.attachedEvents.size === 0) {
-            this.attachedEvents = new Set([... this.bus.allowedEvents.values()]);
-        }
+        // if (this.attachedEvents.size === 0) {
+        //     this.attachedEvents = new Set([... this.bus.allowedEvents.values()]);
+        // }
 
-        this.attachedEvents.forEach((eventType) => this.bus.addListener(eventType, this.applyFilter.bind(this)));
+        // this.attachedEvents.forEach((eventType) => this.bus.addListener(eventType, this.applyFilter.bind(this)));
     }
 
     // TODO
@@ -272,7 +223,7 @@ class EventListener {
             return;
         }
 
-        this._callback(event);
+        this.#callback(event);
     }
 
     /**
@@ -280,9 +231,7 @@ class EventListener {
      *
      * @param  {Function} fn The callback function to be called on every event. It will be passed the event that triggered it.
      */
-    static listenAll(fn) {
-        checkType("listenAllList", "fn", fn, "function");
-
+    static listenAll(fn: ListenFn) {
         listenAllList.push(fn);
     }
 
@@ -302,9 +251,3 @@ class EventListener {
         return listenAllList;
     }
 }
-
-module.exports = {
-    EventBase,
-    EventBusBase,
-    EventListener,
-};
