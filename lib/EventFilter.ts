@@ -1,4 +1,18 @@
-const {checkType} = require("./Utility");
+// TODO: this interface could be more explicit:
+// must be one of 'any', 'all', or 'none'
+// must be one of 'sourceType', 'sourceName', or 'eventType'
+export interface FilterCriteria {
+    sourceType?: string;
+    sourceName?: string;
+    eventType?: string;
+    any?: boolean;
+    all?: boolean;
+    none?: boolean;
+    priority?: number;
+}
+
+export type FilterType = "allow" | "deny";
+export type FilterFn = (type: string) => boolean;
 
 /**
  * A filter that detects if an event should be allowed or denied based on some criteria.
@@ -8,7 +22,13 @@ const {checkType} = require("./Utility");
  * @property {number}  priority - The relative priority of this filter. Used when part of a {@link EventListener} `filterList`.
  * @property {object}  criteria - The original criteria object passed to the constructor
  */
-class EventFilter {
+export class EventFilter {
+    #priority: number;
+    #isDeny: boolean;
+    #isAllow: boolean;
+    #criteria: FilterCriteria;
+    #criteriaFn;
+
     /**
      * Creates a new filter for an event. The filter is a simple detecter for a single set of criteria, but can be chained
      * together into a firewall-like set of policies as a {@link EventListener} `filterList`.
@@ -27,54 +47,53 @@ class EventFilter {
      * @param {number}         [priority=100]      - The priority of this specific filter. Not useful for a single filter,
      *                                               but used as part of an {@link EventListener} `filterList`.
      */
-    constructor(type, criteria, priority = 100) {
-        checkType("EventFilter.constructor", "type", type, "string");
-        checkType("EventFilter.constructor", "criteria", criteria, "object");
-        checkType("EventFilter.constructor", "priority", priority, "number");
-        this._priority = priority;
+    constructor(type: string, criteria: FilterCriteria, priority = 100) {
+        this.#priority = priority;
 
         if (type === "allow") {
-            this.allow = true;
+            this.#isAllow = true;
+            this.#isDeny = false;
         } else if (type === "deny") {
-            this.deny = true;
+            this.#isDeny = true;
+            this.#isAllow = false;
         } else {
             throw new TypeError("EventFilter constructor expected 'type' to be 'allow' or 'deny'");
         }
 
-        this._criteria = criteria;
-        this._criteriaFn = EventFilter.buildTestFn(criteria);
+        this.#criteria = criteria;
+        this.#criteriaFn = EventFilter.buildTestFn(criteria);
     }
 
     // eslint-disable-next-line jsdoc/require-jsdoc
     set allow(v) {
-        this._isAllow = !!v;
-        this._isDeny = !this._isAllow;
+        this.#isAllow = !!v;
+        this.#isDeny = !this.#isAllow;
     }
 
     // eslint-disable-next-line jsdoc/require-jsdoc
     get allow() {
-        return this._isAllow;
+        return this.#isAllow;
     }
 
     // eslint-disable-next-line jsdoc/require-jsdoc
     set deny(v) {
-        this._isDeny = !!v;
-        this._isAllow = !this._isDeny;
+        this.#isDeny = !!v;
+        this.#isAllow = !this.#isDeny;
     }
 
     // eslint-disable-next-line jsdoc/require-jsdoc
     get deny() {
-        return this._isDeny;
+        return this.#isDeny;
     }
 
     // eslint-disable-next-line jsdoc/require-jsdoc
     get priority() {
-        return this._priority;
+        return this.#priority;
     }
 
     // eslint-disable-next-line jsdoc/require-jsdoc
     get criteria() {
-        return this._criteria;
+        return this.#criteria;
     }
 
     /**
@@ -85,7 +104,7 @@ class EventFilter {
      * constructor, `false` otherwise
      */
     matchEvent(event) {
-        return this._criteriaFn(event);
+        return this.#criteriaFn(event);
     }
 
     /**
@@ -123,43 +142,36 @@ class EventFilter {
      * @returns {Function}        A function that recieves a single {@link EventBase} parameter and returns `true` if the
      * event matches the criteria, `false` otherwise
      */
-    static buildTestFn(criteria) {
-        checkType("buildTestFn", "criteria", criteria, "object");
-        let criteriaFnList = [];
+    static buildTestFn(criteria: FilterCriteria) {
+        const criteriaFnList: FilterFn[] = [];
         let retFn;
 
-        for (let key of Object.keys(criteria)) {
+        for (const key of Object.keys(criteria)) {
             switch (key) {
             case "sourceType":
-                checkType("buildTestFn", "criteria.sourceType", criteria.sourceType, "string");
                 criteriaFnList.push(matchSourceType.bind(null, criteria.sourceType));
                 break;
             case "sourceName":
-                checkType("buildTestFn", "criteria.sourceName", criteria.sourceName, "string");
                 criteriaFnList.push(matchSourceName.bind(null, criteria.sourceName));
                 break;
             case "eventType":
-                checkType("buildTestFn", "criteria.eventType", criteria.eventType, "string");
                 criteriaFnList.push(matchEventType.bind(null, criteria.eventType));
                 break;
             case "fn":
                 throw new Error("not implemented");
             case "any":
-                checkType("buildTestFn", "criteria.any", criteria.any, "boolean");
                 if (criteria.any) {
                     retFn = matchCriteriaAny.bind(null, criteriaFnList);
                 }
 
                 break;
             case "all":
-                checkType("buildTestFn", "criteria.all", criteria.all, "boolean");
                 if (criteria.all) {
                     retFn = matchCriteriaAll.bind(null, criteriaFnList);
                 }
 
                 break;
             case "none":
-                checkType("buildTestFn", "criteria.none", criteria.none, "boolean");
                 if (criteria.none) {
                     retFn = matchCriteriaNone.bind(null, criteriaFnList);
                 }
@@ -180,8 +192,7 @@ class EventFilter {
 
         return retFn;
 
-        /* eslint-disable-next-line jsdoc/require-jsdoc */
-        function matchSourceType(name, obj) {
+        function matchSourceType(name, obj): boolean {
             if (obj.sourceType === name) {
                 return true;
             }
@@ -189,8 +200,7 @@ class EventFilter {
             return false;
         }
 
-        /* eslint-disable-next-line jsdoc/require-jsdoc */
-        function matchSourceName(name, obj) {
+        function matchSourceName(name, obj): boolean {
             if (obj.sourceName === name) {
                 return true;
             }
@@ -198,8 +208,7 @@ class EventFilter {
             return false;
         }
 
-        /* eslint-disable-next-line jsdoc/require-jsdoc */
-        function matchEventType(type, obj) {
+        function matchEventType(type, obj): boolean {
             if (obj.type === type) {
                 return true;
             }
@@ -207,26 +216,19 @@ class EventFilter {
             return false;
         }
 
-        /* eslint-disable-next-line jsdoc/require-jsdoc */
-        function matchCriteriaAny(fnList, e) {
+        function matchCriteriaAny(fnList, e): boolean {
             // return true if any function returns true
             return fnList.map((fn) => fn(e)).some((i) => i);
         }
 
-        /* eslint-disable-next-line jsdoc/require-jsdoc */
-        function matchCriteriaAll(fnList, e) {
+        function matchCriteriaAll(fnList, e): boolean {
             // return true if any function returns true
             return fnList.map((fn) => fn(e)).every((i) => i);
         }
 
-        /* eslint-disable-next-line jsdoc/require-jsdoc */
-        function matchCriteriaNone(fnList, e) {
+        function matchCriteriaNone(fnList, e): boolean {
             // return true if any function returns true
             return fnList.map((fn) => fn(e)).every((i) => i === false);
         }
     }
 }
-
-module.exports = {
-    EventFilter,
-};
