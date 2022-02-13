@@ -3,7 +3,6 @@ export {Config} from "./lib/Config";
 export {Component} from "./lib/Component";
 export {Log} from "./lib/Log";
 export {EventFilter} from "./lib/EventFilter";
-export {EventBase, EventBusBase, EventListener} from "./lib/EventBase";
 export {Event} from "./lib/Event";
 export {EventBus} from "./lib/EventBus";
 export {Trace} from "./lib/Trace";

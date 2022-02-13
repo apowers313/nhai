@@ -13,8 +13,6 @@
         "lib/Utility.ts",
         "test/utility.test.ts",
         "lib/EventFilter.ts",
-        "lib/EventBase.ts",
-        "test/event.test.ts",
         "lib/Event.ts",
         "lib/EventBus.ts",
         "test/eventBus.test.ts",
