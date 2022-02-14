@@ -7,7 +7,6 @@ import {EventBus} from "./EventBus";
  *
  * @property {string}    name       - The name of the component
  * @property {type}      string     - The type of the component
- * @property {EventBase} eventClass - A constructor function for the class of events used by the component
  */
 export abstract class Component<EventType extends Event> {
     name: string;
@@ -32,9 +31,7 @@ export abstract class Component<EventType extends Event> {
     /**
      * Emits an event using the specified eventClass
      *
-     * @param {string} type - The event type to emit
-     * @param {*} data - The data to emit
-     * @param evt
+     * @param evt The event to be sent on the corresponding EventBus
      */
     sendEvent(evt: EventType) {
         this.eventBus.send(evt);
