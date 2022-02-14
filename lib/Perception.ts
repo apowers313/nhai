@@ -1,38 +1,33 @@
 // const { EventBase, EventBusBase } = require("./EventBase");
 // const Component = require("./Component");
-const {EventBase, EventBusBase} = require("./EventBase");
-const {Component} = require("./Component");
-const {checkType, checkInstance, createHiddenProp} = require("./Utility");
+import {Component} from "./Component";
+import {Event} from "./Event";
+import {EventBus} from "./EventBus";
+
+export type PerceptionEventType = "register" | "init" | "data";
 
 /**
  * Events used for communicattion between perception {@link Component|Components}
  *
  * @extends EventBase
  */
-class PerceptionEvent extends EventBase {
+export abstract class PerceptionEvent extends Event {
+    abstract sourceName: string;
+    abstract sourceType: string;
+    type: PerceptionEventType;
+    data: any;
+
     /**
      * Creates a new event to be sent over the perception bus
      *
-     * @param {string} sourceName - The name of the source of the event.
-     * @param {string} sourceType - The type of the source.
+     * @param type
+     * @param data
      */
-    constructor(sourceName, sourceType) {
+    constructor(type: PerceptionEventType, data: any) {
         super();
 
-        checkType("PerceptionEvent.constructor", "sourceName", sourceName, "string");
-        checkType("PerceptionEvent.constructor", "sourceType", sourceType, "string");
-        createHiddenProp(this, "_sourceName", sourceName, true);
-        createHiddenProp(this, "_sourceType", sourceType, true);
-    }
-
-    /** The `String` describing the name of the event source */
-    get sourceName() {
-        return this._sourceName || "initializing";
-    }
-
-    /** A `String` describing the type of the source */
-    get sourceType() {
-        return this._sourceType || "initializing";
+        this.type = type;
+        this.data = data;
     }
 
     /** A `Set` describing the types of events that are allowed */
@@ -46,40 +41,38 @@ class PerceptionEvent extends EventBase {
     }
 }
 
-const perceptionEventBus = new EventBusBase(PerceptionEvent);
+class PerceptionEventBus extends EventBus<PerceptionEvent>{}
+
+export const perceptionEventBus = new PerceptionEventBus("perception");
 
 /**
  * A perception input (e.g. - vision, sound, feel)
  *
  * @extends Component
  */
-class Perception extends Component {
+export class Perception extends Component<PerceptionEvent> {
+    eventBus: PerceptionEventBus;
+
     /**
      * Creates a new Perception object
      *
      * @param {string}   name     - Name of the perception object. Should be human descriptive of the type of type of perception being performed.
-     * @param {Function} dataType - A constructure for the type of data that will be emitted by this Perception object.
      */
-    constructor(name, dataType) {
-        super(name, "perception", PerceptionEvent);
+    constructor(name) {
+        super(name, "perception");
 
-        // if (typeof dataType !== "function") throw new TypeError("Perception constructor expected 'dataType' to be a class");
-        checkType("Perception constructor", "dataType", dataType, "class");
-        this.dataType = dataType;
+        this.eventBus = perceptionEventBus;
     }
 
     /**
      * A perception input event. Data must be of the `dataType` specified in the constructor.
      *
      * @param {*} data - The data that has been perceived
-     *
+     * @param evt
      * @returns {boolean} Returns `true` if the event had listeners, `false` otherwise
      */
-    input(data) {
-        checkInstance("Perception.input", "data", data, this.dataType);
-        // if (!(data instanceof this.dataType)) throw new TypeError(`Perception.input expected dataType to be ${this.dataType.name}`);
-        let e = new this.eventClass(this.name, this.type);
-        return e.emit("data", data);
+    input(evt: PerceptionEvent) {
+        this.eventBus.send(evt);
     }
 
     /** the perception event bus, for communicating between perception {@link Component|Components} */
@@ -87,5 +80,3 @@ class Perception extends Component {
         return perceptionEventBus;
     }
 }
-
-module.exports = {Perception, PerceptionEvent};

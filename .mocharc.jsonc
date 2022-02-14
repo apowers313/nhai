@@ -9,7 +9,8 @@
         "test/eventBus.test.ts",
         // "test/grid.test.ts",
         "test/log.test.ts",
-        "test/utility.test.ts"
+        "test/utility.test.ts",
+        "test/perception.test.ts"
     ],
     "recursive": true,
     "reporter": "spec"

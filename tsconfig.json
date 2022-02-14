@@ -20,7 +20,9 @@
         "lib/Breakpoint.ts",
         "test/breakpoint.test.ts",
         "src/Grid.ts",
-        "test/grid.test.ts"
+        "test/grid.test.ts",
+        "lib/Perception.ts",
+        "test/perception.test.ts"
     ],
     "exclude": [
         "node_modules"

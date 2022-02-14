@@ -7,3 +7,4 @@ export {Event} from "./lib/Event";
 export {EventBus} from "./lib/EventBus";
 export {Trace} from "./lib/Trace";
 export {Breakpoint} from "./lib/Breakpoint";
+export {Perception, PerceptionEvent} from "./lib/Perception";
