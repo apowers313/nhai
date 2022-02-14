@@ -4,11 +4,6 @@ module.exports = {
     parserOptions: {
         project: "tsconfig.json",
     },
-    overrides: [
-        {
-            files: ["**/*.js", "**/*.ts"],
-        },
-    ],
     ignorePatterns: [
         "*.hbs",
     ],
