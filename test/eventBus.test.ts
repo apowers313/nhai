@@ -34,4 +34,19 @@ describe("EventBus", function() {
 
         it("allows async function listener");
     });
+
+    describe("shutdown", function() {
+        it("removes subscribers", function() {
+            const tb = new TestBus("test");
+            function listener1(evt: TestEvent) {
+                console.log("evt", evt);
+            }
+            function listener2(evt: TestEvent) {
+                console.log("evt", evt);
+            }
+            tb.listen(listener1);
+            tb.listen(listener2);
+            tb.shutdown();
+        });
+    });
 });

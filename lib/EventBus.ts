@@ -1,4 +1,4 @@
-import {Observable, Subject} from "rxjs";
+import {Observable, Subject, Subscription} from "rxjs";
 import {Event} from "./Event";
 
 export type ListenerSyncFn<T> = (value: T) => void;
@@ -11,6 +11,7 @@ const eventBusMap: Map<string, EventBus<any>> = new Map();
  */
 export abstract class EventBus<EventType extends Event> {
     #subject: Subject<EventType>;
+    #subscribers: Set<Subscription> = new Set();
     #name: string;
 
     /**
@@ -39,11 +40,36 @@ export abstract class EventBus<EventType extends Event> {
      * @param arg An Observable that will receive the event, or a callback function that will receive the event.
      */
     listen(arg: Observable<EventType> | ListenerSyncFn<EventType> | ListenerAsyncFn<EventType>) {
+        let sub: Subscription;
+
         if (arg instanceof Observable) {
-            arg.subscribe(this.#subject);
+            sub = arg.subscribe(this.#subject);
         } else {
-            this.#subject.subscribe(arg);
+            sub = this.#subject.subscribe(arg);
         }
+
+        this.#subscribers.add(sub);
+    }
+
+    /**
+     * Returns the number of listeners that are attached to the bus
+     *
+     * @returns The number of listeners that are attached to the bus
+     */
+    get listenerCount(): number {
+        return this.#subscribers.size;
+    }
+
+    /**
+     * Shuts down the bus, removing all subscribers
+     */
+    shutdown() {
+        [... this.#subscribers.values()].forEach((sub) => {
+            sub.unsubscribe();
+        });
+
+        this.#subscribers.clear();
+        this.#subject = new Subject<EventType>();
     }
 
     /**
