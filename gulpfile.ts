@@ -1,12 +1,13 @@
 /* eslint-disable jsdoc/require-jsdoc */
+import * as bs from "browser-sync";
 import {parallel, src, watch} from "gulp";
-import {spawn} from "child_process";
+import eslint from "gulp-eslint7";
 
-const eslint = require("gulp-eslint7");
+import {spawn} from "child_process";
 // const jsdoc = require("gulp-jsdoc3");
 // const nodemon = require("gulp-nodemon");
 // // const istanbul = require("gulp-istanbul"); // gulp-istanbul is broken; hasn't been updated in 3 years
-const browserSync = require("browser-sync").create();
+const browserSync = bs.create();
 // const print = require("gulp-print").default;
 
 // const mochaPreload = "test/helpers/preload.js";
