@@ -33,6 +33,8 @@ module.exports = {
         "lines-between-class-members": "off",
         "@typescript-eslint/lines-between-class-members": ["error", "always", {exceptAfterSingleLine: true}],
         "@typescript-eslint/no-require-imports": "error",
+        "no-dupe-class-members": "off",
+        "@typescript-eslint/no-dupe-class-members": ["error"],
         // TODO: turn these off
         "@typescript-eslint/no-var-requires": "off",
         "@typescript-eslint/no-unsafe-assignment": "off",
