@@ -1,6 +1,6 @@
-const {Grid} = require("../src/Grid.js");
-const {assert} = require("chai");
-const helperScreens = require("./helpers/screens");
+import {Grid} from "../src/Grid";
+import {assert} from "chai";
+import {screens as helperScreens} from "./helpers/screens";
 
 describe("Grid", function() {
     it("is Function", function() {
@@ -8,58 +8,24 @@ describe("Grid", function() {
     });
 
     it("creates a Grid object", function() {
-        let g = new Grid(3, 5);
+        const g = new Grid(3, 5);
         assert.instanceOf(g, Grid);
     });
 
     it("can get dataBuf", function() {
-        let g = new Grid(3, 5);
+        const g = new Grid(3, 5);
         assert.isTrue(ArrayBuffer.isView(g.dataBuf));
         assert.instanceOf(g.dataBuf.buffer, ArrayBuffer);
     });
 
     it("can get width and height", function() {
-        let g = new Grid(3, 5);
+        const g = new Grid(3, 5);
         assert.strictEqual(g.width, 3);
         assert.strictEqual(g.height, 5);
-    });
-
-    it("can't set width", function() {
-        let g = new Grid(3, 5);
-        assert.strictEqual(g.width, 3);
-        assert.throws(() => {
-            g.width = 100;
-        }, Error, "can't set property width");
-        assert.strictEqual(g.width, 3);
-    });
-
-    it("can't set height", function() {
-        let g = new Grid(3, 5);
-        assert.strictEqual(g.height, 5);
-        assert.throws(() => {
-            g.height = 100;
-        }, Error, "can't set property height");
-        assert.strictEqual(g.height, 5);
-    });
-
-    it("can't get private property", function() {
-        let g = new Grid(3, 5);
-
-        assert.throws(() => {
-            g._width;
-        }, Error, "attempting to access private property _width");
-    });
-
-    it("can't set private property", function() {
-        let g = new Grid(3, 5);
-
-        assert.throws(() => {
-            g._width = 100;
-        }, Error, "can't set property _width");
     });
 
     it("can assign value to Grid[x][y]", function() {
-        let g = new Grid(3, 5);
+        const g = new Grid(3, 5);
         assert.instanceOf(g, Grid);
         g[0][0] = 42;
         assert.strictEqual(g.dataBuf[0], 42);
@@ -78,7 +44,7 @@ describe("Grid", function() {
     });
 
     it("can get a value from Grid[x][y]", function() {
-        let g = new Grid(3, 5);
+        const g = new Grid(3, 5);
         assert.instanceOf(g, Grid);
         g[0][0] = 42;
         assert.strictEqual(g.dataBuf[0], 42);
@@ -89,7 +55,7 @@ describe("Grid", function() {
     });
 
     it("throws if setting 'x' value", function() {
-        let g = new Grid(3, 5);
+        const g = new Grid(3, 5);
 
         assert.throws(() => {
             g[0] = 1;
@@ -97,7 +63,7 @@ describe("Grid", function() {
     });
 
     it("throws on getting negative 'x'", function() {
-        let g = new Grid(3, 5);
+        const g = new Grid(3, 5);
 
         assert.throws(() => {
             g[-1];
@@ -109,7 +75,7 @@ describe("Grid", function() {
     });
 
     it("throws on getting 'x' beyond max", function() {
-        let g = new Grid(3, 5);
+        const g = new Grid(3, 5);
 
         assert.throws(() => {
             g[3];
@@ -121,7 +87,7 @@ describe("Grid", function() {
     });
 
     it("throws on getting negative 'y'", function() {
-        let g = new Grid(3, 5);
+        const g = new Grid(3, 5);
 
         assert.throws(() => {
             g[0][-1];
@@ -129,7 +95,7 @@ describe("Grid", function() {
     });
 
     it("throws on setting negative 'y'", function() {
-        let g = new Grid(3, 5);
+        const g = new Grid(3, 5);
 
         assert.throws(() => {
             g[0][-8] = 5;
@@ -137,7 +103,7 @@ describe("Grid", function() {
     });
 
     it("throws on getting 'y' beyond max", function() {
-        let g = new Grid(3, 5);
+        const g = new Grid(3, 5);
 
         assert.throws(() => {
             g[0][5];
@@ -149,7 +115,7 @@ describe("Grid", function() {
     });
 
     it("throws on setting 'y' beyond max", function() {
-        let g = new Grid(3, 5);
+        const g = new Grid(3, 5);
 
         assert.throws(() => {
             g[0][5] = 12;
@@ -161,22 +127,22 @@ describe("Grid", function() {
     });
 
     it("throws if setting value on Grid that doesn't exist", function() {
-        let g = new Grid(3, 5);
+        const g = new Grid(3, 5);
 
         assert.throws(() => {
-            g.foo = 100;
+            (g as any).foo = 100;
         }, Error, "can't set property foo");
     });
 
     it("converts characters", function() {
-        let g = new Grid(3, 5);
+        const g = new Grid(3, 5);
 
         g[0][0] = "a";
         assert.strictEqual(g[0][0], 97);
     });
 
     it("throws on strings", function() {
-        let g = new Grid(3, 5);
+        const g = new Grid(3, 5);
 
         assert.throws(() => {
             g[0][0] = "abc";
@@ -184,7 +150,7 @@ describe("Grid", function() {
     });
 
     it("throws on unknown types", function() {
-        let g = new Grid(3, 5);
+        const g = new Grid(3, 5);
 
         assert.throws(() => {
             g[0][0] = new Map();
@@ -193,7 +159,7 @@ describe("Grid", function() {
 
     describe("toString", function() {
         it("formats Grid", function() {
-            let g = new Grid(3, 5);
+            const g = new Grid(3, 5);
             g[0][0] = 1;
             g[1][0] = 1;
             g[2][0] = 2;
@@ -205,7 +171,7 @@ describe("Grid", function() {
             // for (let i = 0; i < 15; i++) console.log(`g.dataBuf[${i}] === ${g.dataBuf[i]}`);
             // assert.strictEqual(g.dataBuf[i], i);
 
-            let str = g.toString();
+            const str = g.toString();
             assert.strictEqual(
                 str,
                 "   1   1   2\n" +
@@ -217,7 +183,7 @@ describe("Grid", function() {
         });
 
         it("formats with serializer", function() {
-            let g = new Grid(3, 5, {
+            const g = new Grid(3, 5, {
                 serializer: function(val) {
                     if (val === 0) {
                         return " ";
@@ -237,7 +203,7 @@ describe("Grid", function() {
             // for (let i = 0; i < 15; i++) console.log(`g.dataBuf[${i}] === ${g.dataBuf[i]}`);
             // assert.strictEqual(g.dataBuf[i], i);
 
-            let str = g.toString();
+            const str = g.toString();
             assert.strictEqual(
                 str,
                 "hit\n" +
@@ -253,13 +219,13 @@ describe("Grid", function() {
 
     describe("copy", function() {
         it("makes a duplicate", function() {
-            let g1 = new Grid(3, 5);
+            const g1 = new Grid(3, 5);
             g1[0][0] = 12;
             g1[2][4] = 7;
             assert.strictEqual(g1[0][0], 12);
             assert.strictEqual(g1[2][4], 7);
 
-            let g2 = g1.copy();
+            const g2 = g1.copy();
             assert.instanceOf(g2, Grid);
 
             assert.notStrictEqual(g1, g2);
@@ -273,27 +239,33 @@ describe("Grid", function() {
         });
 
         it("copies serializer", function() {
-            function foo() {}
-            let g1 = new Grid(3, 5, {
+            function foo(val: number): string {
+                return `${val}`;
+            }
+            const g1 = new Grid(3, 5, {
                 serializer: foo,
             });
-            let g2 = g1.copy();
+            const g2 = g1.copy();
             assert.strictEqual(g2.serializer, foo);
         });
 
         it("copies converter", function() {
-            function foo() {}
-            let g1 = new Grid(3, 5, {
+            function foo(val: string | number): number {
+                val;
+                return 0;
+            }
+
+            const g1 = new Grid(3, 5, {
                 converter: foo,
             });
-            let g2 = g1.copy();
+            const g2 = g1.copy();
             assert.strictEqual(g2.converter, foo);
         });
     });
 
     describe("clear", function() {
         it("zeros Grid", function() {
-            let g = new Grid(3, 5);
+            const g = new Grid(3, 5);
             g[0][0] = 12;
             g[2][4] = 7;
             assert.strictEqual(g[0][0], 12);
@@ -308,8 +280,8 @@ describe("Grid", function() {
 
     describe("from", function() {
         it("creates Grid", function() {
-            let screen1 = helperScreens[1].split("\n");
-            let g = Grid.from(screen1);
+            const screen1 = helperScreens[1].split("\n");
+            const g = Grid.from(screen1);
             assert.instanceOf(g, Grid);
             assert.strictEqual(g.width, 80);
             assert.strictEqual(g.height, 20);
@@ -324,13 +296,14 @@ describe("Grid", function() {
 
     describe("diff", function() {
         it("compares two Grids", function() {
-            let g1 = new Grid(5, 5);
-            let g2 = new Grid(5, 5);
+            const g1 = new Grid(5, 5);
+            const g2 = new Grid(5, 5);
             g1[0][0] = 42;
             g2[4][4] = 32;
-            let ret = Grid.diff(g1, g2);
+            const ret = Grid.diff(g1, g2);
+            assert.isNotNull(ret);
             assert.isArray(ret);
-            assert.strictEqual(ret.length, 2);
+            assert.strictEqual(ret!.length, 2);
             assert.deepEqual(ret, [
                 {x: 0, y: 0, srcVal: 42, dstVal: 0},
                 {x: 4, y: 4, srcVal: 0, dstVal: 32},
@@ -338,15 +311,15 @@ describe("Grid", function() {
         });
 
         it("returns null if Grids are the same", function() {
-            let g1 = new Grid(5, 5);
-            let g2 = new Grid(5, 5);
-            let ret = Grid.diff(g1, g2);
+            const g1 = new Grid(5, 5);
+            const g2 = new Grid(5, 5);
+            const ret = Grid.diff(g1, g2);
             assert.isNull(ret);
         });
 
         it("throws if Grids are different sizes", function() {
-            let g1 = new Grid(5, 5);
-            let g2 = new Grid(5, 4);
+            const g1 = new Grid(5, 5);
+            const g2 = new Grid(5, 4);
             assert.throws(() => {
                 Grid.diff(g1, g2);
             }, Error, "diff expected Grids to be same size: src(5,5) vs dst(5,4)");

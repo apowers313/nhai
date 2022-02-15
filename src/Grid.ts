@@ -1,5 +1,3 @@
-const {checkType, checkInstance, createHiddenProp} = require("../index").Utility;
-
 function checkBounds(max, val) {
     // TODO: check to make sure val is a number
     if (val >= max) {
@@ -12,11 +10,7 @@ function checkBounds(max, val) {
 }
 
 function getProp(name) {
-    if (name[0] === "_") {
-        throw new Error(`attempting to access private property ${name}`);
-    }
-
-    let n = Number.parseInt(name);
+    const n = Number.parseInt(name);
     if (Number.isInteger(n)) {
         return n;
     }
@@ -24,11 +18,27 @@ function getProp(name) {
     return name;
 }
 
+type SerializerFn = (val: number) => string;
+type ConverterFn = (val: string | number) => number;
+interface YValueOpts {
+    serializer?: SerializerFn,
+    converter?: ConverterFn,
+}
+
 class yValue {
-    constructor(dataBuf, height, x, opts = {}) {
-        createHiddenProp(this, "_height", height, true);
-        createHiddenProp(this, "_baseOffset", height * x, true);
-        createHiddenProp(this, "_dataBuf", dataBuf, true);
+    serializer: SerializerFn;
+    converter: ConverterFn;
+    #height: number;
+    #baseOffset: number;
+    #dataBuf: Uint8Array;
+
+    constructor(dataBuf: Uint8Array, height: number, x: number, opts: YValueOpts = {}) {
+        // createHiddenProp(this, "_height", height, true);
+        // createHiddenProp(this, "_baseOffset", height * x, true);
+        // createHiddenProp(this, "_dataBuf", dataBuf, true);
+        this.#height = height;
+        this.#baseOffset = height * x;
+        this.#dataBuf = dataBuf;
         this.serializer = opts.serializer || defaultSerializer;
         this.converter = opts.converter || defaultConverter;
 
@@ -39,26 +49,26 @@ class yValue {
     }
 
     // eslint-disable-next-line no-unused-vars
-    getHandler(target, idx, receiver) {
+    getHandler(target, idx) {
         idx = getProp(idx);
 
         if (Number.isInteger(idx)) {
-            checkBounds(this._height, idx);
-            let offset = this._baseOffset + idx;
-            return this._dataBuf[offset];
+            checkBounds(this.#height, idx);
+            const offset = this.#baseOffset + idx;
+            return this.#dataBuf[offset];
         }
 
         throw new Error(`can't get property ${idx}`);
     }
 
     // eslint-disable-next-line no-unused-vars
-    setHandler(target, idx, value, receiver) {
+    setHandler(target, idx, value) {
         idx = getProp(idx);
 
         if (Number.isInteger(idx)) {
-            checkBounds(this._height, idx);
-            let offset = this._baseOffset + idx;
-            this._dataBuf[offset] = this.converter(value);
+            checkBounds(this.#height, idx);
+            const offset = this.#baseOffset + idx;
+            this.#dataBuf[offset] = this.converter(value);
             return true;
         }
 
@@ -66,10 +76,34 @@ class yValue {
     }
 }
 
+export type GridForEachCallback = (value: number, x: number, y: number, grid: Grid) => void;
+export interface GridDiff {
+    x: number,
+    y: number,
+    srcVal: number,
+    dstVal: number;
+}
+
+interface GridOpts {
+    buffer?: Uint8Array;
+    serializer?: SerializerFn,
+    converter?: ConverterFn,
+}
+
 /**
  * A two-dimensional array class
  */
-class Grid {
+export class Grid {
+    serializer: SerializerFn;
+    converter: ConverterFn;
+    /** How wide the Grid is */
+    readonly width: number;
+    /** How tall the Grid is */
+    readonly height: number;
+    /** A {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array|Uint8Array} for the raw data underlying the Grid */
+    readonly dataBuf: Uint8Array;
+    #xArray: yValue[];
+
     /**
      * Creates a new two dimensional array
      *
@@ -79,9 +113,11 @@ class Grid {
      * @param {Function} opts.serializer - A function that converts values from a number to a string for `toString`. Function accepts a single 'num' argument that is the Number to be converted and returns a string.
      * @param {Function} opts.converter  - A function that converts values to be stored in the Grid. Function accepts a single 'val' argument and returns an number.
      */
-    constructor(width, height, opts = {}) {
-        createHiddenProp(this, "_width", width, true);
-        createHiddenProp(this, "_height", height, true);
+    constructor(width: number, height: number, opts: GridOpts = {}) {
+        // createHiddenProp(this, "_width", width, true);
+        // createHiddenProp(this, "_height", height, true);
+        this.width = width;
+        this.height = height;
 
         let db;
         if (opts.buffer && (opts.buffer instanceof Uint8Array)) {
@@ -94,36 +130,38 @@ class Grid {
             db = new Uint8Array(width * height);
         }
 
-        createHiddenProp(this, "_dataBuf", db, true);
+        this.dataBuf = db;
 
-        let xArray = [];
+        const xArray: yValue[] = [];
         for (let x = 0; x < width; x++) {
-            xArray[x] = new yValue(this._dataBuf, height, x, opts);
+            xArray[x] = new yValue(this.dataBuf, height, x, opts);
         }
 
-        createHiddenProp(this, "_xArray", xArray, true);
+        this.#xArray = xArray;
         this.serializer = opts.serializer || defaultSerializer;
         this.converter = opts.converter || defaultConverter;
 
         return new Proxy(this, {
-            get: getHandler.bind(this),
-            set: setHandler.bind(this),
+            get: this.#getHandler,
+            set: this.#setHandler,
         });
     }
 
-    /** How wide the Grid is */
-    get width() {
-        return this._width;
+    // eslint-disable-next-line jsdoc/require-jsdoc
+    #getHandler(target, idx) {
+        idx = getProp(idx);
+
+        if (Number.isInteger(idx)) {
+            checkBounds(target.width, idx);
+            return target.#xArray[idx];
+        }
+
+        return target[idx];
     }
 
-    /** How tall the Grid is */
-    get height() {
-        return this._height;
-    }
-
-    /** A {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array|Uint8Array} for the raw data underlying the Grid */
-    get dataBuf() {
-        return this._dataBuf;
+    // eslint-disable-next-line jsdoc/require-jsdoc, @typescript-eslint/no-explicit-any
+    #setHandler(target: any, idx: string): boolean {
+        throw new Error(`can't set property ${idx}`);
     }
 
     // eslint-disable-next-line jsdoc/require-jsdoc
@@ -159,7 +197,7 @@ class Grid {
      * @returns {Grid} A duplicate of the Grid
      */
     copy() {
-        let ret = new Grid(this.width, this.height, {
+        const ret = new Grid(this.width, this.height, {
             serializer: this.serializer,
             converter: this.converter,
             buffer: this.dataBuf,
@@ -172,7 +210,7 @@ class Grid {
      * Resets all data in the Grid to zero.
      */
     clear() {
-        this.dataBuf.fill(0, 0, this.dataBuf.buffer.length);
+        this.dataBuf.fill(0, 0, this.dataBuf.buffer.byteLength);
     }
 
     /**
@@ -180,8 +218,7 @@ class Grid {
      *
      * @param   {Function} cb Called for each cell of the Grid. Signature is `cb(value, x, y, grid)`.
      */
-    forEach(cb) {
-        checkType("forEach", "cb", cb, "function");
+    forEach(cb: GridForEachCallback) {
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
                 cb(this[x][y], x, y, this);
@@ -196,42 +233,42 @@ class Grid {
      * The Grid height will be equal to the number of elements in the array, and the width will be equal to
      * the length of the strings.
      */
-    static from(val) {
-        if (Array.isArray(val)) {
-            checkType("Grid.from", "val[0]", val[0], "string");
-            // TODO: assuming array of strings
-            // TODO: all lines are the same length
-            let w = val[0].length;
-            let h = val.length;
-            let g = new Grid(w, h);
-
-            g.forEach((v, x, y) => {
-                g[x][y] = val[y][x];
-            });
-
-            return g;
+    static from(val: string[]) {
+        if (!Array.isArray(val)) {
+            throw new TypeError(`Grid.from got unexpected type: ${val}`);
         }
 
-        // TODO: .from(ArrayBuffer,x,y)
-        throw new TypeError(`Grid.from got unexpected type: ${val}`);
+        val.forEach((s) => {
+            if (s.length !== val[0].length) {
+                throw new TypeError("Grid.from: all lines must be the same length");
+            }
+        });
+
+        const w = val[0].length;
+        const h = val.length;
+        const g = new Grid(w, h);
+
+        g.forEach((v, x, y) => {
+            g[x][y] = val[y][x];
+        });
+
+        return g;
     }
 
     /**
      * Compares two Grids and returns an Array of the differences. Grids must be the same height and width.
      *
-     * @param {Grid} src - The first grid to compare.
-     * @param {Grid} dst - The second grid to compare.
+     * @param src - The first grid to compare.
+     * @param dst - The second grid to compare.
      *
-     * @returns {Array.<object>|null}     An Array of Objects describing the differences. Object for each change is `{x, y, srcVal, dstVal}`. Returns `null` if there are no differences.
+     * @returns An Array of Objects describing the differences. Object for each change is `{x, y, srcVal, dstVal}`. Returns `null` if there are no differences.
      */
-    static diff(src, dst) {
-        checkInstance("diff", "src", src, Grid);
-        checkInstance("diff", "dst", dst, Grid);
+    static diff(src: Grid, dst: Grid): GridDiff[] | null {
         if (src.height !== dst.height || src.width !== dst.width) {
             throw new Error(`diff expected Grids to be same size: src(${src.width},${src.height}) vs dst(${dst.width},${dst.height})`);
         }
 
-        let ret = [];
+        const ret: GridDiff[] = [];
         src.forEach((v, x, y) => {
             if (src[x][y] !== dst[x][y]) {
                 ret.push({
@@ -247,27 +284,7 @@ class Grid {
     }
 }
 
-// eslint-disable-next-line no-unused-vars
-function getHandler(target, idx, receiver) {
-    idx = getProp(idx);
-
-    if (Number.isInteger(idx)) {
-        checkBounds(this._width, idx);
-        return this._xArray[idx];
-    }
-
-    return this[idx];
-}
-
-// eslint-disable-next-line no-unused-vars
-function setHandler(target, idx, value, receiver) {
-    // console.log("Grid setHandler");
-    // idx = getProp(idx);
-    // if (Number.isInteger(idx)) throw new Error(`can't set 'x' value: ${idx}`);
-    throw new Error(`can't set property ${idx}`);
-}
-
-function defaultSerializer(val) {
+function defaultSerializer(val: number): string {
     if (val === undefined) {
         return "    ";
     }
@@ -275,7 +292,7 @@ function defaultSerializer(val) {
     return val.toString().padStart(4);
 }
 
-function defaultConverter(val) {
+function defaultConverter(val: number | string): number {
     if (typeof val === "number") {
         return val;
     }
@@ -286,5 +303,3 @@ function defaultConverter(val) {
 
     throw new Error(`unable to convert value ${val} to number`);
 }
-
-module.exports = {Grid};
