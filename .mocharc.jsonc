@@ -1,13 +1,13 @@
 // specification: https://mochajs.org/#configuring-mocha-nodejs
 // examples: https://github.com/mochajs/mocha/tree/master/example/config
 {
-    "extension": ["test.ts"],
+    // "extension": ["test.ts"],
     "require": ["ts-node/register"],
     "file": [
         "test/config.test.ts",
         "test/component.test.ts",
         "test/eventBus.test.ts",
-        // "test/grid.test.ts",
+        "test/grid.test.ts",
         "test/log.test.ts",
         "test/utility.test.ts",
         "test/perception.test.ts"
