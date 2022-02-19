@@ -1,6 +1,6 @@
-import {Observable, Observer, OperatorFunction, Subject, Subscription} from "rxjs";
+import {Observable, Observer, OperatorFunction, Subject, Subscription, queueScheduler} from "rxjs";
+import {filter, observeOn /* tap */} from "rxjs/operators";
 import {Event} from "./Event";
-import {filter} from "rxjs/operators";
 
 export type ListenerSyncFn<T> = (value: T) => void;
 export type ListenerAsyncFn<T> = (value: T) => Promise<void>;
@@ -12,7 +12,8 @@ const eventBusMap: Map<string, EventBus<any>> = new Map();
  * A message channel for sending Events between components
  */
 export abstract class EventBus<EventType extends Event> {
-    #subject: Subject<EventType>;
+    #inputSubject!: Subject<EventType>;
+    #outputSubject!: Subject<EventType>;
     #subscribers: Set<Subscription> = new Set();
     #name: string;
 
@@ -22,9 +23,10 @@ export abstract class EventBus<EventType extends Event> {
      * @param name The name of the EventBus. Can be used to retreive the EventBus later.
      */
     constructor(name: string) {
-        this.#subject = new Subject<EventType>();
         this.#name = name;
         eventBusMap.set(name, this);
+
+        this.#init();
     }
 
     /**
@@ -33,8 +35,7 @@ export abstract class EventBus<EventType extends Event> {
      * @param evt The Event to be sent
      */
     send(evt: EventType) {
-        console.log("EventBus.send:", evt);
-        this.#subject.next(evt);
+        this.#inputSubject.next(evt);
     }
 
     listen(obs: Partial<Observer<EventType>>): void;
@@ -46,7 +47,7 @@ export abstract class EventBus<EventType extends Event> {
      */
     // listen(arg: ListenerAsyncFn<EventType>): void;
     listen(arg: never): void {
-        const sub: Subscription = this.#subject.subscribe(arg);
+        const sub: Subscription = this.#outputSubject.subscribe(arg);
         this.#subscribers.add(sub);
     }
 
@@ -65,7 +66,7 @@ export abstract class EventBus<EventType extends Event> {
      * @returns An Observable that will emit all the events from the EventBus
      */
     get observable(): Observable<EventType> {
-        return this.#subject.pipe();
+        return this.#outputSubject.pipe();
     }
 
     /**
@@ -76,8 +77,8 @@ export abstract class EventBus<EventType extends Event> {
      */
     pipe(ops: OperatorFunction<any, any>[], cb: ListenerSyncFn<EventType>) {
         this
-            .#subject
-            .pipe.apply(this.#subject, ops as any)
+            .#outputSubject
+            .pipe.apply(this.#outputSubject, ops as any)
             .subscribe(cb as (value: unknown) => void);
     }
 
@@ -90,21 +91,31 @@ export abstract class EventBus<EventType extends Event> {
     filter(filterFns: FilterFn<EventType>[], cb: ListenerSyncFn<EventType>) {
         const filters = filterFns.map((f) => filter(f));
         this
-            .#subject
-            .pipe.apply(this.#subject, filters as any)
+            .#outputSubject
+            .pipe.apply(this.#outputSubject, filters as any)
             .subscribe(cb as (value: unknown) => void);
     }
 
+    // eslint-disable-next-line jsdoc/require-jsdoc
+    #init() {
+        this.#inputSubject = new Subject<EventType>();
+        this.#outputSubject = new Subject<EventType>();
+        this.#inputSubject.pipe(
+            observeOn(queueScheduler),
+            // tap((evt: EventType) => console.debug(`[EventBus ${this.#name}] -> (${evt.type}) ${JSON.stringify(evt.data)}`)),
+        ).subscribe(this.#outputSubject);
+    }
+
     /**
-     * Shuts down the bus, removing all subscribers
+     * Resets the bus, removing all subscribers
      */
-    shutdown() {
+    reset() {
         [... this.#subscribers.values()].forEach((sub) => {
             sub.unsubscribe();
         });
 
         this.#subscribers.clear();
-        this.#subject = new Subject<EventType>();
+        this.#init();
     }
 
     /**

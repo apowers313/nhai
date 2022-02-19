@@ -87,18 +87,16 @@ describe("EventBus", function() {
         });
     });
 
-    describe("shutdown", function() {
+    describe("reset", function() {
         it("removes subscribers", function() {
             const tb = new TestBus("test");
-            function listener1(evt: TestEvent) {
-                console.log("evt", evt);
-            }
-            function listener2(evt: TestEvent) {
-                console.log("evt", evt);
-            }
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            function listener1(_evt: TestEvent) {}
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            function listener2(_evt: TestEvent) {}
             tb.listen(listener1);
             tb.listen(listener2);
-            tb.shutdown();
+            tb.reset();
         });
     });
 });
