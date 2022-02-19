@@ -2,13 +2,21 @@ import {Event} from "./Event";
 import {EventBus} from "./EventBus";
 
 /**
+ * Abstract class for events emitted from a Component
+ */
+export abstract class ComponentEvent extends Event {
+    sourceName!: string;
+    sourceType!: string;
+}
+
+/**
  * A component that implements some functionality and communicates with other components. Used as a base class for various
  * parts of the system that will interact through events.
  *
  * @property {string}    name       - The name of the component
  * @property {type}      string     - The type of the component
  */
-export abstract class Component<EventType extends Event> {
+export abstract class Component<EventType extends ComponentEvent> {
     name: string;
     type: string;
     abstract eventBus: EventBus<EventType>;
@@ -34,6 +42,8 @@ export abstract class Component<EventType extends Event> {
      * @param evt The event to be sent on the corresponding EventBus
      */
     sendEvent(evt: EventType) {
+        evt.sourceName = this.name;
+        evt.sourceType = this.type;
         this.eventBus.send(evt);
     }
 
