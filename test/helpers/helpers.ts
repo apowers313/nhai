@@ -10,6 +10,8 @@ export interface TestData {
 export class TestEvent extends Event {
     type: "test";
     data: TestData;
+    sourceName = "test-source-name";
+    sourceType = "test-source-type";
 
     constructor(value: TestData) {
         super();
