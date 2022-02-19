@@ -1,7 +1,6 @@
 // const { EventBase, EventBusBase } = require("./EventBase");
 // const Component = require("./Component");
-import {Component} from "./Component";
-import {Event} from "./Event";
+import {Component, ComponentEvent} from "./Component";
 import {EventBus} from "./EventBus";
 
 export type PerceptionEventType = "register" | "init" | "data";
@@ -11,7 +10,7 @@ export type PerceptionEventType = "register" | "init" | "data";
  *
  * @extends EventBase
  */
-export abstract class PerceptionEvent extends Event {
+export abstract class PerceptionEvent extends ComponentEvent {
     abstract sourceName: string;
     abstract sourceType: string;
     type: PerceptionEventType;
@@ -43,7 +42,7 @@ export abstract class PerceptionEvent extends Event {
 
 class PerceptionEventBus extends EventBus<PerceptionEvent>{}
 
-export const perceptionEventBus = new PerceptionEventBus("perception");
+const perceptionEventBus = new PerceptionEventBus("perception");
 
 /**
  * A perception input (e.g. - vision, sound, feel)
@@ -76,7 +75,7 @@ export class Perception extends Component<PerceptionEvent> {
     }
 
     /** the perception event bus, for communicating between perception {@link Component|Components} */
-    static get eventBus() {
+    static get eventBus(): PerceptionEventBus {
         return perceptionEventBus;
     }
 }

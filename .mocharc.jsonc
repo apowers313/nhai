@@ -3,10 +3,12 @@
 {
     // "extension": ["test.ts"],
     "require": ["ts-node/register"],
+    "parallel": false,
     "file": [
         "test/config.test.ts",
         "test/component.test.ts",
         "test/eventBus.test.ts",
+        "test/featureExtractor.test.ts",
         "test/grid.test.ts",
         "test/log.test.ts",
         "test/utility.test.ts",

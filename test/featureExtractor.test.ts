@@ -1,9 +1,15 @@
-const {FeatureExtractor, Component, Perception, PerceptionEvent, EventFilter, EventListener} = require("../index");
-const {assert} = require("chai");
+import {Component, FeatureExtractor, FeatureExtractorEvent, Perception, PerceptionEvent} from "../mod";
+import {skip, take} from "rxjs/operators";
+import {assert} from "chai";
+
+class PerceptionEventTest extends PerceptionEvent {
+    sourceName = "haptics";
+    sourceType = "perception";
+}
 
 describe("FeatureExtractor", function() {
     afterEach(async function() {
-        await Perception.eventBus.removeAllListeners();
+        await Perception.eventBus.reset();
         Component.clearList();
     });
 
@@ -13,33 +19,42 @@ describe("FeatureExtractor", function() {
     });
 
     describe("listen", function() {
-        it("catches events", async function() {
-            let o = {beer: "yum"};
-            let e = new PerceptionEvent("haptics", "perception");
-            let fe = new FeatureExtractor("bob", function(... args) {
-                assert.strictEqual(args.length, 2);
-                assert.strictEqual(args[0], o);
-                assert.strictEqual(args[1], e);
+        it("catches events", function(done) {
+            const o = {beer: "yum"};
+            const e = new PerceptionEventTest("data", o);
+            const fe = new FeatureExtractor("bob", function(rcvEvt: PerceptionEvent): null {
+                assert.strictEqual(rcvEvt.data, o);
+                assert.strictEqual(rcvEvt, e);
+                done();
+                return null;
             });
-            fe.listen("haptics");
-            await e.emit("data", o);
+            fe.attach("haptics");
+            Perception.eventBus.send(e);
         });
 
-        it("emits return value", async function() {
-            let ret = {tequila: "blech"};
-            let e = new PerceptionEvent("haptics", "perception");
-            let fe = new FeatureExtractor("bob", function() {
-                return ret;
+        it("emits return value", function(done) {
+            const feature = new FeatureExtractorEvent("data", {tequila: "blech"});
+            const fe = new FeatureExtractor("bob", function(_evt: PerceptionEvent): FeatureExtractorEvent {
+                return feature;
             });
-            fe.listen("haptics");
+            fe.attach("haptics");
 
             // listen for feature-extractor event
-            let f = new EventFilter("allow", {eventType: "data", sourceType: "feature-extractor", sourceName: "bob", all: true});
-            new EventListener(Perception.eventBus, f, function(feEvent) {
-                assert.strictEqual(feEvent.data, ret);
-            });
+            Perception
+                .eventBus
+                .pipe([
+                    skip(1),
+                    take(1),
+                ],
+                (retEvt: PerceptionEvent) => {
+                    assert.strictEqual(retEvt.sourceType, "feature-extractor");
+                    assert.strictEqual(retEvt.sourceName, "bob");
+                    assert.strictEqual(retEvt.type, "data");
+                    assert.strictEqual(retEvt, feature);
+                    done();
+                });
 
-            await e.emit("data");
+            Perception.eventBus.send(new PerceptionEventTest("data", {}));
         });
     });
 

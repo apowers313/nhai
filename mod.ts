@@ -1,10 +1,11 @@
 export * as Utility from "./lib/Utility";
+export {Perception, PerceptionEvent} from "./lib/Perception";
+export {FeatureExtractor, FeatureExtractorEvent} from "./lib/FeatureExtractor";
+export {Breakpoint} from "./lib/Breakpoint";
 export {Config} from "./lib/Config";
 export {Component} from "./lib/Component";
-export {Log} from "./lib/Log";
 export {EventFilter} from "./lib/EventFilter";
 export {Event} from "./lib/Event";
 export {EventBus} from "./lib/EventBus";
+export {Log} from "./lib/Log";
 export {Trace} from "./lib/Trace";
-export {Breakpoint} from "./lib/Breakpoint";
-export {Perception, PerceptionEvent} from "./lib/Perception";

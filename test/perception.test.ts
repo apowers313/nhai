@@ -17,7 +17,7 @@ describe("PerceptionEvent", function() {
 // eslint-disable-next-line mocha/max-top-level-suites
 describe("Perception", function() {
     afterEach(async function() {
-        await Perception.eventBus.shutdown();
+        await Perception.eventBus.reset();
         Component.clearList();
     });
 

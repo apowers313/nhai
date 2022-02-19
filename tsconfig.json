@@ -22,7 +22,9 @@
         "src/Grid.ts",
         "test/grid.test.ts",
         "lib/Perception.ts",
-        "test/perception.test.ts"
+        "test/perception.test.ts",
+        "lib/FeatureExtractor.ts",
+        "test/featureExtractor.test.ts"
     ],
     "exclude": [
         "node_modules"
